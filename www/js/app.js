@@ -6,9 +6,6 @@ var app = new Framework7({
   name: 'framework7-core-tab-view', // App name
   theme: 'auto', // Automatic theme detection
 
-
-  
-
   // Centering the navbar
   navbar: {
     mdCenterTitle: true,
@@ -44,25 +41,25 @@ var app = new Framework7({
       // Demo shops for SHOP LIST section
       shops: [
         {
+          id: 0,
+          name: 'Le Croissant Shinsaibashi',
+          telephone: '06-6211-9603',
+          address: '2 Chome-7-25 Shinsaibashisuji, Chuo Ward, Osaka, 542-0085',
+          products: 50
+        },
+        {
           id: 1,
-          name: 'Sony',
-          telephone: '06302861552',
-          address: '1 Chome-6-27 Konan, Minato City, Tokyo 108-0075',
-          'number of products': 50
+          name: 'Rikuro’s cheese cake',
+          telephone: '0120-572-132',
+          address: '3 Chome-2-28 Nanba, Chuo Ward, Osaka, 542-0076',
+          products: 20
         },
         {
           id: 2,
-          name: 'Sega',
-          telephone: '06303171973',
-          address: 'Shinagawa City, Tokyo',
-          'number of products': 20
-        },
-        {
-          id: 3,
-          name: 'Nintendo',
-          telephone: '06302402088',
-          address: 'Kyoto',
-          'number of products': 100
+          name: 'DAIWA KAEN',
+          telephone: '06-6212-3566',
+          address: '4 Chome-2-１番17 号 Nanba, Chuo Ward, Osaka, 542-0076',
+          products: 100
         }
       ]
     };
@@ -72,6 +69,39 @@ var app = new Framework7({
     helloWorld: function () {
       app.dialog.alert('Hello World!');
     },
+    home: function () {
+      // show home - index.html
+      // used within the home tab
+      app.views.main.router.navigate({ name: 'home' });
+    },
+    homeTab: function () {
+      // switching from other tab to home tab
+      // it will show the current page of the home tab (not the index page)
+      document.getElementById('home-tab').click();
+    },
+    homeTabAndHome: function () {
+      document.getElementById('home-tab').click();
+      app.views.main.router.navigate({ name: 'home' });
+    },
+    isFormEmpty: function (formData) {
+      // checks if the New Shop form has any empty entry
+      if (document.getElementById('shop-name').value == "" ||
+        document.getElementById('shop-telephone').value == "" ||
+        document.getElementById('shop-address').value == "" ||
+        document.getElementById('shop-location').value == "")
+        return false;
+
+      return true;
+    },
+    emptyNewShopForm: function () {
+      // after submitting the New Shop form
+      // it will empty the inputs
+      document.getElementById('shop-name').value = "";
+      document.getElementById('shop-telephone').value = "";
+      document.getElementById('shop-address').value = "";
+      document.getElementById('shop-location').value = "";
+    },
+
   },
   // App routes
   routes: routes,
@@ -87,4 +117,35 @@ $$('#my-login-screen .login-button').on('click', function () {
 
   // Alert username and password
   app.dialog.alert('Username: ' + username + '<br>Password: ' + password);
+});
+
+// Get new shop data from form
+$$(document).on('click', '.convert-form-to-data', function () {
+  if (app.methods.isFormEmpty()) {
+    var formData = app.form.convertToData('#new-shop-form');
+    const jsonString = JSON.stringify(formData);
+    const jsonObject = JSON.parse(jsonString);
+
+    var data = {
+      id: app.data.shops.length,
+      name: jsonObject.name,
+      telephone: jsonObject.telephone,
+      address: jsonObject.address
+    }
+
+    app.data.shops.push(data);
+    app.methods.emptyNewShopForm();
+    app.dialog.alert('Shop added to the shop list.', '');
+  } else app.dialog.alert('Please fill out the form first.', '');
+});
+
+// Fill form with data
+$$(document).on('click', '.fill-form-from-data', function () {
+  var formData = {
+    'name': 'György',
+    'phone': '06302861552',
+    'address': '4031 Debrecen Nagybotos utca 1/A',
+    'location': 'Hungary',
+  }
+  app.form.fillFromData('#new-shop-form', formData);
 });

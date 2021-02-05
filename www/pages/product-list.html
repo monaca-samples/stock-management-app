@@ -1,16 +1,41 @@
-<div class="page" data-name="product-list">
-  <div class="navbar">
-    <div class="navbar-inner sliding">
-      <div class="left">
-        <a href="#" class="link back">
-          <i class="icon icon-back"></i>
-          <span class="if-not-md">Back</span>
-        </a>
-      </div>
-      <div class="title">Products</div>
-    </div>
-  </div>
-  <div class="page-content">
-    <div class="block-title">This is the PRODUCT LIST page.</div>
-  </div>
-</div>
+<template>
+	<div class="page" data-name="product-list">
+
+		<div class="navbar">
+			<div class="navbar-bg"></div>
+			<div class="navbar-inner sliding">
+				<div class="title">Products</div>
+			</div>
+		</div>
+
+		<div class="page-content">
+			<div id="card-bg" class="block block-strong inset">
+						<p>Product Code:</p>
+						<p>Product Name:</p>
+						<p>Price:</p>
+						<p>Quantity:</p>
+				<div class="display-flex justify-content-space-around">
+					<div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
+						<div class="stepper-button-minus "></div>
+						<div class="stepper-button-plus "></div>
+					</div>
+				</div>
+			</div>
+
+			<div id="card-bg" class="block block-strong inset">
+						<p>Product Code:</p>
+						<p>Product Name:</p>
+						<p>Price:</p>
+						<p>Quantity:</p>
+				<div class="display-flex justify-content-space-around">
+					<div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
+						<div class="stepper-button-minus "></div>
+						<div class="stepper-button-plus "></div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+</template>

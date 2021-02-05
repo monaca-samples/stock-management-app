@@ -1,16 +1,106 @@
-<div class="page" data-name="new-shop">
-  <div class="navbar">
-    <div class="navbar-inner sliding">
-      <div class="left">
-        <a href="#" class="link back">
-          <i class="icon icon-back"></i>
-          <span class="if-not-md">Back</span>
-        </a>
-      </div>
-      <div class="title">Shop</div>
-    </div>
-  </div>
-  <div class="page-content">
-    <div class="block-title">This is the NEW SHOP page.</div>
-  </div>
-</div>
+<template>
+	<div class="page" data-name="new-shop">
+
+		<div class="navbar">
+			<div class="navbar-bg"></div>
+			<div class="navbar-inner sliding">
+				<div class="left">
+					<a href="#" class="link back">
+						<i class="icon icon-back"></i>
+						<span class="if-not-md">Back</span>
+					</a>
+				</div>
+				<div class="title">Shop</div>
+			</div>
+		</div>
+
+		<div class="page-content">
+			<form class="list" id="new-shop-form">
+				<div class="list no-hairlines-md">
+					<ul>
+						<li>
+							<div class="item-content item-input">
+								<div class="item-inner">
+									<div class="item-input-wrap">
+										<textarea class="resizable" placeholder="Name" id="shop-name" name="name" required validate></textarea>
+									</div>
+								</div>
+							</div>
+						</li>
+						<li>
+							<div class="item-content item-input">
+								<div class="item-inner">
+									<div class="item-input-wrap">
+										<input type="text" placeholder="Telephone number" id="shop-telephone" name="telephone" required validate pattern="[0-9]*"
+										/>
+									</div>
+								</div>
+							</div>
+						</li>
+						<li>
+							<div class="item-content item-input">
+								<div class="item-inner">
+									<div class="item-input-wrap">
+										<textarea class="resizable" placeholder="Address" id="shop-address" name="address" required validate></textarea>
+									</div>
+								</div>
+							</div>
+						</li>
+						<li>
+							<div class="item-content item-input">
+								<div class="item-inner">
+									<div class="item-input-wrap">
+										<textarea class="resizable" placeholder="Location" id="shop-location" name="location" required validate></textarea>
+									</div>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+
+				<div class="block">
+					<div class="row">
+						<div class="col-50">
+							<a href="#" class="button button-raised button-fill">Current</a>
+						</div>
+						<div class="col-50">
+							<a href="#" class="button button-raised button-fill ">From Map</a>
+						</div>
+					</div>
+				</div>
+
+				<div class="block block-strong display-flex justify-content-center">
+					<p class="align-self-center">MAP</p>
+				</div>
+
+				<div class="row display-flex justify-content-center">
+					<div class="col-80 align-self-center">
+						<a href="#" class="button button-raised button-fill convert-form-to-data">Save</a>
+					</div>
+				</div>
+			</form>
+
+
+		</div>
+	</div>
+</template>
+
+<script>
+	var $$ = Dom7;
+
+	return {
+    // Lifecycle Hooks
+    // Component Data
+    data: function () {
+      // Must return an object
+      return {
+      }
+    },
+    // Component Methods
+    methods: {
+    },
+    // Page Events
+      
+  }
+
+</script>

@@ -1,16 +1,42 @@
-<div class="page" data-name="new-shop">
-  <div class="navbar">
-    <div class="navbar-inner sliding">
-      <div class="left">
-        <a href="#" class="link back">
-          <i class="icon icon-back"></i>
-          <span class="if-not-md">Back</span>
-        </a>
-      </div>
-      <div class="title">Shops</div>
-    </div>
-  </div>
-  <div class="page-content">
-    <div class="block-title">This is the SHOP LIST page.</div>
-  </div>
-</div>
+<template>
+	<div class="page" data-name="shop-list">
+
+		<div class="navbar">
+			<div class="navbar-bg"></div>
+			<div class="navbar-inner sliding">
+				<div class="left">
+					<a href="#" class="link back">
+						<i class="icon icon-back"></i>
+						<span class="if-not-md">Back</span>
+					</a>
+				</div>
+				<div class="title">Shops</div>
+			</div>
+		</div>
+
+		<div class="page-content">
+
+			{{#each shops}}
+			<div id="card-bg" class="block block-strong inset">
+				<p>Name: {{name}}</p>
+				<p>Tel: {{telephone}}</p>
+				<p>Address: {{address}}</p>
+				<p>Number of products: {{products}}</p>
+			</div>
+			{{/each}}
+
+		</div>
+
+	</div>
+</template>
+
+<script>
+	return {
+    data: function () {
+      return {
+        shops: this.$root.shops,
+      };
+    }
+  };
+
+</script>

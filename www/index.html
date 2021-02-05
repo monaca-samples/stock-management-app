@@ -54,47 +54,63 @@
 									</a>
 								</li>
 							</ul>
-							<div class="block-title">Shop</div>
-							<ul>
-								<li>
-									<a href="/shop-list/" data-view=".view-main" class="item-content item-link panel-close">
-										<div class="item-inner">
-											<div class="item-title">Shop List</div>
+							<div class="list accordion-list">
+								<ul>
+									<li class="accordion-item">
+										<a class="item-content item-link" href="#">
+											<div class="item-inner">
+												<div class="item-title">Shop</div>
+											</div>
+										</a>
+										<div class="accordion-item-content">
+											<div class="block">
+												<a href="/shop-list/" data-view=".view-main" class="item-content item-link panel-close">
+													<div class="item-inner">
+														<div class="item-title">Shop List</div>
+													</div>
+												</a>
+											</div>
+											<div class="block">
+												<a href="/new-shop/" data-view=".view-main" class="item-content item-link panel-close">
+													<div class="item-inner">
+														<div class="item-title">New Shop</div>
+													</div>
+												</a>
+											</div>
 										</div>
-									</a>
-								</li>
-								<li>
-									<a href="/new-shop/" data-view=".view-main" class="item-content item-link panel-close">
-										<div class="item-inner">
-											<div class="item-title">New Shop</div>
+									</li>
+									<li class="accordion-item">
+										<a class="item-content item-link" href="#">
+											<div class="item-inner">
+												<div class="item-title">Inventory</div>
+											</div>
+										</a>
+										<div class="accordion-item-content">
+											<div class="block">
+												<a id="product-tab" href="#view-product-list" class="item-content item-link tab tab-link panel-close">
+													<div class="item-inner">
+														<div class="item-title">Product List</div>
+													</div>
+												</a>
+											</div>
+											<div class="block">
+												<a href="/new-product/" data-view=".view-main" class="item-content item-link panel-close">
+													<div class="item-inner">
+														<div class="item-title">New Product</div>
+													</div>
+												</a>
+											</div>
+											<div class="block">
+												<a id="search-tab" href="#view-search" class="item-content item-link tab-link panel-close">
+													<div class="item-inner">
+														<div class="item-title">Search Product</div>
+													</div>
+												</a>
+											</div>
 										</div>
-									</a>
-								</li>
-							</ul>
-							<div class="block-title">Inventory</div>
-							<ul>
-								<li>
-									<a href="/product-list/" data-view=".view-main" class="item-content item-link panel-close">
-										<div class="item-inner">
-											<div class="item-title">Product List</div>
-										</div>
-									</a>
-								</li>
-								<li>
-									<a href="/new-product/" data-view=".view-main" class="item-content item-link panel-close">
-										<div class="item-inner">
-											<div class="item-title">New Product</div>
-										</div>
-									</a>
-								</li>
-								<li>
-									<a href="/search/" data-view=".view-main" class="item-content item-link panel-close">
-										<div class="item-inner">
-											<div class="item-title">Search Product</div>
-										</div>
-									</a>
-								</li>
-							</ul>
+									</li>
+								</ul>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -106,15 +122,15 @@
 			<!-- Tabbar for switching views-tabs -->
 			<div class="toolbar tabbar toolbar-bottom">
 				<div class="toolbar-inner">
-					<a href="#view-search" class="tab-link">
+					<a id="search-tab" href="#view-search" class="tab-link">
 						<i class="icon f7-icons if-not-md">search</i>
 						<i class="icon material-icons if-md">search</i>
 					</a>
-					<a href="#view-home" class="tab-link tab-link-active">
+					<a id="home-tab" href="#view-home" class="tab-link tab-link-active">
 						<i class="icon f7-icons if-not-md">house_fill</i>
 						<i class="icon material-icons if-md">home</i>
 					</a>
-					<a href="#view-product-list" class="tab-link">
+					<a id="product-list-tab" href="#view-product-list" class="tab-link">
 						<i class="icon f7-icons if-not-md">bag</i>
 						<i class="icon material-icons if-md">shopping_bag</i>
 					</a>
@@ -172,7 +188,7 @@
 										</div>
 									</a>
 								</li>
-                <li>
+								<li>
 									<a href="/catalog/" class="item-content item-link">
 										<div class="item-inner">
 											<div class="item-title">Catalog</div>
@@ -224,7 +240,7 @@
 			</div>
 
 			<!-- Search View -->
-			<div id="view-search" class="view view-init tab" data-name="catalog" data-url="/search/">
+			<div id="view-search" class="view view-init tab" data-name="search" data-url="/search/">
 				<!-- Search page will be loaded here dynamically from /search/ route -->
 			</div>
 
@@ -233,7 +249,6 @@
 				<!-- Settings page will be loaded here dynamically from /settings/ route -->
 			</div>
 		</div>
-
 
 		<!-- Popup -->
 		<div class="popup" id="my-popup">

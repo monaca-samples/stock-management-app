@@ -1,16 +1,102 @@
-<div class="page" data-name="new-product">
-  <div class="navbar">
-    <div class="navbar-inner sliding">
-      <div class="left">
-        <a href="#" class="link back">
-          <i class="icon icon-back"></i>
-          <span class="if-not-md">Back</span>
-        </a>
-      </div>
-      <div class="title">Product</div>
-    </div>
-  </div>
-  <div class="page-content">
-    <div class="block-title">This is the NEW PRODUCT page.</div>
-  </div>
-</div>
+<template>
+	<div class="page" data-name="new-product">
+
+		<div class="navbar">
+			<div class="navbar-bg"></div>
+			<div class="navbar-inner sliding">
+				<div class="left">
+					<a href="#" class="link back">
+						<i class="icon icon-back"></i>
+						<span class="if-not-md">Back</span>
+					</a>
+				</div>
+				<div class="title">Product</div>
+			</div>
+		</div>
+
+		<div class="page-content">
+			<div class="list">
+				<div class="list no-hairlines-md">
+					<ul>
+						<div class="row display-flex">
+							<div class="col-95 align-content-space-around">
+								<li class="item-content item-input">
+									<div class="item-inner">
+										<div class="item-input-wrap">
+											<input type="text" placeholder="Code"/>
+											<span class="input-clear-button"></span>
+										</div>
+									</div>
+									<i class="icon f7-icons">barcode_viewfinder</i>
+									<i class="icon material-icons if-md">barcode_viewfinder</i>
+								</li>
+							</div>
+						</div>
+						<li class="item-content item-input">
+							<div class="item-inner">
+								<div class="item-input-wrap">
+									<input type="text" placeholder="Name"/>
+									<span class="input-clear-button"></span>
+								</div>
+							</div>
+						</li>
+            <li class="item-content item-input">
+							<div class="item-inner">
+								<div class="item-input-wrap">
+									<input type="text" placeholder="Price"/>
+									<span class="input-clear-button"></span>
+								</div>
+							</div>
+						</li>
+            <li class="item-content item-input">
+							<div class="item-inner">
+								<div class="item-input-wrap">
+									<input type="text" placeholder="Quantity"/>
+									<span class="input-clear-button"></span>
+								</div>
+							</div>
+						</li>
+						<div class="row display-flex">
+							<div class="col-95 align-content-space-around">
+								<li class="item-content item-input">
+									<div class="item-inner">
+										<div class="item-input-wrap">
+											<input type="text" placeholder="Shop"/>
+											<span class="input-clear-button"></span>
+										</div>
+									</div>
+									<i class="icon f7-icons">cart</i>
+									<i class="icon material-icons if-md">cart</i>
+								</li>
+							</div>
+						</div>
+					</ul>
+				</div>
+			</div>
+
+			<div class="block block-strong display-flex justify-content-center">
+				<p class="align-self-center">PICTURE</p>
+			</div>
+
+			<div class="block">
+				<div class="row display-flex justify-content-flex-end">
+					<div class="col-30">
+						<a href="#" class="button button-raised button-fill">Album</a>
+					</div>
+          <div class="col-10"><span></span></div>
+					<div class="col-30 ">
+						<a href="#" class="button button-raised button-fill ">Camera</a>
+					</div>
+				</div>
+			</div>
+
+			<div class="row display-flex justify-content-center">
+				<div class="col-80 align-self-center">
+					<a href="#" class="button button-raised button-fill">Save</a>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+</template>

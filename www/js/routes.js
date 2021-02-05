@@ -1,16 +1,18 @@
 
 var routes = [
   {
+    name: 'home',
     path: '/',
     url: './index.html',
   },
   {
+    name: 'shoplist',
     path: '/shop-list/',
-    url: './pages/shop-list.html',
+    componentUrl: './pages/shop-list.html',
   },
   {
     path: '/new-shop/',
-    url: './pages/new-shop.html',
+    componentUrl: './pages/new-shop.html',
   },
   {
     path: '/product/:id/',
@@ -18,19 +20,20 @@ var routes = [
   },
   {
     path: '/product-list/',
-    url: './pages/product-list.html',
+    componentUrl: './pages/product-list.html',
   },
   {
     path: '/new-product/',
-    url: './pages/new-product.html',
+    componentUrl: './pages/new-product.html',
   },
   {
+    name: 'search',
     path: '/search/',
-    url: './pages/search.html',
+    componentUrl: './pages/search.html',
   },
   {
-    path: '/result/',
-    url: './pages/result.html',
+    path: '/search-result/',
+    url: './pages/search-result.html',
   },
   {
     path: '/about/',
@@ -46,7 +49,7 @@ var routes = [
   },
     {
     path: '/catalog/',
-    url: './pages/catalog.html',
+    componentUrl: './pages/catalog.html',
   },
   {
     path: '/dynamic-route/blog/:blogId/post/:postId/',
