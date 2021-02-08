@@ -1,28 +1,28 @@
 <template>
-	<div class="page" data-name="new-shop">
+	<div class="page" data-name="edit-shop">
 
 		<div class="navbar">
 			<div class="navbar-bg"></div>
 			<div class="navbar-inner sliding">
 				<div class="left">
-					<a href="#" class="link back">
-						<i class="icon icon-back"></i>
+					<a @click="$root.shoplist()" class="link"> 
+            <i class="icon icon-back"></i>
 						<span class="if-not-md">Back</span>
 					</a>
 				</div>
-				<div class="title">Shop</div>
+				<div class="title">Edit Shop Details</div>
 			</div>
 		</div>
 
 		<div class="page-content">
-			<form class="list" id="new-shop-form">
+			<form class="list" id="edit-shop-form">
 				<div class="list no-hairlines-md">
 					<ul>
 						<li>
 							<div class="item-content item-input">
 								<div class="item-inner">
 									<div class="item-input-wrap">
-										<textarea class="resizable" placeholder="Name" id="shop-name" name="name" required validate></textarea>
+										<textarea class="resizable" placeholder="Name" id="shop-name" name="name" required validate>{{shop.name}}</textarea>
 									</div>
 								</div>
 							</div>
@@ -31,8 +31,7 @@
 							<div class="item-content item-input">
 								<div class="item-inner">
 									<div class="item-input-wrap">
-										<input type="text" placeholder="Telephone number" id="shop-telephone" name="telephone" required validate pattern="[0-9]*"
-										/>
+										<textarea class="resizable" placeholder="Telephone number" id="shop-telephone" name="telephone" required validate>{{shop.telephone}}</textarea>
 									</div>
 								</div>
 							</div>
@@ -41,7 +40,7 @@
 							<div class="item-content item-input">
 								<div class="item-inner">
 									<div class="item-input-wrap">
-										<textarea class="resizable" placeholder="Address" id="shop-address" name="address" required validate></textarea>
+										<textarea class="resizable" placeholder="Address" id="shop-address" name="address" required validate>{{shop.address}}</textarea>
 									</div>
 								</div>
 							</div>
@@ -50,7 +49,7 @@
 							<div class="item-content item-input">
 								<div class="item-inner">
 									<div class="item-input-wrap">
-										<textarea class="resizable" placeholder="Location" id="shop-location" name="location" required validate></textarea>
+										<textarea class="resizable" placeholder="Location" id="shop-location" name="location" required validate>{{shop.location}}</textarea>
 									</div>
 								</div>
 							</div>
@@ -75,30 +74,31 @@
 
 				<div class="row display-flex justify-content-center">
 					<div class="col-80 align-self-center">
-						<a href="#" class="button button-raised button-fill convert-form-to-data">Save</a>
+						<a href="#" class="button button-raised button-fill edited-shop-data">Save</a>
 					</div>
 				</div>
 			</form>
-
 
 		</div>
 	</div>
 </template>
 
 <script>
-return {
-    // Lifecycle Hooks
-    // Component Data
+	return {
     data: function () {
-      // Must return an object
+      var shopId = this.$route.params.id;
+      var currentShop;
+      this.$root.shops.forEach(function (shop) {
+        if (shop.id === shopId) {
+          currentShop = shop;
+        }
+      });
       return {
-      }
+        shop: currentShop,
+      };
     },
-    // Component Methods
     methods: {
     },
-    // Page Events
-      
-  }
+  };
 
 </script>

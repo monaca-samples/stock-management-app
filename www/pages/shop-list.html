@@ -5,7 +5,7 @@
 			<div class="navbar-bg"></div>
 			<div class="navbar-inner sliding">
 				<div class="left">
-					<a href="#" class="link back">
+					<a @click="$root.home()" class="link">
 						<i class="icon icon-back"></i>
 						<span class="if-not-md">Back</span>
 					</a>
@@ -15,28 +15,41 @@
 		</div>
 
 		<div class="page-content">
-
 			{{#each shops}}
-			<div id="card-bg" class="block block-strong inset">
-				<p>Name: {{name}}</p>
-				<p>Tel: {{telephone}}</p>
-				<p>Address: {{address}}</p>
-				<p>Number of products: {{products}}</p>
+			<div id="card-bg" class="block block-strong inset display-flex flex-direction-row">
+				<div>
+					<p>Name: <span>{{name}}</span></p>
+					<p>Tel: <span>{{telephone}}</span></p>
+					<p>Address: <span>{{address}}</span></p>
+					<p>Number of products: {{products}}</p>
+				</div>
+				<div class="align-self-flex-start">
+					<i class="icon f7-icons">
+              <a href="/edit-shop/{{id}}/" data-shop-id="{{id}}" class="get-shop-details-data">pencil</a>
+          </i>
+				</div>
 			</div>
 			{{/each}}
 
 		</div>
-
 	</div>
 </template>
 
 <script>
 	return {
+    // Lifecycle Hooks
+    // Component Data
     data: function () {
+      // Must return an object
       return {
         shops: this.$root.shops,
-      };
-    }
-  };
+      }
+    },
+    // Component Methods
+    methods: {
+    },
+    // Page Events
+    
+  }
 
 </script>

@@ -15,6 +15,10 @@ var routes = [
     componentUrl: './pages/new-shop.html',
   },
   {
+    path: '/edit-shop/:id/',
+    componentUrl: './pages/edit-shop.html',
+  },
+  {
     path: '/product/:id/',
     componentUrl: './pages/product.html',
   },

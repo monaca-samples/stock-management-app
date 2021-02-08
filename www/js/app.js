@@ -23,17 +23,17 @@ var app = new Framework7({
       // Demo products for Catalog section
       products: [
         {
-          id: '1',
+          id: '0',
           title: 'Apple iPhone 8',
           description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi tempora similique reiciendis, error nesciunt vero, blanditiis pariatur dolor, minima sed sapiente rerum, dolorem corrupti hic modi praesentium unde saepe perspiciatis.'
         },
         {
-          id: '2',
+          id: '1',
           title: 'Apple iPhone 8 Plus',
           description: 'Velit odit autem modi saepe ratione totam minus, aperiam, labore quia provident temporibus quasi est ut aliquid blanditiis beatae suscipit odio vel! Nostrum porro sunt sint eveniet maiores, dolorem itaque!'
         },
         {
-          id: '3',
+          id: '2',
           title: 'Apple iPhone X',
           description: 'Expedita sequi perferendis quod illum pariatur aliquam, alias laboriosam! Vero blanditiis placeat, mollitia necessitatibus reprehenderit. Labore dolores amet quos, accusamus earum asperiores officiis assumenda optio architecto quia neque, quae eum.'
         },
@@ -41,24 +41,27 @@ var app = new Framework7({
       // Demo shops for SHOP LIST section
       shops: [
         {
-          id: 0,
+          id: '0',
           name: 'Le Croissant Shinsaibashi',
           telephone: '06-6211-9603',
           address: '2 Chome-7-25 Shinsaibashisuji, Chuo Ward, Osaka, 542-0085',
+          location: '2 Chome-1 Dogenzaka, Shibuya City, Tokyo 150-0043',
           products: 50
         },
         {
-          id: 1,
+          id: '1',
           name: 'Rikuro’s cheese cake',
           telephone: '0120-572-132',
           address: '3 Chome-2-28 Nanba, Chuo Ward, Osaka, 542-0076',
+          location: '2 Chome-1 Dogenzaka, Shibuya City, Tokyo 150-0043',
           products: 20
         },
         {
-          id: 2,
+          id: '2',
           name: 'DAIWA KAEN',
           telephone: '06-6212-3566',
           address: '4 Chome-2-１番17 号 Nanba, Chuo Ward, Osaka, 542-0076',
+          location: '2 Chome-1 Dogenzaka, Shibuya City, Tokyo 150-0043',
           products: 100
         }
       ]
@@ -83,7 +86,19 @@ var app = new Framework7({
       document.getElementById('home-tab').click();
       app.views.main.router.navigate({ name: 'home' });
     },
-    isFormEmpty: function (formData) {
+    shoplist: function () {
+      // show shop list - shop-list.html
+      // used within the home tab
+      app.views.main.router.navigate({ name: 'shoplist' });
+    },
+    dataToJson: function (formIdName) {
+      var formData = app.form.convertToData(formIdName);
+      const jsonString = JSON.stringify(formData);
+      const jsonObject = JSON.parse(jsonString);
+
+      return jsonObject;
+    },
+    isFormEmpty: function () {
       // checks if the New Shop form has any empty entry
       if (document.getElementById('shop-name').value == "" ||
         document.getElementById('shop-telephone').value == "" ||
@@ -101,7 +116,6 @@ var app = new Framework7({
       document.getElementById('shop-address').value = "";
       document.getElementById('shop-location').value = "";
     },
-
   },
   // App routes
   routes: routes,
@@ -122,15 +136,13 @@ $$('#my-login-screen .login-button').on('click', function () {
 // Get new shop data from form
 $$(document).on('click', '.convert-form-to-data', function () {
   if (app.methods.isFormEmpty()) {
-    var formData = app.form.convertToData('#new-shop-form');
-    const jsonString = JSON.stringify(formData);
-    const jsonObject = JSON.parse(jsonString);
+    const jsonObject = app.methods.dataToJson('#new-shop-form');
 
-    var data = {
-      id: app.data.shops.length,
-      name: jsonObject.name,
-      telephone: jsonObject.telephone,
-      address: jsonObject.address
+    const data = {
+      'id': app.data.shops.length,
+      'name': jsonObject.name,
+      'telephone': jsonObject.telephone,
+      'address': jsonObject.address
     }
 
     app.data.shops.push(data);
@@ -139,13 +151,21 @@ $$(document).on('click', '.convert-form-to-data', function () {
   } else app.dialog.alert('Please fill out the form first.', '');
 });
 
-// Fill form with data
-$$(document).on('click', '.fill-form-from-data', function () {
-  var formData = {
-    'name': 'György',
-    'phone': '06302861552',
-    'address': '4031 Debrecen Nagybotos utca 1/A',
-    'location': 'Hungary',
-  }
-  app.form.fillFromData('#new-shop-form', formData);
+//Get shop details data
+$$(document).on('click', '.get-shop-details-data', function () {
+  var shopId = $$(this).data('shop-id');
+
+  // Save the edited shop data
+  $$(document).on('click', '.edited-shop-data', function () {
+    if (app.methods.isFormEmpty()) {
+      const jsonObject = app.methods.dataToJson('#edit-shop-form');
+
+      app.data.shops[shopId].name = jsonObject.name;
+      app.data.shops[shopId].telephone = jsonObject.telephone;
+      app.data.shops[shopId].address = jsonObject.address;
+      app.data.shops[shopId].location = jsonObject.location;
+
+      app.dialog.alert('Saved shop details.', '');
+    } else app.dialog.alert('Please fill out the form first.', '');
+  });
 });
