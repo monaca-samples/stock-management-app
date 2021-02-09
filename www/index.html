@@ -29,6 +29,9 @@
 	<link rel="stylesheet" href="css/app.css">
 	<script src="components/loader.js"></script>
 	<link rel="stylesheet" href="components/loader.css">
+
+	<link rel="stylesheet" href="js/util/leaflet/leaflet.css" />
+	<script src="js/util/leaflet/leaflet.js"></script>
 </head>
 
 <body>
@@ -159,6 +162,10 @@
 					<!-- Scrollable page content-->
 					<div class="page-content">
 						<div class="block block-strong">
+
+							<p>MAP</p>
+							<div id="mapid"></div>
+
 							<p>This is an example of tabs-layout application. The main point of such tabbed layout is that each tab contains independent
 								view with its own routing and navigation.</p>
 
@@ -235,6 +242,7 @@
 								</li>
 							</ul>
 						</div>
+
 					</div>
 				</div>
 			</div>
@@ -325,3 +333,21 @@
 </body>
 
 </html>
+
+
+<!-- From Leaflet webpage tutorial + Yong-san's map details -->
+<script>
+	map = L.map('mapid').setView([35.40, 139.50], 13);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 18,
+      tileSize: 512,
+      zoomOffset: -1,
+  }).addTo(map);
+  
+  L.marker([35.40, 139.50]).addTo(map)
+      .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
+      .openPopup();
+
+</script>

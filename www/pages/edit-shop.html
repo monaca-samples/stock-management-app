@@ -5,8 +5,8 @@
 			<div class="navbar-bg"></div>
 			<div class="navbar-inner sliding">
 				<div class="left">
-					<a @click="$root.shoplist()" class="link"> 
-            <i class="icon icon-back"></i>
+					<a @click="$root.shoplist()" class="link">
+						<i class="icon icon-back"></i>
 						<span class="if-not-md">Back</span>
 					</a>
 				</div>
@@ -21,6 +21,7 @@
 						<li>
 							<div class="item-content item-input">
 								<div class="item-inner">
+									<div class="item-title item-label">Shop Name</div>
 									<div class="item-input-wrap">
 										<textarea class="resizable" placeholder="Name" id="shop-name" name="name" required validate>{{shop.name}}</textarea>
 									</div>
@@ -30,6 +31,7 @@
 						<li>
 							<div class="item-content item-input">
 								<div class="item-inner">
+									<div class="item-title item-label">Telephone</div>
 									<div class="item-input-wrap">
 										<textarea class="resizable" placeholder="Telephone number" id="shop-telephone" name="telephone" required validate>{{shop.telephone}}</textarea>
 									</div>
@@ -39,6 +41,7 @@
 						<li>
 							<div class="item-content item-input">
 								<div class="item-inner">
+									<div class="item-title item-label">Address</div>
 									<div class="item-input-wrap">
 										<textarea class="resizable" placeholder="Address" id="shop-address" name="address" required validate>{{shop.address}}</textarea>
 									</div>
@@ -48,6 +51,7 @@
 						<li>
 							<div class="item-content item-input">
 								<div class="item-inner">
+									<div class="item-title item-label">Location</div>
 									<div class="item-input-wrap">
 										<textarea class="resizable" placeholder="Location" id="shop-location" name="location" required validate>{{shop.location}}</textarea>
 									</div>

@@ -38,7 +38,7 @@ var app = new Framework7({
           description: 'Expedita sequi perferendis quod illum pariatur aliquam, alias laboriosam! Vero blanditiis placeat, mollitia necessitatibus reprehenderit. Labore dolores amet quos, accusamus earum asperiores officiis assumenda optio architecto quia neque, quae eum.'
         },
       ],
-      // Demo shops for SHOP LIST section
+      // Demo shops for Shop List section
       shops: [
         {
           id: '0',
@@ -72,25 +72,23 @@ var app = new Framework7({
     helloWorld: function () {
       app.dialog.alert('Hello World!');
     },
+    // Show index.html within the home tab
     home: function () {
-      // show home - index.html
-      // used within the home tab
       app.views.main.router.navigate({ name: 'home' });
     },
+    // Switching from a tab to home tab, it will show the current page of the home tab
     homeTab: function () {
-      // switching from other tab to home tab
-      // it will show the current page of the home tab (not the index page)
       document.getElementById('home-tab').click();
     },
     homeTabAndHome: function () {
       document.getElementById('home-tab').click();
       app.views.main.router.navigate({ name: 'home' });
     },
+    // Show shop-list.html within the home tab
     shoplist: function () {
-      // show shop list - shop-list.html
-      // used within the home tab
       app.views.main.router.navigate({ name: 'shoplist' });
     },
+    // Converts a form to a JSON object
     dataToJson: function (formIdName) {
       var formData = app.form.convertToData(formIdName);
       const jsonString = JSON.stringify(formData);
@@ -98,8 +96,8 @@ var app = new Framework7({
 
       return jsonObject;
     },
+    // Checks if the form has any empty entry
     isFormEmpty: function () {
-      // checks if the New Shop form has any empty entry
       if (document.getElementById('shop-name').value == "" ||
         document.getElementById('shop-telephone').value == "" ||
         document.getElementById('shop-address').value == "" ||
@@ -108,9 +106,8 @@ var app = new Framework7({
 
       return true;
     },
+    // After submitting a New Shop it will empty the inputs
     emptyNewShopForm: function () {
-      // after submitting the New Shop form
-      // it will empty the inputs
       document.getElementById('shop-name').value = "";
       document.getElementById('shop-telephone').value = "";
       document.getElementById('shop-address').value = "";
@@ -151,7 +148,7 @@ $$(document).on('click', '.convert-form-to-data', function () {
   } else app.dialog.alert('Please fill out the form first.', '');
 });
 
-//Get shop details data
+// Get shop details data
 $$(document).on('click', '.get-shop-details-data', function () {
   var shopId = $$(this).data('shop-id');
 

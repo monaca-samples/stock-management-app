@@ -15,7 +15,8 @@
             "cordova-plugin-whitelist": {},
             "cordova-plugin-splashscreen": {},
             "cordova-plugin-statusbar": {},
-            "monaca-plugin-monaca-core": {}
+            "monaca-plugin-monaca-core": {},
+            "cordova-plugin-geolocation": {}
         }
     },
     "browserslist": [
@@ -34,7 +35,8 @@
         "dom7": "^2.1.5",
         "framework7": "^5.7.12",
         "framework7-icons": "^3.0.1",
-        "template7": "^1.4.2"
+        "template7": "^1.4.2",
+        "cordova-plugin-geolocation": "4.0.2"
     },
     "devDependencies": {
         "cordova": "^10.0.0",

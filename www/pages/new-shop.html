@@ -1,6 +1,5 @@
 <template>
 	<div class="page" data-name="new-shop">
-
 		<div class="navbar">
 			<div class="navbar-bg"></div>
 			<div class="navbar-inner sliding">
@@ -69,9 +68,8 @@
 					</div>
 				</div>
 
-				<div class="block block-strong display-flex justify-content-center">
-					<p class="align-self-center">MAP</p>
-				</div>
+				<p>MAP</p>
+				<div id="mapid"></div>
 
 				<div class="row display-flex justify-content-center">
 					<div class="col-80 align-self-center">
@@ -82,23 +80,37 @@
 
 
 		</div>
+
+	</div>
 	</div>
 </template>
 
-<script>
-return {
-    // Lifecycle Hooks
-    // Component Data
-    data: function () {
-      // Must return an object
-      return {
-      }
-    },
-    // Component Methods
-    methods: {
-    },
-    // Page Events
-      
+<!-- <script>
+	// import L from 'leaflet';
+
+	return {
+      data: function () {
+       return {
+        }
+      },
+    
+    on: {
+      pageInit: function(e, page) {
+
+        map = L.map('mapid').setView([35.40, 139.50], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 18,
+            tileSize: 512,
+            zoomOffset: -1,
+        }).addTo(map);
+  
+        L.marker([35.40, 139.50]).addTo(map)
+            .bindPopup('Your current location.')
+            .openPopup();
+        },
+    }
   }
 
-</script>
+</script> -->
