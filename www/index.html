@@ -90,7 +90,7 @@
 										</a>
 										<div class="accordion-item-content">
 											<div class="block">
-												<a id="product-tab" href="#view-product-list" class="item-content item-link tab tab-link panel-close">
+												<a href="/product-list/" data-view=".view-main" class="item-content item-link panel-close">
 													<div class="item-inner">
 														<div class="item-title">Product List</div>
 													</div>
@@ -104,7 +104,7 @@
 												</a>
 											</div>
 											<div class="block">
-												<a id="search-tab" href="#view-search" class="item-content item-link tab-link panel-close">
+												<a href="/search/" data-view=".view-main" class="item-content item-link panel-close">
 													<div class="item-inner">
 														<div class="item-title">Search Product</div>
 													</div>
@@ -133,7 +133,7 @@
 						<i class="icon f7-icons if-not-md">house_fill</i>
 						<i class="icon material-icons if-md">home</i>
 					</a>
-					<a id="product-list-tab" href="#view-product-list" class="tab-link">
+						<a id="shop-tab" href="#view-shop" class="tab-link">
 						<i class="icon f7-icons if-not-md">bag</i>
 						<i class="icon material-icons if-md">shopping_bag</i>
 					</a>
@@ -163,84 +163,32 @@
 					<div class="page-content">
 						<div class="block block-strong">
 
-							<p>MAP</p>
-							<div id="mapid"></div>
+							<!-- Product Page Content on Home Page -->
+							<div class="card-bg block block-strong inset">
+                <p>Product Code:</p>
+                <p>Product Name:</p>
+                <p>Price:</p>
+                <p>Quantity:</p>
+                <div class="display-flex justify-content-space-around">
+                  <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
+                    <div class="stepper-button-minus "></div>
+                    <div class="stepper-button-plus "></div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-bg block block-strong inset">
+                <p>Product Code:</p>
+                <p>Product Name:</p>
+                <p>Price:</p>
+                <p>Quantity:</p>
+                <div class="display-flex justify-content-space-around">
+                  <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
+                    <div class="stepper-button-minus "></div>
+                    <div class="stepper-button-plus "></div>
+                  </div>
+                </div>
+              </div>
 
-							<p>This is an example of tabs-layout application. The main point of such tabbed layout is that each tab contains independent
-								view with its own routing and navigation.</p>
-
-							<p>Each tab/view may have different layout, different navbar type (dynamic, fixed or static) or without navbar like this
-								tab.
-							</p>
-						</div>
-						<div class="block-title">Navigation</div>
-						<div class="list">
-							<ul>
-								<li>
-									<a href="/search/" class="item-content item-link">
-										<div class="item-inner">
-											<div class="item-title">Search</div>
-										</div>
-									</a>
-									<a href="/about/" class="item-content item-link">
-										<div class="item-inner">
-											<div class="item-title">About</div>
-										</div>
-									</a>
-								</li>
-								<li>
-									<a href="/form/" class="item-content item-link">
-										<div class="item-inner">
-											<div class="item-title">Form</div>
-										</div>
-									</a>
-								</li>
-								<li>
-									<a href="/catalog/" class="item-content item-link">
-										<div class="item-inner">
-											<div class="item-title">Catalog</div>
-										</div>
-									</a>
-								</li>
-							</ul>
-						</div>
-
-						<div class="block-title">Modals</div>
-						<div class="block block-strong">
-							<div class="row">
-								<div class="col-50">
-									<a href="#" class="button button-raised button-fill popup-open" data-popup="#my-popup">Popup</a>
-								</div>
-								<div class="col-50">
-									<a href="#" class="button button-raised button-fill login-screen-open" data-login-screen="#my-login-screen">Login Screen</a>
-								</div>
-							</div>
-						</div>
-
-						<div class="block-title">Panels</div>
-						<div class="block block-strong">
-							<div class="row">
-								<div class="col-50">
-									<a href="#" class="button button-raised button-fill panel-open" data-panel="left">Left Panel</a>
-								</div>
-								<div class="col-50">
-									<a href="#" class="button button-raised button-fill panel-open" data-panel="right">Right Panel</a>
-								</div>
-							</div>
-						</div>
-
-						<div class="list links-list">
-							<ul>
-								<li>
-									<a href="/dynamic-route/blog/45/post/125/?foo=bar#about">Dynamic (Component) Route</a>
-								</li>
-								<li>
-									<a href="/load-something-that-doesnt-exist/">Default Route (404)</a>
-								</li>
-								<li>
-									<a href="/request-and-load/user/123456/">Request Data & Load</a>
-								</li>
-							</ul>
 						</div>
 
 					</div>
@@ -248,12 +196,12 @@
 			</div>
 
 			<!-- Search View -->
-			<div id="view-search" class="view view-init tab" data-name="search" data-url="/search/">
+			<div id="view-search" class="view view-init tab" data-name="search" data-url="/search-view/">
 				<!-- Search page will be loaded here dynamically from /search/ route -->
 			</div>
 
 			<!-- Product List View -->
-			<div id="view-product-list" class="view view-init tab" data-name="product-list" data-url="/product-list/">
+			<div id="view-shop" class="view view-init tab" data-name="shop-list" data-url="/shop-list-view/">
 				<!-- Settings page will be loaded here dynamically from /settings/ route -->
 			</div>
 		</div>
@@ -323,9 +271,12 @@
 		</div>
 	</div>
 
+	<!-- Firebase -->
+	<script src="https://www.gstatic.com/firebasejs/8.2.6/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.2.6/firebase-firestore.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.2.6/firebase-storage.js"></script>
 	<!-- Framework7 library -->
 	<script src="framework7/js/framework7.bundle.min.js"></script>
-
 	<!-- App routes -->
 	<script src="js/routes.js"></script>
 	<!-- App scripts -->
@@ -333,21 +284,3 @@
 </body>
 
 </html>
-
-
-<!-- From Leaflet webpage tutorial + Yong-san's map details -->
-<script>
-	map = L.map('mapid').setView([35.40, 139.50], 13);
-
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxZoom: 18,
-      tileSize: 512,
-      zoomOffset: -1,
-  }).addTo(map);
-  
-  L.marker([35.40, 139.50]).addTo(map)
-      .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
-      .openPopup();
-
-</script>

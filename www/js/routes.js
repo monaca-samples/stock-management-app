@@ -6,16 +6,19 @@ var routes = [
     url: './index.html',
   },
   {
-    name: 'shoplist',
     path: '/shop-list/',
     componentUrl: './pages/shop-list.html',
+  },
+    {
+    path: '/shop-list-view/',
+    componentUrl: './pages/shop-list-view.html',
   },
   {
     path: '/new-shop/',
     componentUrl: './pages/new-shop.html',
   },
   {
-    path: '/edit-shop/:id/',
+    path: '/edit-shop/:name/',
     componentUrl: './pages/edit-shop.html',
   },
   {
@@ -31,25 +34,16 @@ var routes = [
     componentUrl: './pages/new-product.html',
   },
   {
-    name: 'search',
     path: '/search/',
     componentUrl: './pages/search.html',
+  },
+    {
+    path: '/search-view/',
+    componentUrl: './pages/search-view.html',
   },
   {
     path: '/search-result/',
     url: './pages/search-result.html',
-  },
-  {
-    path: '/about/',
-    url: './pages/about.html',
-  },
-  {
-    path: '/form/',
-    url: './pages/form.html',
-  },
-  {
-    path: '/settings/',
-    url: './pages/settings.html',
   },
     {
     path: '/catalog/',

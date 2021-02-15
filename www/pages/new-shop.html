@@ -30,8 +30,7 @@
 							<div class="item-content item-input">
 								<div class="item-inner">
 									<div class="item-input-wrap">
-										<input type="text" placeholder="Telephone number" id="shop-telephone" name="telephone" required validate pattern="[0-9]*"
-										/>
+										<textarea class="resizable" placeholder="Telephone number" id="shop-telephone" name="telephone" required validate></textarea>
 									</div>
 								</div>
 							</div>
@@ -68,8 +67,8 @@
 					</div>
 				</div>
 
-				<p>MAP</p>
-				<div id="mapid"></div>
+				<div id="newShopMap" class="map"></div>
+				<br>
 
 				<div class="row display-flex justify-content-center">
 					<div class="col-80 align-self-center">
@@ -78,16 +77,13 @@
 				</div>
 			</form>
 
-
 		</div>
 
 	</div>
 	</div>
 </template>
 
-<!-- <script>
-	// import L from 'leaflet';
-
+<script>
 	return {
       data: function () {
        return {
@@ -96,21 +92,45 @@
     
     on: {
       pageInit: function(e, page) {
+        // From Leaflet webpage tutorial
+        // + Yong-san's map details
+        let map = null;
 
-        map = L.map('mapid').setView([35.40, 139.50], 13);
+				if (!map) map = L.map('newShopMap');
+				map.setView([35.40, 139.50], 13);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            maxZoom: 18,
-            tileSize: 512,
-            zoomOffset: -1,
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          maxZoom: 18,
+          tileSize: 512,
+          zoomOffset: -1,
         }).addTo(map);
   
         L.marker([35.40, 139.50]).addTo(map)
-            .bindPopup('Your current location.')
-            .openPopup();
-        },
+          .bindPopup('Your current location.')
+          .openPopup();
+
+        // Get new shop data from form
+        $$(document).on('click', '.convert-form-to-data', function () {
+          if (app.methods.isFormEmpty()) {
+          const jsonObject = app.methods.dataToJson('#new-shop-form');
+
+          // Add data to the database
+          db.collection('shops').add({
+          'name': jsonObject.name,
+          'telephone': jsonObject.telephone,
+          'address': jsonObject.address,
+          'location': jsonObject.location,
+          'products': 0
+          });
+
+          app.methods.emptyNewShopForm();
+          app.dialog.alert('Shop added to the shop list.', '');
+          } else app.dialog.alert('Please fill out the form first.', '');
+        });
+
+      } //pageInit
     }
   }
 
-</script> -->
+</script>

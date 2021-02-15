@@ -5,10 +5,10 @@
   width: 100%;
 }
 
-#card-bg {
+.card-bg {
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
-#mapid { 
+.map { 
   height: 180px; 
 }

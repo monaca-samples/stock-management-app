@@ -4,38 +4,60 @@
 		<div class="navbar">
 			<div class="navbar-bg"></div>
 			<div class="navbar-inner sliding">
-				<div class="title">Products</div>
+				<div class="left">
+					<a href="#" class="link back">
+						<i class="icon icon-back"></i>
+						<span class="if-not-md">Back</span>
+					</a>
+				</div>
+				<div class="title">Product List</div>
 			</div>
 		</div>
 
 		<div class="page-content">
-			<div id="card-bg" class="block block-strong inset">
-						<p>Product Code:</p>
-						<p>Product Name:</p>
-						<p>Price:</p>
-						<p>Quantity:</p>
-				<div class="display-flex justify-content-space-around">
-					<div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
-						<div class="stepper-button-minus "></div>
-						<div class="stepper-button-plus "></div>
-					</div>
-				</div>
-			</div>
-
-			<div id="card-bg" class="block block-strong inset">
-						<p>Product Code:</p>
-						<p>Product Name:</p>
-						<p>Price:</p>
-						<p>Quantity:</p>
-				<div class="display-flex justify-content-space-around">
-					<div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
-						<div class="stepper-button-minus "></div>
-						<div class="stepper-button-plus "></div>
-					</div>
-				</div>
-			</div>
-
+			<div id="product-list-result"></div>
 		</div>
 
 	</div>
 </template>
+
+<script>
+	return {
+    data: function () {
+      return {
+      }
+    },
+    on: {
+      pageInit: function(e, page) {
+        const productListResultDiv = document.getElementById('product-list-result');
+
+        const getRealTimeUpdatesFirebase = () => {
+          db.collection("products").onSnapshot((doc) => {
+            let result = '';
+            doc.docs.forEach((doc) => {
+              const data = doc.data();
+              result += `
+                <div class="card-bg block block-strong inset">
+				          <p>Product Code: <span>${data.code}</span></p>
+				          <p>Product Name: <span>${data.name}</span></p>
+				          <p>Price: <span>${data.price}</span></p>
+				          <p>Quantity: <span>${data.quantity}</span></p>
+				          <div class="display-flex justify-content-space-around">
+					          <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
+						          <div class="stepper-button-minus "></div>
+						          <div class="stepper-button-plus "></div>
+					          </div>
+				          </div>
+			          </div>
+                `;
+            });
+            productListResultDiv.innerHTML = result;
+          })
+        };
+        
+        getRealTimeUpdatesFirebase();
+    } //pageInit
+  }
+}
+
+</script>

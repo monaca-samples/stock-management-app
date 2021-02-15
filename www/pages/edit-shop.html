@@ -1,11 +1,10 @@
 <template>
 	<div class="page" data-name="edit-shop">
-
 		<div class="navbar">
 			<div class="navbar-bg"></div>
 			<div class="navbar-inner sliding">
 				<div class="left">
-					<a @click="$root.shoplist()" class="link">
+					<a href="#" class="link back">
 						<i class="icon icon-back"></i>
 						<span class="if-not-md">Back</span>
 					</a>
@@ -21,9 +20,9 @@
 						<li>
 							<div class="item-content item-input">
 								<div class="item-inner">
-									<div class="item-title item-label">Shop Name</div>
+                  <div class="item-title item-label">Shop name</div>
 									<div class="item-input-wrap">
-										<textarea class="resizable" placeholder="Name" id="shop-name" name="name" required validate>{{shop.name}}</textarea>
+										<textarea class="resizable" placeholder="Name" id="shop-name" name="name" required validate></textarea>
 									</div>
 								</div>
 							</div>
@@ -31,9 +30,9 @@
 						<li>
 							<div class="item-content item-input">
 								<div class="item-inner">
-									<div class="item-title item-label">Telephone</div>
+                  <div class="item-title item-label">Telephone number</div>
 									<div class="item-input-wrap">
-										<textarea class="resizable" placeholder="Telephone number" id="shop-telephone" name="telephone" required validate>{{shop.telephone}}</textarea>
+										<textarea class="resizable" placeholder="Telephone number" id="shop-telephone" name="telephone" required validate></textarea>
 									</div>
 								</div>
 							</div>
@@ -41,9 +40,9 @@
 						<li>
 							<div class="item-content item-input">
 								<div class="item-inner">
-									<div class="item-title item-label">Address</div>
+                  <div class="item-title item-label">Address</div>
 									<div class="item-input-wrap">
-										<textarea class="resizable" placeholder="Address" id="shop-address" name="address" required validate>{{shop.address}}</textarea>
+										<textarea class="resizable" placeholder="Address" id="shop-address" name="address" required validate></textarea>
 									</div>
 								</div>
 							</div>
@@ -51,9 +50,9 @@
 						<li>
 							<div class="item-content item-input">
 								<div class="item-inner">
-									<div class="item-title item-label">Location</div>
+                  <div class="item-title item-label">Location</div>
 									<div class="item-input-wrap">
-										<textarea class="resizable" placeholder="Location" id="shop-location" name="location" required validate>{{shop.location}}</textarea>
+										<textarea class="resizable" placeholder="Location" id="shop-location" name="location" required validate></textarea>
 									</div>
 								</div>
 							</div>
@@ -72,9 +71,8 @@
 					</div>
 				</div>
 
-				<div class="block block-strong display-flex justify-content-center">
-					<p class="align-self-center">MAP</p>
-				</div>
+				<div id="newShopMap" class="map"></div>
+				<br>
 
 				<div class="row display-flex justify-content-center">
 					<div class="col-80 align-self-center">
@@ -84,25 +82,40 @@
 			</form>
 
 		</div>
+
+	</div>
 	</div>
 </template>
 
 <script>
 	return {
-    data: function () {
-      var shopId = this.$route.params.id;
-      var currentShop;
-      this.$root.shops.forEach(function (shop) {
-        if (shop.id === shopId) {
-          currentShop = shop;
+      data: function () {
+       return {
         }
-      });
-      return {
-        shop: currentShop,
-      };
-    },
-    methods: {
-    },
-  };
+      },
+    
+    on: {
+      pageInit: function(e, page) {
+        // From Leaflet webpage tutorial
+        // + Yong-san's map details
+        let map = null;
+
+				if (!map) map = L.map('newShopMap');
+				map.setView([35.40, 139.50], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          maxZoom: 18,
+          tileSize: 512,
+          zoomOffset: -1,
+        }).addTo(map);
+  
+        L.marker([35.40, 139.50]).addTo(map)
+          .bindPopup('Your current location.')
+          .openPopup();
+
+      } //pageInit
+    }
+  }
 
 </script>
