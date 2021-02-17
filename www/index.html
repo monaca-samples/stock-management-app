@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 	<meta charset="utf-8">
 	<!--
@@ -36,7 +35,7 @@
 
 <body>
 	<div id="app">
-		<!-- Left panel with cover effect-->
+		<!-- Left panel with cover effect -->
 		<div class="panel panel-left panel-cover theme-dark panel-init">
 			<div class="view">
 				<div class="page">
@@ -133,7 +132,7 @@
 						<i class="icon f7-icons if-not-md">house_fill</i>
 						<i class="icon material-icons if-md">home</i>
 					</a>
-						<a id="shop-tab" href="#view-shop" class="tab-link">
+					<a id="shop-tab" href="#view-shop" class="tab-link">
 						<i class="icon f7-icons if-not-md">bag</i>
 						<i class="icon material-icons if-md">shopping_bag</i>
 					</a>
@@ -158,39 +157,12 @@
 							</div>
 						</div>
 					</div>
-
-					<!-- Scrollable page content-->
+					<!-- Scrollable page content -->
 					<div class="page-content">
 						<div class="block block-strong">
-
 							<!-- Product Page Content on Home Page -->
-							<div class="card-bg block block-strong inset">
-                <p>Product Code:</p>
-                <p>Product Name:</p>
-                <p>Price:</p>
-                <p>Quantity:</p>
-                <div class="display-flex justify-content-space-around">
-                  <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
-                    <div class="stepper-button-minus "></div>
-                    <div class="stepper-button-plus "></div>
-                  </div>
-                </div>
-              </div>
-              <div class="card-bg block block-strong inset">
-                <p>Product Code:</p>
-                <p>Product Name:</p>
-                <p>Price:</p>
-                <p>Quantity:</p>
-                <div class="display-flex justify-content-space-around">
-                  <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
-                    <div class="stepper-button-minus "></div>
-                    <div class="stepper-button-plus "></div>
-                  </div>
-                </div>
-              </div>
-
+							<div id="product-list-result"></div>
 						</div>
-
 					</div>
 				</div>
 			</div>
@@ -206,71 +178,6 @@
 			</div>
 		</div>
 
-		<!-- Popup -->
-		<div class="popup" id="my-popup">
-			<div class="view">
-				<div class="page">
-					<div class="navbar">
-						<div class="navbar-bg"></div>
-						<div class="navbar-inner">
-							<div class="title">Popup</div>
-							<div class="right">
-								<a href="#" class="link popup-close">Close</a>
-							</div>
-						</div>
-					</div>
-					<div class="page-content">
-						<div class="block">
-							<p>Popup content goes here.</p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<!-- Login Screen -->
-		<div class="login-screen" id="my-login-screen">
-			<div class="view">
-				<div class="page">
-					<div class="page-content login-screen-content">
-						<div class="login-screen-title">Login</div>
-						<div class="list">
-							<ul>
-								<li class="item-content item-input">
-									<div class="item-inner">
-										<div class="item-title item-label">Username</div>
-										<div class="item-input-wrap">
-
-											<input type="text" name="username" placeholder="Your username">
-										</div>
-									</div>
-								</li>
-								<li class="item-content item-input">
-									<div class="item-inner">
-										<div class="item-title item-label">Password</div>
-										<div class="item-input-wrap">
-
-											<input type="password" name="password" placeholder="Your password">
-										</div>
-									</div>
-								</li>
-							</ul>
-						</div>
-						<div class="list">
-							<ul>
-								<li>
-
-									<a href="#" class="item-link list-button login-button">Sign In</a>
-								</li>
-							</ul>
-							<div class="block-footer">Some text about login information.<br>Click "Sign In" to close Login Screen</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
 	<!-- Firebase -->
 	<script src="https://www.gstatic.com/firebasejs/8.2.6/firebase-app.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/8.2.6/firebase-firestore.js"></script>
@@ -284,3 +191,63 @@
 </body>
 
 </html>
+
+<script>
+  const productListResultDiv = document.getElementById('product-list-result');
+  let productId = null;
+
+  // Subtract quantity
+  $$(document).on('click', '.update-quantity-minus', function() {
+    productId = $$(this).data('product-id');
+    changeQuantity('update-quantity-minus', productId, $$(this).data('quantity'));
+  });
+
+  // Add quantity
+  $$(document).on('click', '.update-quantity-plus', function() {
+    productId = $$(this).data('product-id');
+    changeQuantity('update-quantity-plus', productId, $$(this).data('quantity'));
+  });
+
+  // Function to add/subtract quantity
+  const changeQuantity = (className, productId, productQuantity) => {
+    let newProductQuantity = 0;
+    const idValue = document.getElementsByClassName(className)[0].id;
+
+    if (idValue == "plus")
+        newProductQuantity = parseInt(productQuantity) + 1;
+    if (idValue == "minus")
+        if (parseInt(productQuantity) > 0)
+            newProductQuantity = parseInt(productQuantity) - 1;
+
+    db.collection('products').doc(productId).update({
+        quantity: newProductQuantity,
+    });
+}
+
+  const getRealTimeUpdatesFirebase = () => {
+    db.collection('products').onSnapshot((doc) => {
+      let result = '';
+      doc.docs.forEach((doc) => {
+        const data = doc.data();
+        result += `
+          <div class="card-bg block block-strong inset">
+            <p>Product Code: <span>${data.code}</span></p>
+            <p>Product Name: <span>${data.name}</span></p>
+            <p>Price: <span>${data.price}</span></p>
+            <p>Quantity: <span">${data.quantity}</span></p>  
+            <div class="display-flex justify-content-space-around">
+              <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
+                <div id="minus" class="stepper-button-minus update-quantity-minus" data-quantity="${data.quantity}" data-product-id="${doc.id}"></div>
+                <div id="plus" class="stepper-button-plus update-quantity-plus" data-quantity="${data.quantity}" data-product-id="${doc.id}"></div>
+              </div>
+            </div>
+          </div>
+          `;
+            });
+            
+            productListResultDiv.innerHTML = result;
+          });
+        }
+
+  getRealTimeUpdatesFirebase();
+</script>

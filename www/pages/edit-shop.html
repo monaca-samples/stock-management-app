@@ -1,5 +1,6 @@
 <template>
 	<div class="page" data-name="edit-shop">
+     <!-- Navbar -->
 		<div class="navbar">
 			<div class="navbar-bg"></div>
 			<div class="navbar-inner sliding">
@@ -12,7 +13,7 @@
 				<div class="title">Edit Shop Details</div>
 			</div>
 		</div>
-
+    <!-- Page content -->
 		<div class="page-content">
 			<form class="list" id="edit-shop-form">
 				<div class="list no-hairlines-md">
@@ -59,7 +60,7 @@
 						</li>
 					</ul>
 				</div>
-
+        <!-- Map -->
 				<div class="block">
 					<div class="row">
 						<div class="col-50">
@@ -70,19 +71,16 @@
 						</div>
 					</div>
 				</div>
-
 				<div id="newShopMap" class="map"></div>
 				<br>
-
+        <!-- Button -->
 				<div class="row display-flex justify-content-center">
 					<div class="col-80 align-self-center">
 						<a href="#" class="button button-raised button-fill edited-shop-data">Save</a>
 					</div>
 				</div>
 			</form>
-
 		</div>
-
 	</div>
 	</div>
 </template>
@@ -93,7 +91,6 @@
        return {
         }
       },
-    
     on: {
       pageInit: function(e, page) {
         // From Leaflet webpage tutorial
@@ -114,7 +111,7 @@
           .bindPopup('Your current location.')
           .openPopup();
 
-      } //pageInit
+      } // pageInit
     }
   }
 

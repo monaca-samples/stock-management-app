@@ -20,24 +20,6 @@ var app = new Framework7({
         firstName: 'John',
         lastName: 'Doe',
       },
-      // Demo products for Catalog section
-      products: [
-        {
-          id: '0',
-          title: 'Apple iPhone 8',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi tempora similique reiciendis, error nesciunt vero, blanditiis pariatur dolor, minima sed sapiente rerum, dolorem corrupti hic modi praesentium unde saepe perspiciatis.'
-        },
-        {
-          id: '1',
-          title: 'Apple iPhone 8 Plus',
-          description: 'Velit odit autem modi saepe ratione totam minus, aperiam, labore quia provident temporibus quasi est ut aliquid blanditiis beatae suscipit odio vel! Nostrum porro sunt sint eveniet maiores, dolorem itaque!'
-        },
-        {
-          id: '2',
-          title: 'Apple iPhone X',
-          description: 'Expedita sequi perferendis quod illum pariatur aliquam, alias laboriosam! Vero blanditiis placeat, mollitia necessitatibus reprehenderit. Labore dolores amet quos, accusamus earum asperiores officiis assumenda optio architecto quia neque, quae eum.'
-        },
-      ]
     };
   },
   // App root methods
@@ -94,12 +76,12 @@ var app = new Framework7({
       document.getElementById('shop-location').value = "";
     },
     // After submitting a New Product it will empty the inputs
-    emptyNewShopForm: function () {
-      document.getElementById('product-code').value == "";
-        document.getElementById('product-name').value == ""; 
-        document.getElementById('product-price').value == ""; 
-        document.getElementById('product-quantity').value == ""; 
-        document.getElementById('product-shop').value == "";
+    emptyNewProductForm: function () {
+        document.getElementById('product-code').value = "";
+        document.getElementById('product-name').value = ""; 
+        document.getElementById('product-price').value = ""; 
+        document.getElementById('product-quantity').value = "";
+        document.getElementById('product-shop').value = "";
     },
   },
   // App routes
@@ -126,21 +108,8 @@ const initFirebase = () => {
   db = firebase.firestore();
 };
 
-// Login Screen Demo
-$$('#my-login-screen .login-button').on('click', function () {
-  var username = $$('#my-login-screen [name="username"]').val();
-  var password = $$('#my-login-screen [name="password"]').val();
-
-  // Close login screen
-  app.loginScreen.close('#my-login-screen');
-
-  // Alert username and password
-  app.dialog.alert('Username: ' + username + '<br>Password: ' + password);
-});
-
 // Get shop details data
 $$(document).on('click', '.get-shop-details-data', function () {
-
   shopId = $$(this).data('shop-id');
 
   db.collection('shops').where(firebase.firestore.FieldPath.documentId(), '==', shopId).get().then((snapshot) => {

@@ -1,5 +1,6 @@
 <template>
 	<div class="page" data-name="new-shop">
+		<!-- Navbar -->
 		<div class="navbar">
 			<div class="navbar-bg"></div>
 			<div class="navbar-inner sliding">
@@ -12,7 +13,7 @@
 				<div class="title">Shop</div>
 			</div>
 		</div>
-
+		<!-- Page content -->
 		<div class="page-content">
 			<form class="list" id="new-shop-form">
 				<div class="list no-hairlines-md">
@@ -55,7 +56,7 @@
 						</li>
 					</ul>
 				</div>
-
+				<!-- Map -->
 				<div class="block">
 					<div class="row">
 						<div class="col-50">
@@ -66,30 +67,25 @@
 						</div>
 					</div>
 				</div>
-
 				<div id="newShopMap" class="map"></div>
 				<br>
-
 				<div class="row display-flex justify-content-center">
 					<div class="col-80 align-self-center">
 						<a href="#" class="button button-raised button-fill convert-form-to-data">Save</a>
 					</div>
 				</div>
 			</form>
-
 		</div>
-
 	</div>
 	</div>
 </template>
 
 <script>
 	return {
-      data: function () {
+    data: function () {
        return {
         }
       },
-    
     on: {
       pageInit: function(e, page) {
         // From Leaflet webpage tutorial
@@ -113,24 +109,22 @@
         // Get new shop data from form
         $$(document).on('click', '.convert-form-to-data', function () {
           if (app.methods.isFormEmpty()) {
-          const jsonObject = app.methods.dataToJson('#new-shop-form');
+            const jsonObject = app.methods.dataToJson('#new-shop-form');
 
-          // Add data to the database
-          db.collection('shops').add({
-          'name': jsonObject.name,
-          'telephone': jsonObject.telephone,
-          'address': jsonObject.address,
-          'location': jsonObject.location,
-          'products': 0
-          });
+            // Add data to the database
+            db.collection('shops').add({
+              'name': jsonObject.name,
+              'telephone': jsonObject.telephone,
+              'address': jsonObject.address,
+              'location': jsonObject.location,
+            });
 
-          app.methods.emptyNewShopForm();
-          app.dialog.alert('Shop added to the shop list.', '');
+            app.methods.emptyNewShopForm();
+            app.dialog.alert('Shop added to the shop list.', '');
           } else app.dialog.alert('Please fill out the form first.', '');
         });
 
-      } //pageInit
+      } // pageInit
     }
   }
-
 </script>

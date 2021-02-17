@@ -22,10 +22,6 @@ var routes = [
     componentUrl: './pages/edit-shop.html',
   },
   {
-    path: '/product/:id/',
-    componentUrl: './pages/product.html',
-  },
-  {
     path: '/product-list/',
     componentUrl: './pages/product-list.html',
   },
@@ -44,10 +40,6 @@ var routes = [
   {
     path: '/search-result/',
     url: './pages/search-result.html',
-  },
-    {
-    path: '/catalog/',
-    componentUrl: './pages/catalog.html',
   },
   {
     path: '/dynamic-route/blog/:blogId/post/:postId/',
