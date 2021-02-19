@@ -47,7 +47,7 @@ var app = new Framework7({
 
       return jsonObject;
     },
-    // Checks if the form (shop) has any empty entry
+    // Checks if the form (new shop) has any empty entry
     isFormEmpty: function () {
       if (document.getElementById('shop-name').value == "" ||
         document.getElementById('shop-telephone').value == "" ||
@@ -57,12 +57,21 @@ var app = new Framework7({
 
       return true;
     },
-    // Checks if the form (product) has any empty entry
+    // Checks if the form (new product) has any empty entry
     isProductFormEmpty: function () {
       if (document.getElementById('product-code').value == "" ||
         document.getElementById('product-name').value == "" ||
         document.getElementById('product-price').value == "" ||
-        document.getElementById('product-quantity').value == "" || 
+        document.getElementById('product-quantity').value == "" ||
+        document.getElementById('product-shop').value == "")
+        return false;
+
+      return true;
+    },
+    // Checks if the form (search) has any empty entry
+    isSearchFormEmpty: function () {
+      if (document.getElementById('product-code').value == "" &&
+        document.getElementById('product-name').value == "" &&
         document.getElementById('product-shop').value == "")
         return false;
 
@@ -77,11 +86,11 @@ var app = new Framework7({
     },
     // After submitting a New Product it will empty the inputs
     emptyNewProductForm: function () {
-        document.getElementById('product-code').value = "";
-        document.getElementById('product-name').value = ""; 
-        document.getElementById('product-price').value = ""; 
-        document.getElementById('product-quantity').value = "";
-        document.getElementById('product-shop').value = "";
+      document.getElementById('product-code').value = "";
+      document.getElementById('product-name').value = "";
+      document.getElementById('product-price').value = "";
+      document.getElementById('product-quantity').value = "";
+      document.getElementById('product-shop').value = "";
     },
   },
   // App routes
@@ -91,6 +100,12 @@ var app = new Framework7({
 // Variables
 let db = null;
 let shopId = null;
+
+// PhoneGap
+document.addEventListener("deviceready", onDeviceReady, false);
+function onDeviceReady() {
+  console.log("PhoneGap is ready");
+}
 
 // Firebase configuration and initialization
 const initFirebase = () => {

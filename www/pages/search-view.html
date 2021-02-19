@@ -1,61 +1,295 @@
 <template>
 	<div class="page" data-name="search-view">
-    <!-- Navbar -->
+		<!-- Navbar -->
 		<div class="navbar">
 			<div class="navbar-bg"></div>
 			<div class="navbar-inner sliding">
 				<div class="title">Search</div>
 			</div>
 		</div>
-    <!-- Page content -->
+		<!-- Page content -->
 		<div class="page-content">
-			<div class="list">
-				<div class="list no-hairlines-md">
-					<ul>
-						<div class="row display-flex">
-							<div class="col-95 align-content-space-around">
-								<li class="item-content item-input">
-									<div class="item-inner">
-										<div class="item-input-wrap">
-											<input type="text" placeholder="Code"/>
-											<span class="input-clear-button"></span>
+			<!-- Left panel with cover effect -->
+			<!-- Form -->
+			<form class="list" id="search-product-form">
+				<div class="list">
+					<div class="list no-hairlines-md">
+						<ul>
+							<div class="row display-flex">
+								<div class="col-95 align-content-space-around">
+									<li class="item-content item-input">
+										<div class="item-inner">
+											<div class="item-input-wrap">
+												<input id="product-code" name="code" type="text" placeholder="Code" />
+												<span class="input-clear-button"></span>
+											</div>
 										</div>
-									</div>
-									<i class="icon f7-icons">barcode_viewfinder</i>
-									<i class="icon material-icons if-md">barcode_viewfinder</i>
-								</li>
-							</div>
-						</div>
-						<li class="item-content item-input">
-							<div class="item-inner">
-								<div class="item-input-wrap">
-									<input type="text" placeholder="Product Name"/>
-									<span class="input-clear-button"></span>
+										<a class="button popup-open popup-code-list" href="#" data-popup=".popup-code-list"><i class="icon f7-icons">barcode_viewfinder</i></a>
+										<a class="button popup-open popup-code-list" href="#" data-popup=".popup-code-list"><i class="icon material-icons if-md">barcode_viewfinder</i></a>
+									</li>
 								</div>
 							</div>
-						</li>
-						<div class="row display-flex">
-							<div class="col-95 align-content-space-around">
-								<li class="item-content item-input">
-									<div class="item-inner">
-										<div class="item-input-wrap">
-											<input type="text" placeholder="Shop Address"/>
-											<span class="input-clear-button"></span>
-										</div>
+							<li class="item-content item-input">
+								<div class="item-inner">
+									<div class="item-input-wrap">
+										<a class="button popup-open popup-product-list" href="#" data-popup=".popup-product-list"><input id="product-name" name="name" type="text" placeholder="Product Name" /></a>
+										<span class="input-clear-button"></span>
 									</div>
-									<i class="icon f7-icons">cart</i>
-									<i class="icon material-icons if-md">cart</i>
-								</li>
+								</div>
+							</li>
+							<div class="row display-flex">
+								<div class="col-95 align-content-space-around">
+									<li class="item-content item-input">
+										<div class="item-inner">
+											<div class="item-input-wrap">
+												<input id="product-shop" name="shop" type="text" placeholder="Shop Name" />
+												<span class="input-clear-button"></span>
+											</div>
+										</div>
+										<a class="button popup-open popup-shop-list" href="#" data-popup=".popup-shop-list"><i class="icon f7-icons">cart</i></a>
+										<a class="button popup-open popup-shop-list" href="#" data-popup=".popup-shop-list"><i class="icon material-icons if-md">cart</i></a>
+									</li>
+								</div>
 							</div>
+						</ul>
+					</div>
+				</div>
+				<!-- Pop up code list -->
+				<div class="popup popup-code-list">
+					<div class="navbar">
+						<div class="navbar-bg"></div>
+						<div class="navbar-inner sliding">
+							<div class="left">
+								<a href="#" class="link popup-close">
+									<i class="icon icon-back"></i>
+									<span class="if-not-md">Back</span>
+								</a>
+							</div>
+							<div class="title">Barcodes</div>
 						</div>
-					</ul>
+					</div>
+					<div class="list">
+						<ul id="popup-codes"></ul>
+					</div>
 				</div>
-			</div>
-      <!-- Button -->
-			<div class="row display-flex justify-content-center">
-				<div class="col-80 align-self-center">
-					<a href="#" class="button button-raised button-fill">Search</a>
+				<!-- Pop up product list -->
+				<div class="popup popup-product-list">
+					<div class="navbar">
+						<div class="navbar-bg"></div>
+						<div class="navbar-inner sliding">
+							<div class="left">
+								<a href="#" class="link popup-close">
+									<i class="icon icon-back"></i>
+									<span class="if-not-md">Back</span>
+								</a>
+							</div>
+							<div class="title">Products</div>
+						</div>
+					</div>
+					<div class="list">
+						<ul id="popup-products"></ul>
+					</div>
 				</div>
-			</div>
+				<!-- Pop up shop list -->
+				<div class="popup popup-shop-list">
+					<div class="navbar">
+						<div class="navbar-bg"></div>
+						<div class="navbar-inner sliding">
+							<div class="left">
+								<a href="#" class="link popup-close">
+									<i class="icon icon-back"></i>
+									<span class="if-not-md">Back</span>
+								</a>
+							</div>
+							<div class="title">Shop List</div>
+						</div>
+					</div>
+					<div class="list">
+						<ul id="popup-shops"></ul>
+					</div>
+				</div>
+				<!-- Button -->
+				<div class="row display-flex justify-content-center">
+					<div class="col-80 align-self-center">
+						<a href="#" class="button button-raised button-fill convert-product-form-to-data">Search</a>
+					</div>
+				</div>
+				<div id="product-list"></div>
+			</form>
 		</div>
 </template>
+
+<script>
+	return {
+    data: function () {
+      return {
+        }
+    },
+    on: {
+      pageInit: function(e, page) {
+        const popUpCodes = document.getElementById('popup-codes')
+        const popUpProducts = document.getElementById('popup-products')
+        const popUpShops = document.getElementById('popup-shops');
+        const productListDiv = document.getElementById('product-list');
+        let productId = null;
+
+        // Pop up barcode list
+        $$(document).on('click', '.popup-code-list', function () {
+          db.collection('products').get().then((snapshot) => {
+            let result = '';
+            snapshot.docs.forEach(doc => {
+              const data = doc.data();
+              result += `
+                  <li>
+                  <a href="#" class="item-content item-link popup-close">
+                    <div class="item-inner">
+                      <div data-product-code="${data.code}" class="get-product-code item-title">${data.code}</div>
+                    </div>
+                  </a>
+                  </li>
+							    `;
+              });
+
+            popUpCodes.innerHTML = result;
+          });
+        });
+
+        // Pop up product list
+        $$(document).on('click', '.popup-product-list', function () {
+          db.collection('products').get().then((snapshot) => {
+            let result = '';
+            snapshot.docs.forEach(doc => {
+              const data = doc.data();
+              result += `
+                  <li>
+                  <a href="#" class="item-content item-link popup-close">
+                    <div class="item-inner">
+                      <div data-product-name="${data.name}" class="get-product-name item-title">${data.name}</div>
+                    </div>
+                  </a>
+                  </li>
+							    `;
+              });
+
+            popUpProducts.innerHTML = result;
+          });
+        });
+
+        // Pop up shop list
+        $$(document).on('click', '.popup-shop-list', function () {
+          db.collection('shops').get().then((snapshot) => {
+            let result = '';
+            snapshot.docs.forEach(doc => {
+              const data = doc.data();
+              result += `
+                  <li>
+                  <a href="#" class="item-content item-link popup-close">
+                    <div class="item-inner">
+                      <div data-shop-id="${doc.id}" data-shop-name="${data.name}" class="get-shop-name item-title">${data.name}</div>
+                    </div>
+                  </a>
+                  </li>
+							    `;
+              });
+
+            popUpShops.innerHTML = result;
+          });
+        });
+
+        // Get barcode data from pop up and add it to the form
+        $$(document).on('click', '.get-product-code', function () {
+          productCode = $$(this).data('product-code');
+          document.getElementById('product-code').value = productCode;
+        });
+
+        // Get product name data from pop up and add it to the form
+        $$(document).on('click', '.get-product-name', function () {
+          productName = $$(this).data('product-name');
+          document.getElementById('product-name').value = productName;
+        });
+
+        // Get shop name data from pop up and add it to the form
+        let shopId;
+        $$(document).on('click', '.get-shop-name', function () {
+          shopName = $$(this).data('shop-name');
+          shopId = $$(this).data('shop-id');
+          document.getElementById('product-shop').value = shopName;
+        });
+
+        // Real time update with Firebase
+        const getRealTimeUpdatesFirebase = () => {
+            const jsonObject = app.methods.dataToJson('#search-product-form');
+            
+            db.collection('products').where('shop', '==', jsonObject.shop).get().then((snapshot) => {
+              let result = '';
+              snapshot.docs.forEach(doc => {
+                const data = doc.data();
+                result += `
+                 <div class="card-bg block block-strong inset">
+                     <p>Product Code: <span>${data.code}</span></p>
+                     <p>Product Name: <span>${data.name}</span></p>
+                     <p>Price: <span>${data.price}</span></p>
+                     <p>Quantity: <span id="search-quantity">${data.quantity}</span></p>
+                     <div class="block display-flex justify-content-center">
+                       <img style="width:200px;height:150px" id="test_img" src="assets/pictures/camera.png" />
+                     </div>
+                     <div class="display-flex justify-content-space-around">
+                       <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
+                         <div id="search-minus" class="stepper-button-minus update-search-quantity-minus" data-search-quantity="${data.quantity}" data-search-product-id="${doc.id}"></div>
+                         <div id="search-plus" class="stepper-button-plus update-search-quantity-plus" data-search-quantity="${data.quantity}" data-search-product-id="${doc.id}"></div>
+                       </div>
+                     </div>
+                   </div>
+                 `;
+              });
+              productListDiv.innerHTML = result;
+              });
+        }
+
+        // // Get query
+        $$(document).on('click', '.convert-product-form-to-data', function () { 
+          if (app.methods.isSearchFormEmpty()) getRealTimeUpdatesFirebase();
+          else app.dialog.alert('Please fill out the form first.', '');
+        });
+
+        // Subtract quantity
+        $$(document).on('click', '.update-search-quantity-minus', function () {
+          productId = $$(this).data('search-product-id');
+          changeQuantity('update-search-quantity-minus', productId, $$(this).data('search-quantity'));
+        });
+
+        // Add quantity
+        $$(document).on('click', '.update-search-quantity-plus', function () {
+          productId = $$(this).data('search-product-id');
+          changeQuantity('update-search-quantity-plus', productId, $$(this).data('search-quantity'));
+        });
+
+        // Function to add/subtract quantity
+        const changeQuantity = (className, productId, productQuantity) => {
+          let newProductQuantity = 0;
+          const idValue = document.getElementsByClassName(className)[0].id;
+
+          if(idValue == "search-plus") 
+            newProductQuantity = parseInt(productQuantity) + 1;
+          if(idValue == "search-minus") 
+            if(parseInt(productQuantity) > 0) 
+              newProductQuantity = parseInt(productQuantity) - 1;
+          
+          db.collection('products').doc(productId).update({
+            quantity: newProductQuantity,
+          });
+
+          // Real time update on page
+          getRealTimeUpdatesFirebase();
+        }
+
+        // If the user changes quantity on the home page and then // goes back to the previous search page update the page
+        $$(document).on('page:tabshow', function (e) {
+          getRealTimeUpdatesFirebase();
+        })
+      } // pageInit
+      
+    }
+  }
+
+</script>

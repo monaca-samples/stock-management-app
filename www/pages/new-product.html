@@ -1,6 +1,6 @@
 <template>
 	<div class="page" data-name="new-product">
-    <!-- Navbar-->
+		<!-- Navbar-->
 		<div class="navbar">
 			<div class="navbar-bg"></div>
 			<div class="navbar-inner sliding">
@@ -13,7 +13,7 @@
 				<div class="title">Product</div>
 			</div>
 		</div>
-    <!-- Page content-->
+		<!-- Page content-->
 		<div class="page-content">
 			<form class="list" id="new-product-form">
 				<div class="list">
@@ -69,7 +69,7 @@
 						</ul>
 					</div>
 				</div>
-        <!-- Pop up list -->
+				<!-- Pop up list -->
 				<div class="popup popup-shop-list">
 					<div class="navbar">
 						<div class="navbar-bg"></div>
@@ -87,10 +87,14 @@
 						<ul id="popup-shops"></ul>
 					</div>
 				</div>
-        <!-- Picture -->
-				<div class="block block-strong display-flex justify-content-center">
-					<p class="align-self-center">PICTURE</p>
+				<!-- Picture -->
+				<div class="block display-flex justify-content-center">
+					<div id="viewport" class="viewport">
+						<img style="width:200px;height:150px" id="test_img" src="assets/pictures/camera.png" />
+            <div id="uploading-picture" class="display-flex justify-content-center"></div>
+					</div>
 				</div>
+				<!-- Button -->
 				<div class="block">
 					<div class="row display-flex justify-content-flex-end">
 						<div class="col-30">
@@ -102,7 +106,7 @@
 						</div>
 					</div>
 				</div>
-        <!-- Button -->
+				<!-- Button -->
 				<div class="row display-flex justify-content-center">
 					<div class="col-80 align-self-center">
 						<a href="#" class="button button-raised button-fill convert-product-form-to-data">Save</a>
@@ -123,45 +127,9 @@
       pageInit: function(e, page) {
         const popUpUl = document.getElementById('popup-shops');
         const productShopInput = document.getElementById('product-shop');
-        // const cameraButton = document.getElementById('take-picture');
-        // const albumButton = document.getElementById('photo-album');
-
-        // const fail = (msg) => {
-        //   console.log(msg);
-        //   alert(msg);
-        // };
-
-        // const pictureTaken = (data) => {
-        //   console.log('picture taken');
-        //   const imgSrc = "data:image/jpeg;base64," + data;
-        //   var viewport = document.getElementById('viewport');
-        //   viewport.style.display = "";
-        //   document.getElementById("test_img").src = imgSrc;
-        // }
-
-        // const takePicture = () => {
-        //   console.log('taking picture');
-        //   navigator.camera.getPicture(pictureTaken, fail, {
-        //     quality: 100,
-        //     encodingType: Camera.EncodingType.JPEG,
-        //     mediaType: Camera.MediaType.PICTURE,
-        //     destinationType: Camera.DestinationType.DATA_URL, // FILE_URI, DATA_URL
-        //     sourceType: Camera.PictureSourceType.CAMERA,
-        //     saveToPhotoAlbum: true,
-        //     cameraDirection: Camera.Direction.BACK, // only supported in iOS. Android always use back camera.
-        //   });
-        // }
-
-        // const browsePicture = (type = Camera.EncodingType.JPEG) => {
-        //   console.log('browsing picture');
-        //   navigator.camera.getPicture(pictureTaken, fail, {
-        //     sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
-        //     encodingType: type, // PNG, JPEG
-        //     quality: 100,
-        //     mediaType: Camera.MediaType.PICTURE,
-        //     destinationType: Camera.DestinationType.DATA_URL,
-        //   });
-        // };
+        const cameraButton = document.getElementById('take-picture');
+        const albumButton = document.getElementById('photo-album');
+        const uploadingPictureDiv = document.getElementById('uploading-picture');
 
         // Pop up shop list
         $$(document).on('click', '.popup-shop-list', function () {
@@ -192,6 +160,101 @@
           document.getElementById('product-shop').value = shopName;
         });
 
+        // Set options for camera
+        function setOptions(srcType) {
+            var options = {
+                quality: 100,
+                destinationType: Camera.DestinationType.DATA_URL,
+                sourceType: srcType,
+                encodingType: Camera.EncodingType.JPEG,
+                mediaType: Camera.MediaType.PICTURE,
+                allowEdit: false,
+                correctOrientation: true,
+                // saveToPhotoAlbum: true, 
+                // on some Android devices it gives "Error capturing image"
+                cameraDirection: Camera.Direction.BACK,
+            }
+            return options;
+        }
+
+        // Take picture with camera
+        function openCamera(selection) {
+            var srcType = Camera.PictureSourceType.CAMERA;
+            var options = setOptions(srcType);
+            navigator.camera.getPicture(function cameraSuccess(image) {
+                displayImage(image);
+            }, function cameraError(error) {
+                  alert(error);
+            }, options);
+        }
+
+        // Open gallery and choose a picture
+        function browsePicture(selection) {
+            var srcType = Camera.PictureSourceType.PHOTOLIBRARY;
+            var options = setOptions(srcType);
+            navigator.camera.getPicture(function cameraSuccess(image) {
+                displayImage(image);
+            }, function cameraError(error) {
+                  alert(error);
+            }, options);
+        }
+
+        // Add picture to DOM
+        function displayImage(data) {
+            var viewport = document.getElementById('viewport');
+            viewport.style.display = "block";
+            viewport.style.position = "relative";
+            document.getElementById("test_img").src = "data:image/jpeg;base64," + data;
+        }
+
+        // Uploading picture
+        const uploadImageToFirebaseStorage = (filename, img) => {
+          return new Promise((resolve, reject) => {
+            // Create a root reference
+            const storageRef = firebase.storage().ref();
+            const ref = storageRef.child(filename);
+            const uploadTask = ref.putString(img, 'base64');
+
+            uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, 
+              function(snapshot) {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log('Upload is ' + Math.trunc(progress) + '% done');
+                uploadingPictureDiv.innerHTML = 'Upload is ' + Math.trunc(progress) + '% done';
+
+                if(progress == 100) {
+                  app.dialog.alert('Product added to the products list.', '');
+                  app.methods.emptyNewProductForm();
+                  document.getElementById("test_img").src = "assets/pictures/camera.png";
+                  uploadingPictureDiv.innerHTML = "";
+                }
+                   
+                switch (snapshot.state) {
+                  case firebase.storage.TaskState.PAUSED: 
+                    console.log('Upload is paused');
+                    break;
+                  case firebase.storage.TaskState.RUNNING: 
+                    console.log('Upload is running');
+                    break;
+                }
+              }, function(error) {
+              switch (error.code) {
+                case 'storage/unauthorized':
+                  break;
+                case 'storage/canceled':
+                  break;
+                case 'storage/unknown':
+                  break;
+              }
+            }, function() {
+              // Upload completed successfully, now we can get the download URL
+              uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+                console.log('File available at', downloadURL);
+                resolve(downloadURL);
+              });
+            });
+          });
+        };
+
         // Get new product data from form
         $$(document).on('click', '.convert-product-form-to-data', function () {
           if (app.methods.isProductFormEmpty()) {
@@ -204,15 +267,16 @@
               'price': jsonObject.price,
               'quantity': jsonObject.quantity,
               'shop': jsonObject.shop,
-            })
+            });
 
-            app.methods.emptyNewProductForm();
-            app.dialog.alert('Product added to the products list.', '');
+           // const img = document.getElementById("test_img").src.substring("data:image/jpeg;base64,".length);
+            console.log(jsonObject.code + '.jpg');
+          //  uploadImageToFirebaseStorage(jsonObject.code + '.jpg', img);
           } else app.dialog.alert('Please fill out the form first.', '');
         });
 
-        // cameraButton.addEventListener('click', takePicture);
-        // albumButton.addEventListener('click', browsePicture);
+        cameraButton.addEventListener('click', openCamera);
+        albumButton.addEventListener('click', browsePicture);
       } // pageInit
     }
   }
