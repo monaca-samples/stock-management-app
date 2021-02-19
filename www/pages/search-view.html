@@ -109,9 +109,14 @@
 					</div>
 				</div>
 				<!-- Button -->
-				<div class="row display-flex justify-content-center">
-					<div class="col-80 align-self-center">
-						<a href="#" class="button button-raised button-fill convert-product-form-to-data">Search</a>
+				<div class="block">
+					<div class="row">
+						<div class="col-50">
+							<a href="#" class="button button-raised button-fill convert-product-form-to-data">Search</a>
+						</div>
+						<div class="col-50">
+							<a href="#" class="button button-raised button-fill" @click="$root.emptySearchForm()">Clear</a>
+						</div>
 					</div>
 				</div>
 				<div id="product-list"></div>
@@ -216,11 +221,9 @@
           document.getElementById('product-shop').value = shopName;
         });
 
-        // Real time update with Firebase
-        const getRealTimeUpdatesFirebase = () => {
-            const jsonObject = app.methods.dataToJson('#search-product-form');
-            
-            db.collection('products').where('shop', '==', jsonObject.shop).get().then((snapshot) => {
+        // Search by two filled field
+        const twoFieldSearch = (stringName, fieldName, stringName2, fieldName2) => {
+          db.collection('products').where(stringName, '==', fieldName).where(stringName2, '==', fieldName2).get().then((snapshot) => {
               let result = '';
               snapshot.docs.forEach(doc => {
                 const data = doc.data();
@@ -244,6 +247,53 @@
               });
               productListDiv.innerHTML = result;
               });
+        }
+
+        // Search by one filled field
+        const oneFieldSearch = (stringName, fieldName) => {
+          db.collection('products').where(stringName, '==', fieldName).get().then((snapshot) => {
+              let result = '';
+              snapshot.docs.forEach(doc => {
+                const data = doc.data();
+                result += `
+                 <div class="card-bg block block-strong inset">
+                     <p>Product Code: <span>${data.code}</span></p>
+                     <p>Product Name: <span>${data.name}</span></p>
+                     <p>Price: <span>${data.price}</span></p>
+                     <p>Quantity: <span id="search-quantity">${data.quantity}</span></p>
+                     <div class="block display-flex justify-content-center">
+                       <img style="width:200px;height:150px" id="test_img" src="assets/pictures/camera.png" />
+                     </div>
+                     <div class="display-flex justify-content-space-around">
+                       <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
+                         <div id="search-minus" class="stepper-button-minus update-search-quantity-minus" data-search-quantity="${data.quantity}" data-search-product-id="${doc.id}"></div>
+                         <div id="search-plus" class="stepper-button-plus update-search-quantity-plus" data-search-quantity="${data.quantity}" data-search-product-id="${doc.id}"></div>
+                       </div>
+                     </div>
+                   </div>
+                 `;
+              });
+              productListDiv.innerHTML = result;
+              });
+        }
+
+        // Real time update with Firebase
+        const getRealTimeUpdatesFirebase = () => {
+            const jsonObject = app.methods.dataToJson('#search-product-form');
+
+            if(jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop == "") {
+              oneFieldSearch('code', jsonObject.code);
+            } else if(jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop == "") {
+                oneFieldSearch('name', jsonObject.name);
+            } else if(jsonObject.code == "" && jsonObject.name == "" && jsonObject.shop != "") {
+                oneFieldSearch('shop', jsonObject.shop);
+            } else if(jsonObject.code != "" && jsonObject.name != "" && jsonObject.shop == "") {
+                twoFieldSearch('code', jsonObject.code, 'name', jsonObject.name);
+            } else if(jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop != "") {
+                twoFieldSearch('code', jsonObject.code, 'shop', jsonObject.shop);
+            } else if(jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop != "") {
+                twoFieldSearch('name', jsonObject.name, 'shop', jsonObject.shop);
+            }
         }
 
         // // Get query
@@ -283,10 +333,11 @@
           getRealTimeUpdatesFirebase();
         }
 
-        // If the user changes quantity on the home page and then // goes back to the previous search page update the page
+        // If the user changes view empty the Search page
         $$(document).on('page:tabshow', function (e) {
-          getRealTimeUpdatesFirebase();
+          app.methods.emptySearchForm();
         })
+
       } // pageInit
       
     }

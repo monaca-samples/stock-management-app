@@ -38,10 +38,6 @@ var routes = [
     componentUrl: './pages/search-view.html',
   },
   {
-    path: '/search-result/',
-    url: './pages/search-result.html',
-  },
-  {
     path: '/dynamic-route/blog/:blogId/post/:postId/',
     componentUrl: './pages/dynamic-route.html',
   },

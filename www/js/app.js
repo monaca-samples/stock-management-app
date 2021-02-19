@@ -92,6 +92,13 @@ var app = new Framework7({
       document.getElementById('product-quantity').value = "";
       document.getElementById('product-shop').value = "";
     },
+    // After clicking Clear button it will empty the inputs and the search result
+    emptySearchForm: function () {
+      document.getElementById('product-code').value = "";
+      document.getElementById('product-name').value = "";
+      document.getElementById('product-shop').value = "";
+      document.getElementById('product-list').innerText = "";
+    },
   },
   // App routes
   routes: routes,
