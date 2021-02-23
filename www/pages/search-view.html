@@ -333,9 +333,10 @@
           getRealTimeUpdatesFirebase();
         }
 
-        // If the user changes view empty the Search page
+        // If the user changes view and comes back 
+        // to the Search page check the db for updates
         $$(document).on('page:tabshow', function (e) {
-          app.methods.emptySearchForm();
+          getRealTimeUpdatesFirebase();
         })
 
       } // pageInit
