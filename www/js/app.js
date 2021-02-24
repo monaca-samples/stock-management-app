@@ -6,6 +6,10 @@ var app = new Framework7({
   name: 'framework7-core-tab-view', // App name
   theme: 'auto', // Automatic theme detection
 
+  view: {
+    // For navigation between multi-level pages
+    stackPages: true,
+  },
   // Centering the navbar
   navbar: {
     mdCenterTitle: true,
