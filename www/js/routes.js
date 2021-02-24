@@ -30,6 +30,10 @@ var routes = [
     componentUrl: './pages/new-product.html',
   },
   {
+    path: '/edit-product/:name/',
+    componentUrl: './pages/edit-product.html',
+  },
+  {
     path: '/search/',
     componentUrl: './pages/search.html',
   },

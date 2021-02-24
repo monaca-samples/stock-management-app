@@ -160,5 +160,39 @@ $$(document).on('click', '.edited-shop-data', function () {
   } else app.dialog.alert('Please fill out the form first.', '');
 });
 
+// Get product details data
+$$(document).on('click', '.get-product-details-data', function () {
+  productId = $$(this).data('product-id');
+
+  db.collection('products').where(firebase.firestore.FieldPath.documentId(), '==', productId).get().then((snapshot) => {
+    snapshot.docs.forEach(doc => {
+      const data = doc.data();
+      document.getElementById('product-code').value = data.code;
+      document.getElementById('product-name').value = data.name;
+      document.getElementById('product-price').value = data.price;
+      document.getElementById('product-quantity').value = data.quantity;
+      document.getElementById('product-shop').value = data.shop;
+    });
+  });
+});
+
+
+// Save the edited product data
+$$(document).on('click', '.edited-product-data', function () {
+  if (app.methods.isProductFormEmpty()) {
+
+    db.collection('products').doc(productId).update({
+      code: document.getElementById('product-code').value,
+      name: document.getElementById('product-name').value,
+      price: document.getElementById('product-price').value,
+      quantity: document.getElementById('product-quantity').value,
+      shop: document.getElementById('product-shop').value
+    });
+
+    app.dialog.alert('Saved product details.', '');
+  } else app.dialog.alert('Please fill out the form first.', '');
+});
+
+
 // Execute functions
 initFirebase();
