@@ -169,6 +169,16 @@
 				</div>
 			</div>
 
+			<div class="list links-list">
+				<ul>
+					{{#each products}}
+					<li>
+						<a href="/product/{{id}}/">{{title}}</a>
+					</li>
+					{{/each}}
+				</ul>
+			</div>
+
 			<!-- Search View -->
 			<div id="view-search" class="view view-init tab" data-name="search" data-url="/search-view/">
 				<!-- Search page will be loaded here dynamically from /search/ route -->
@@ -200,102 +210,82 @@
 
   // Subtract quantity
   $$(document).on('click', '.update-quantity-minus', function() {
-    productId = $$(this).data('product-id');
-    changeQuantity('update-quantity-minus', productId, $$(this).data('quantity'));
+      productId = $$(this).data('product-id');
+      changeQuantity('update-quantity-minus', productId, $$(this).data('quantity'));
   });
 
   // Add quantity
   $$(document).on('click', '.update-quantity-plus', function() {
-    productId = $$(this).data('product-id');
-    changeQuantity('update-quantity-plus', productId, $$(this).data('quantity'));
+      productId = $$(this).data('product-id');
+      changeQuantity('update-quantity-plus', productId, $$(this).data('quantity'));
   });
 
   // Function to add/subtract quantity
   const changeQuantity = (className, productId, productQuantity) => {
-    let newProductQuantity = 0;
-    const idValue = document.getElementsByClassName(className)[0].id;
+      let newProductQuantity = 0;
+      const idValue = document.getElementsByClassName(className)[0].id;
 
-    if (idValue == "plus")
-        newProductQuantity = parseInt(productQuantity) + 1;
-    if (idValue == "minus")
-        if (parseInt(productQuantity) > 0)
-            newProductQuantity = parseInt(productQuantity) - 1;
+      if (idValue == "plus")
+          newProductQuantity = parseInt(productQuantity) + 1;
+      if (idValue == "minus")
+          if (parseInt(productQuantity) > 0)
+              newProductQuantity = parseInt(productQuantity) - 1;
 
-    db.collection('products').doc(productId).update({
-        quantity: newProductQuantity,
-    });
-}
-  const getImage = (barcode) => {
-    // Create a reference to the file we want to download
-    const storageRef = firebase.storage().ref();
-    const filename = barcode + '.jpg';
-    const ref = storageRef.child(filename);
-
-    // Get the download URL
-    ref.getDownloadURL().then(function(url) {
-    // Insert url into an <img> tag to "download"
-    console.log(url);
-    document.getElementById("test_img").src = url;
-    }).catch(function(error) {
-
-    // A full list of error codes is available at
-    // https://firebase.google.com/docs/storage/web/handle-errors
-    switch (error.code) {
-      case 'storage/object-not-found':
-      // File doesn't exist
-      break;
-
-              case 'storage/unauthorized':
-                // User doesn't have permission to access the object
-                break;
-
-              case 'storage/canceled':
-                // User canceled the upload
-                break;
-
-              case 'storage/unknown':
-                // Unknown error occurred, inspect the server response
-                break;
-            }
-          });
-        };
+      db.collection('products').doc(productId).update({
+          quantity: newProductQuantity,
+      });
+  }
 
   const getRealTimeUpdatesFirebase = () => {
-    db.collection('products').onSnapshot((doc) => {
-      let result = '';
-      doc.docs.forEach((doc) => {
-        const data = doc.data();
-        result += `
-          <div class="card-bg block block-strong inset">
-            <div class="display-flex justify-content-space-between">
-              <div>
-                <p>Product Code: <span>${data.code}</span></p>
-                <p>Name: <span>${data.name}</span></p>
-                <p>Price: <span>${data.price}</span></p>
-                <p>Quantity: <span">${data.quantity}</span></p>
+      db.collection('products').onSnapshot((doc) => {
+          let result = '';
+          doc.docs.forEach((doc) => {
+              const data = doc.data();
+              document.getElementById('product-code').innerText = data.code;
+              document.getElementById('product-name').innerText = data.name;
+              result += `
+            <div class="card-bg block block-strong inset">
+              <div class="display-flex justify-content-space-between">
+                <div>
+                  <p>Product Code: <span data-product-code="${data.code}">${data.code}</span></p>
+                  <p>Name: <span>${data.name}</span></p>
+                  <p>Price: <span>${data.price}</span></p>
+                  <p>Quantity: <span">${data.quantity}</span></p>
+                </div>
+                <i class="icon f7-icons ">
+                  <a href="/edit-product/${doc.id}/" data-product-id="${doc.id}" class="get-product-details-data">pencil</a>
+                </i>
               </div>
-              <i class="icon f7-icons ">
-                <a href="/edit-product/${doc.id}/" data-product-id="${doc.id}" class="get-product-details-data">pencil</a>
-              </i>
-            </div>
-            <div class="display-flex justify-content-center">
-              <img style="width:200px;height:150px" id="test_img" src="assets/pictures/camera.png"/>
-            </div>
-            <div class="display-flex justify-content-center">
-              <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
-                <div id="minus" class="stepper-button-minus update-quantity-minus" data-quantity="${data.quantity}" data-product-id="${doc.id}"></div>
-                <div id="plus" class="stepper-button-plus update-quantity-plus" data-quantity="${data.quantity}" data-product-id="${doc.id}"></div>
+              <div class="block display-flex justify-content-center">
+                <div>
+                  <img style="width:200px;height:150px" id="imageFile" src="assets/pictures/camera.png">
+                </div>
+				      </div>
+              <div class="display-flex justify-content-center">
+                <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
+                  <div id="minus" class="stepper-button-minus update-quantity-minus" data-quantity="${data.quantity}" data-product-id="${doc.id}"></div>
+                  <div id="plus" class="stepper-button-plus update-quantity-plus" data-quantity="${data.quantity}" data-product-id="${doc.id}"></div>
+                </div>
+              </div>   
               </div>
-            </div>          
-          </div>
-        `;
+              `
+              // const storageRef = firebase.storage().ref();
+              // const filename = 'products/' + data.code + '.jpg';
+              // const ref = storageRef.child(filename);
 
-          //getImage(data.code);
+              // let productImage = document.createElement('img');
+
+              // ref.getDownloadURL().then(function(url) {
+              //   if(ref.name == data.code + '.jpg') {
+              //     console.log(ref.name + " " + data.code );
+              //     productImage.setAttribute('src', url);
+              //     productListResultDiv.appendChild(productImage);
+              //   }
+              // });
           });
-            
-            productListResultDiv.innerHTML = result;
-          });
-        }
+          productListResultDiv.innerHTML = result;
+      });
+  }
 
   getRealTimeUpdatesFirebase();
 

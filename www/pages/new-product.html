@@ -89,10 +89,10 @@
 				</div>
 				<!-- Picture -->
 				<div class="block display-flex justify-content-center">
-					<div id="viewport" class="viewport">
-						<img style="width:200px;height:150px" id="test_img" src="assets/pictures/camera.png" />
-            <div id="uploading-picture" class="display-flex justify-content-center"></div>
-					</div>
+          <div>
+            <img style="width:200px;height:150px" id="imageFile" src="assets/pictures/camera.png">
+             <div id="uploading-picture" class="display-flex justify-content-center"></div>
+          </div>
 				</div>
 				<!-- Button -->
 				<div class="block">
@@ -109,7 +109,7 @@
 				<!-- Button -->
 				<div class="row display-flex justify-content-center">
 					<div class="col-80 align-self-center">
-						<a href="#" class="button button-raised button-fill convert-product-form-to-data">Save</a>
+						<a href="#" class="button button-raised button-fill convert-new-product-form-to-data">Save</a>
 					</div>
 				</div>
 			</form>
@@ -162,58 +162,50 @@
 
         // Set options for camera
         function setOptions(srcType) {
-            var options = {
-                quality: 100,
-                destinationType: Camera.DestinationType.DATA_URL,
-                sourceType: srcType,
-                encodingType: Camera.EncodingType.JPEG,
-                mediaType: Camera.MediaType.PICTURE,
-                allowEdit: false,
-                correctOrientation: true,
-                // saveToPhotoAlbum: true, 
-                // on some Android devices it gives "Error capturing image"
-                cameraDirection: Camera.Direction.BACK,
-            }
-            return options;
+          var options = {
+              quality: 50,
+              destinationType: Camera.DestinationType.DATA_URL, 
+              sourceType: srcType,
+              encodingType: Camera.EncodingType.JPEG,
+              mediaType: Camera.MediaType.PICTURE,
+              allowEdit: false,
+              correctOrientation: true
+          }
+          return options;
         }
 
         // Take picture with camera
         function openCamera(selection) {
-            var srcType = Camera.PictureSourceType.CAMERA;
-            var options = setOptions(srcType);
-            navigator.camera.getPicture(function cameraSuccess(image) {
-                displayImage(image);
-            }, function cameraError(error) {
-                  alert(error);
-            }, options);
-        }
+          var srcType = Camera.PictureSourceType.CAMERA;
+          var options = setOptions(srcType);
+          navigator.camera.getPicture(function cameraSuccess(imageUrl) {
+              displayImage(imageUrl);
+          }, function cameraError(error) {
+              console.debug("Unable to take picture: " + error, "app");
+          }, options);
+      }
 
         // Open gallery and choose a picture
-        function browsePicture(selection) {
-            var srcType = Camera.PictureSourceType.PHOTOLIBRARY;
-            var options = setOptions(srcType);
-            navigator.camera.getPicture(function cameraSuccess(image) {
-                displayImage(image);
-            }, function cameraError(error) {
-                  alert(error);
-            }, options);
-        }
+        function openFilePicker(selection) {
+          var srcType = Camera.PictureSourceType.SAVEDPHOTOALBUM;
+          var options = setOptions(srcType);
+          navigator.camera.getPicture(function cameraSuccess(imageUrl) {
+              displayImage(imageUrl);
+          }, function cameraError(error) {
+              console.debug("Unable to obtain picture: " + error, "app");
+          }, options);
+      }
 
         // Add picture to DOM
-        function displayImage(data) {
-            var viewport = document.getElementById('viewport');
-            viewport.style.display = "block";
-            viewport.style.position = "relative";
-            document.getElementById("test_img").src = "data:image/jpeg;base64," + data;
+        function displayImage(img) {
+          var elem = document.getElementById('imageFile');
+          elem.src = "data:image/jpeg;base64," + img; 
         }
 
         // Uploading picture
-        const uploadImageToFirebaseStorage = (filename, img) => {
-          return new Promise((resolve, reject) => {
-            // Create a root reference
-            const storageRef = firebase.storage().ref();
-            const ref = storageRef.child(filename);
-            const uploadTask = ref.putString(img, 'base64');
+        function uploadImageToFirebaseStorage(filename, img) {
+            const storageRef = firebase.storage().ref('products/' + filename);
+            const uploadTask = storageRef.putString(img, 'base64');
 
             uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, 
               function(snapshot) {
@@ -224,7 +216,7 @@
                 if(progress == 100) {
                   app.dialog.alert('Product added to the products list.', '');
                   app.methods.emptyNewProductForm();
-                  document.getElementById("test_img").src = "assets/pictures/camera.png";
+                  document.getElementById("imageFile").src = "assets/pictures/camera.png";
                   uploadingPictureDiv.innerHTML = "";
                 }
                    
@@ -236,47 +228,59 @@
                     console.log('Upload is running');
                     break;
                 }
-              }, function(error) {
-              switch (error.code) {
-                case 'storage/unauthorized':
+              }, 
+
+              function(error) {
+                switch (error.code) {
+                  case 'storage/unauthorized':                       
                   break;
-                case 'storage/canceled':
-                  break;
-                case 'storage/unknown':
-                  break;
-              }
-            }, function() {
-              // Upload completed successfully, now we can get the download URL
-              uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-                console.log('File available at', downloadURL);
-                resolve(downloadURL);
+                  case 'storage/canceled':
+                    break;
+                  case 'storage/unknown':
+                    break;
+                  case 'storage/invalid-format':
+                    break;
+                }
+            }, 
+            
+            function() {
+              uploadTask.snapshot.storageRef.getDownloadURL().then(function(url) {
+                console.log('File available at', url);
               });
             });
-          });
-        };
+        }
+
+        function checkPicture(jsonObject) {
+          try {
+            const img = document.getElementById("imageFile").src.substring("data:image/jpeg;base64,".length);
+            uploadImageToFirebaseStorage(jsonObject.code + '.jpg', img);
+            return true;
+            } catch {
+                app.dialog.alert('Please upload a picture!', '');
+                return false;
+            }
+        }
 
         // Get new product data from form
-        $$(document).on('click', '.convert-product-form-to-data', function () {
+        $$(document).on('click', '.convert-new-product-form-to-data', function () {  
+            
           if (app.methods.isProductFormEmpty()) {
             const jsonObject = app.methods.dataToJson('#new-product-form');
-
-            // Create/Add products data to the shop
-            db.collection('products').add({
-              code: jsonObject.code,
-              'name': jsonObject.name,
-              'price': jsonObject.price,
-              'quantity': jsonObject.quantity,
-              'shop': jsonObject.shop,
-            });
-
-           // const img = document.getElementById("test_img").src.substring("data:image/jpeg;base64,".length);
-            console.log(jsonObject.code + '.jpg');
-          //  uploadImageToFirebaseStorage(jsonObject.code + '.jpg', img);
+            if(checkPicture(jsonObject)) {
+               // Create/Add products data to the shop
+              db.collection('products').add({
+                code: jsonObject.code,
+                'name': jsonObject.name,
+                'price': jsonObject.price,
+                'quantity': jsonObject.quantity,
+                'shop': jsonObject.shop,
+              });
+            }   
           } else app.dialog.alert('Please fill out the form first.', '');
         });
 
-        cameraButton.addEventListener('click', openCamera);
-        albumButton.addEventListener('click', browsePicture);
+       cameraButton.addEventListener('click', openCamera);
+       albumButton.addEventListener('click', openFilePicker);
       } // pageInit
     }
   }

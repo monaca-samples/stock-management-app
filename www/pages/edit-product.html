@@ -89,9 +89,9 @@
 				</div>
 				<!-- Picture -->
 				<div class="block display-flex justify-content-center">
-					<div id="viewport" class="viewport">
-						<img style="width:200px;height:150px" id="test_img" src="assets/pictures/camera.png" />
-            <div id="uploading-picture" class="display-flex justify-content-center"></div>
+					<div>
+						<img style="width:200px;height:150px" id="imageFile" src="assets/pictures/camera.png">
+						<!-- <div id="uploading-picture" class="display-flex justify-content-center"></div> -->
 					</div>
 				</div>
 				<!-- Button -->
@@ -127,6 +127,8 @@
       pageInit: function(e, page) {
         const popUpUl = document.getElementById('popup-shops');
         const productShopInput = document.getElementById('product-shop');
+        const cameraButton = document.getElementById('take-picture');
+        const albumButton = document.getElementById('photo-album');
 
         // Pop up shop list
         $$(document).on('click', '.popup-shop-list', function () {
@@ -157,6 +159,50 @@
           document.getElementById('product-shop').value = shopName;
         });
 
+        // Set options for camera
+        function setOptions(srcType) {
+          var options = {
+              quality: 50,
+              destinationType: Camera.DestinationType.DATA_URL, 
+              sourceType: srcType,
+              encodingType: Camera.EncodingType.JPEG,
+              mediaType: Camera.MediaType.PICTURE,
+              allowEdit: false,
+              correctOrientation: true
+          }
+          return options;
+        }
+
+        // Take picture with camera
+        function openCamera(selection) {
+          var srcType = Camera.PictureSourceType.CAMERA;
+          var options = setOptions(srcType);
+          navigator.camera.getPicture(function cameraSuccess(imageUrl) {
+              displayImage(imageUrl);
+          }, function cameraError(error) {
+              console.debug("Unable to take picture: " + error, "app");
+          }, options);
+      }
+
+        // Open gallery and choose a picture
+        function openFilePicker(selection) {
+          var srcType = Camera.PictureSourceType.SAVEDPHOTOALBUM;
+          var options = setOptions(srcType);
+          navigator.camera.getPicture(function cameraSuccess(imageUrl) {
+              displayImage(imageUrl);
+          }, function cameraError(error) {
+              console.debug("Unable to obtain picture: " + error, "app");
+          }, options);
+      }
+
+        // Add picture to DOM
+        function displayImage(img) {
+          var elem = document.getElementById('imageFile');
+          elem.src = "data:image/jpeg;base64," + img; 
+        }
+
+       cameraButton.addEventListener('click', openCamera);
+       albumButton.addEventListener('click', openFilePicker);
       } // pageInit
     }
   }
