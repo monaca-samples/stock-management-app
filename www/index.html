@@ -169,16 +169,6 @@
 				</div>
 			</div>
 
-			<div class="list links-list">
-				<ul>
-					{{#each products}}
-					<li>
-						<a href="/product/{{id}}/">{{title}}</a>
-					</li>
-					{{/each}}
-				</ul>
-			</div>
-
 			<!-- Search View -->
 			<div id="view-search" class="view view-init tab" data-name="search" data-url="/search-view/">
 				<!-- Search page will be loaded here dynamically from /search/ route -->
@@ -236,6 +226,32 @@
       });
   }
 
+         // To get the picture from the database 
+       function getImage (data) {
+        const storageRef = firebase.storage().ref();
+        const filename = 'products/' + data.code + '.jpg';
+        const ref = storageRef.child(filename);
+        console.log(ref);
+
+        // Get the download URL
+        ref.getDownloadURL().then(function(url) {
+          // Insert url into an <img> tag to "download"
+          console.log(url);
+          document.getElementById("imageFile").src = url;
+        }).catch(function(error) {
+          switch (error.code) {
+            case 'storage/object-not-found':
+              break;
+            case 'storage/unauthorized':
+              break;
+            case 'storage/canceled':
+              break;
+            case 'storage/unknown':
+              break;
+          }
+        });
+      }; 
+
   const getRealTimeUpdatesFirebase = () => {
       db.collection('products').onSnapshot((doc) => {
           let result = '';
@@ -247,12 +263,12 @@
             <div class="card-bg block block-strong inset">
               <div class="display-flex justify-content-space-between">
                 <div>
-                  <p>Product Code: <span data-product-code="${data.code}">${data.code}</span></p>
+                  <p>Product Code: <span>${data.code}</span></p>
                   <p>Name: <span>${data.name}</span></p>
                   <p>Price: <span>${data.price}</span></p>
                   <p>Quantity: <span">${data.quantity}</span></p>
                 </div>
-                <i class="icon f7-icons ">
+                <i class="icon f7-icons">
                   <a href="/edit-product/${doc.id}/" data-product-id="${doc.id}" class="get-product-details-data">pencil</a>
                 </i>
               </div>
@@ -268,20 +284,10 @@
                 </div>
               </div>   
               </div>
-              `
-              // const storageRef = firebase.storage().ref();
-              // const filename = 'products/' + data.code + '.jpg';
-              // const ref = storageRef.child(filename);
+              `;
 
-              // let productImage = document.createElement('img');
-
-              // ref.getDownloadURL().then(function(url) {
-              //   if(ref.name == data.code + '.jpg') {
-              //     console.log(ref.name + " " + data.code );
-              //     productImage.setAttribute('src', url);
-              //     productListResultDiv.appendChild(productImage);
-              //   }
-              // });
+          getImage(data);
+              
           });
           productListResultDiv.innerHTML = result;
       });
