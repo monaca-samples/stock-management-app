@@ -16,9 +16,6 @@
     <!-- Page content -->
 		<div class="page-content">
 			<div id="product-list"></div>
-      {{#each products}}
-      <li>{{name}}</li>
-      <li>{{code}}</li>
 		</div>
 	</div>
 </template>
@@ -27,15 +24,10 @@
 	return {
     data: function () {
       return {
-        products: [],
       }
     },
     on: {
       pageInit: function(e, page) {
-        var self = this;
-        var app = self.$app;
-        let _products = [];
-
         const productListDiv = document.getElementById('product-list');
         let productId = null;
 
@@ -67,31 +59,31 @@
           });
         }
 
-       // To get the picture from the database 
-       function getImage (data) {
-        const storageRef = firebase.storage().ref();
-        const filename = 'products/' + data.code + '.jpg';
-        const ref = storageRef.child(filename);
-        console.log(ref);
+      //  // To get the picture from the database 
+      //  function getImage (data) {
+      //   const storageRef = firebase.storage().ref();
+      //   const filename = 'products/' + data.code + '.jpg';
+      //   const ref = storageRef.child(filename);
+      //   console.log(ref);
 
-        // Get the download URL
-        ref.getDownloadURL().then(function(url) {
-          // Insert url into an <img> tag to "download"
-          console.log(url);
-          document.getElementById("test_img").src = url;
-        }).catch(function(error) {
-          switch (error.code) {
-            case 'storage/object-not-found':
-              break;
-            case 'storage/unauthorized':
-              break;
-            case 'storage/canceled':
-              break;
-            case 'storage/unknown':
-              break;
-          }
-        });
-      }; 
+      //   // Get the download URL
+      //   ref.getDownloadURL().then(function(url) {
+      //     // Insert url into an <img> tag to "download"
+      //     console.log(url);
+      //     document.getElementById("test_img").src = url;
+      //   }).catch(function(error) {
+      //     switch (error.code) {
+      //       case 'storage/object-not-found':
+      //         break;
+      //       case 'storage/unauthorized':
+      //         break;
+      //       case 'storage/canceled':
+      //         break;
+      //       case 'storage/unknown':
+      //         break;
+      //     }
+      //   });
+      // }; 
 
         const getRealTimeUpdatesFirebase = () => {
           db.collection('products').onSnapshot((doc) => {
@@ -124,7 +116,7 @@
                 </div>
                 `;
 
-                getImage(data);
+                //getImage(data);
             });
 
             productListDiv.innerHTML = result;
