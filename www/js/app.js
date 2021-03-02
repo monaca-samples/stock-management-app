@@ -168,6 +168,29 @@ $$(document).on('click', '.edited-shop-data', function () {
 $$(document).on('click', '.get-product-details-data', function () {
   productId = $$(this).data('product-id');
 
+  // To get the picture from the database 
+  function getImage(data) {
+    const storageRef = firebase.storage().ref();
+    const filename = 'products/' + data.code + '.jpg';
+    const ref = storageRef.child(filename);
+
+    // Get the download URL
+    ref.getDownloadURL().then(function (url) {
+      document.getElementById('imageFile').src = url;
+    }).catch(function (error) {
+      switch (error.code) {
+        case 'storage/object-not-found':
+          break;
+        case 'storage/unauthorized':
+          break;
+        case 'storage/canceled':
+          break;
+        case 'storage/unknown':
+          break;
+      }
+    });
+  };
+
   db.collection('products').where(firebase.firestore.FieldPath.documentId(), '==', productId).get().then((snapshot) => {
     snapshot.docs.forEach(doc => {
       const data = doc.data();
@@ -176,22 +199,22 @@ $$(document).on('click', '.get-product-details-data', function () {
       document.getElementById('product-price').value = data.price;
       document.getElementById('product-quantity').value = data.quantity;
       document.getElementById('product-shop').value = data.shop;
+
+      getImage(data);
     });
   });
 });
 
-
 // Save the edited product data
 $$(document).on('click', '.edited-product-data', function () {
   if (app.methods.isProductFormEmpty()) {
-
-    db.collection('products').doc(productId).update({
-      code: document.getElementById('product-code').value,
-      name: document.getElementById('product-name').value,
-      price: document.getElementById('product-price').value,
-      quantity: document.getElementById('product-quantity').value,
-      shop: document.getElementById('product-shop').value
-    });
+      db.collection('products').doc(productId).update({
+        code: document.getElementById('product-code').value,
+        name: document.getElementById('product-name').value,
+        price: document.getElementById('product-price').value,
+        quantity: document.getElementById('product-quantity').value,
+        shop: document.getElementById('product-shop').value
+      });
 
     app.dialog.alert('Saved product details.', '');
   } else app.dialog.alert('Please fill out the form first.', '');

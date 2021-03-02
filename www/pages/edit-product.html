@@ -81,7 +81,6 @@
 				<div class="block display-flex justify-content-center">
 					<div>
 						<img style="width:200px;height:150px" id="imageFile" src="assets/pictures/camera.png">
-						<!-- <div id="uploading-picture" class="display-flex justify-content-center"></div> -->
 					</div>
 				</div>
 				<!-- Button -->
@@ -124,39 +123,38 @@
         // Barcode 
         function scanBarcode() {
           cordova.plugins.barcodeScanner.scan(
-            function (result) {
+            function(result) {
               document.getElementById('product-code').value = result.text;
             },
-            function (error) {
+            function(error) {
               alert("Scanning failed: " + error);
-            },
-            {
-              preferFrontCamera : false, // iOS and Android
-              showFlipCameraButton : false, // iOS and Android
-              showTorchButton : false, // iOS and Android
+            }, {
+              preferFrontCamera: false, // iOS and Android
+              showFlipCameraButton: false, // iOS and Android
+              showTorchButton: false, // iOS and Android
               torchOn: false, // Android, launch with the torch switched on (if available)
-              disableAnimations : true, // iOS
+              disableAnimations: true, // iOS
               disableSuccessBeep: false // iOS and Android
             }
           );
         }
 
         // Pop up shop list
-        $$(document).on('click', '.popup-shop-list', function () {
+        $$(document).on('click', '.popup-shop-list', function() {
           db.collection('shops').get().then((snapshot) => {
             let result = '';
             snapshot.docs.forEach(doc => {
               const data = doc.data();
               result += `
-                  <li>
-                  <a href="#" class="item-content item-link popup-close">
-                    <div class="item-inner">
-                      <div data-shop-id="${doc.id}" data-shop-name="${data.name}" class="get-shop-name item-title">${data.name}</div>
-                    </div>
-                  </a>
-                  </li>
-							    `;
-              });
+                          <li>
+                          <a href="#" class="item-content item-link popup-close">
+                            <div class="item-inner">
+                              <div data-shop-id="${doc.id}" data-shop-name="${data.name}" class="get-shop-name item-title">${data.name}</div>
+                            </div>
+                          </a>
+                          </li>
+                          `;
+            });
 
             popUpUl.innerHTML = result;
           });
@@ -164,7 +162,7 @@
 
         // Get shop data from pop up and add it to the form
         let shopId;
-        $$(document).on('click', '.get-shop-name', function () {
+        $$(document).on('click', '.get-shop-name', function() {
           shopName = $$(this).data('shop-name');
           shopId = $$(this).data('shop-id');
           document.getElementById('product-shop').value = shopName;
@@ -173,13 +171,13 @@
         // Set options for camera
         function setOptions(srcType) {
           var options = {
-              quality: 50,
-              destinationType: Camera.DestinationType.DATA_URL, 
-              sourceType: srcType,
-              encodingType: Camera.EncodingType.JPEG,
-              mediaType: Camera.MediaType.PICTURE,
-              allowEdit: false,
-              correctOrientation: true
+            quality: 50,
+            destinationType: Camera.DestinationType.DATA_URL,
+            sourceType: srcType,
+            encodingType: Camera.EncodingType.JPEG,
+            mediaType: Camera.MediaType.PICTURE,
+            allowEdit: false,
+            correctOrientation: true
           }
           return options;
         }
@@ -189,34 +187,91 @@
           var srcType = Camera.PictureSourceType.CAMERA;
           var options = setOptions(srcType);
           navigator.camera.getPicture(function cameraSuccess(imageUrl) {
-              // Cordova Bug getPicture doesn't work properly
-              displayImage(imageUrl);
+            // Cordova Bug getPicture doesn't work properly
+            displayImage(imageUrl);
           }, function cameraError(error) {
-              console.debug("Unable to take picture: " + error, "app");
+            console.debug("Unable to take picture: " + error, "app");
           }, options);
-      }
+        }
 
         // Open gallery and choose a picture
         function openFilePicker(selection) {
           var srcType = Camera.PictureSourceType.SAVEDPHOTOALBUM;
           var options = setOptions(srcType);
           navigator.camera.getPicture(function cameraSuccess(imageUrl) {
-              // Cordova Bug getPicture doesn't work properly
-              displayImage(imageUrl);
+            // Cordova Bug getPicture doesn't work properly
+            displayImage(imageUrl);
           }, function cameraError(error) {
-              console.debug("Unable to obtain picture: " + error, "app");
+            console.debug("Unable to obtain picture: " + error, "app");
           }, options);
-      }
+        }
 
         // Add picture to DOM
         function displayImage(img) {
-          var elem = document.getElementById('imageFile');
-          elem.src = "data:image/jpeg;base64," + img; 
+          let image = document.getElementById('imageFile');
+          image.src = "data:image/jpeg;base64," + img;
         }
 
-       barcodeIcon.addEventListener('click', scanBarcode); 
-       cameraButton.addEventListener('click', openCamera);
-       albumButton.addEventListener('click', openFilePicker);
+        // Uploading picture
+        function uploadImageToFirebaseStorage(filename, img) {
+          const storageRef = firebase.storage().ref('products/' + filename);
+          const uploadTask = storageRef.putString(img, 'base64');
+
+          uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
+            function(snapshot) {
+              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              console.log('Upload is ' + Math.trunc(progress) + '% done');
+              uploadingPictureDiv.innerHTML = 'Upload is ' + Math.trunc(progress) + '% done';
+
+              if (progress == 100) 
+                app.dialog.alert('Product added to the products list.', '');
+
+              switch (snapshot.state) {
+                case firebase.storage.TaskState.PAUSED:
+                  console.log('Upload is paused');
+                  break;
+                case firebase.storage.TaskState.RUNNING:
+                  console.log('Upload is running');
+                  break;
+              }
+            },
+
+            function(error) {
+              switch (error.code) {
+                case 'storage/unauthorized':
+                  break;
+                case 'storage/canceled':
+                  break;
+                case 'storage/unknown':
+                  break;
+                case 'storage/invalid-format':
+                  break;
+              }
+            },
+
+            function() {
+              uploadTask.snapshot.storageRef.getDownloadURL().then(function(url) {
+                console.log('File available at', url);
+              });
+            });
+        }
+
+        // Check if the user added a picture or not
+        function checkPicture(jsonObject) {
+          try {
+            console.log("hello");
+            const img = document.getElementById("imageFile").src.substring("data:image/jpeg;base64,".length);
+            uploadImageToFirebaseStorage(jsonObject.code + '.jpg', img);
+            return true;
+          } catch {
+            app.dialog.alert('Please upload a picture!', '');
+            return false;
+          }
+        }
+
+        barcodeIcon.addEventListener('click', scanBarcode);
+        cameraButton.addEventListener('click', openCamera);
+        albumButton.addEventListener('click', openFilePicker);
       } // pageInit
     }
   }
