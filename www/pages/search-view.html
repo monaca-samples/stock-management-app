@@ -14,22 +14,17 @@
 			<form class="list" id="search-product-form">
 				<div class="list">
 					<div class="list no-hairlines-md">
-						<ul>
-							<div class="row display-flex">
-								<div class="col-95 align-content-space-around">
-									<li class="item-content item-input">
-										<div class="item-inner">
-											<div class="item-input-wrap">
-												<input id="product-code" name="code" type="text" placeholder="Code" />
-												<span class="input-clear-button"></span>
-											</div>
-										</div>
-										<a class="button popup-open popup-code-list" href="#" data-popup=".popup-code-list"><i class="icon f7-icons">barcode_viewfinder</i></a>
-										<a class="button popup-open popup-code-list" href="#" data-popup=".popup-code-list"><i class="icon material-icons if-md">barcode_viewfinder</i></a>
-									</li>
+						<ul class="row">
+							<li class="col-95 item-content item-input">
+								<div class="item-inner">
+									<div class="item-input-wrap">
+										<input id="product-code" name="code" type="text" placeholder="Code" />
+										<span class="input-clear-button"></span>
+									</div>
 								</div>
-							</div>
-							<li class="item-content item-input">
+								<i class="icon f7-icons popup-open popup-code-list" data-popup=".popup-code-list">barcode_viewfinder</i>
+							</li>
+							<li class="col-100 item-content item-input">
 								<div class="item-inner">
 									<div class="item-input-wrap">
 										<a class="button popup-open popup-product-list" href="#" data-popup=".popup-product-list"><input id="product-name" name="name" type="text" placeholder="Product Name" /></a>
@@ -37,20 +32,15 @@
 									</div>
 								</div>
 							</li>
-							<div class="row display-flex">
-								<div class="col-95 align-content-space-around">
-									<li class="item-content item-input">
-										<div class="item-inner">
-											<div class="item-input-wrap">
-												<input id="product-shop" name="shop" type="text" placeholder="Shop Name" />
-												<span class="input-clear-button"></span>
-											</div>
-										</div>
-										<a class="button popup-open popup-shop-list" href="#" data-popup=".popup-shop-list"><i class="icon f7-icons">cart</i></a>
-										<a class="button popup-open popup-shop-list" href="#" data-popup=".popup-shop-list"><i class="icon material-icons if-md">cart</i></a>
-									</li>
+							<li class="col-95 item-content item-input">
+								<div class="item-inner">
+									<div class="item-input-wrap">
+										<input id="product-shop" name="shop" type="text" placeholder="Shop Name" />
+										<span class="input-clear-button"></span>
+									</div>
 								</div>
-							</div>
+								<i class="icon f7-icons popup-open popup-shop-list" data-popup=".popup-shop-list">cart</i>
+							</li>
 						</ul>
 					</div>
 				</div>

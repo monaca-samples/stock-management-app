@@ -18,54 +18,44 @@
 			<form class="list" id="edit-product-form">
 				<div class="list">
 					<div class="list no-hairlines-md">
-						<ul>
-							<div class="row display-flex">
-								<div class="col-95 align-content-space-around">
-									<li class="item-content item-input">
-										<div class="item-inner">
-											<div class="item-input-wrap">
-												<textarea class="resizable" placeholder="Code" id="product-code" name="code" required validate></textarea>
-											</div>
-										</div>
-										<i class="icon f7-icons">barcode_viewfinder</i>
-										<i class="icon material-icons if-md">barcode_viewfinder</i>
-									</li>
+						<ul class="row">
+							<li class="col-95 item-content item-input">
+								<div class="item-inner">
+									<div class="item-input-wrap">
+										<textarea class="resizable" placeholder="Code" id="product-code" name="code" required validate></textarea>
+									</div>
 								</div>
-							</div>
-							<li class="item-content item-input">
+								<i class="icon f7-icons" id="product-barcode">barcode_viewfinder</i>
+							</li>
+							<li class="col-100 item-content item-input">
 								<div class="item-inner">
 									<div class="item-input-wrap">
 										<textarea class="resizable" placeholder="Name" id="product-name" name="name" required validate></textarea>
 									</div>
 								</div>
 							</li>
-							<li class="item-content item-input">
+							<li class="col-100 item-content item-input">
 								<div class="item-inner">
 									<div class="item-input-wrap">
 										<textarea class="resizable" placeholder="Price" id="product-price" name="price" required validate></textarea>
 									</div>
 								</div>
 							</li>
-							<li class="item-content item-input">
+							<li class="col-100 item-content item-input">
 								<div class="item-inner">
 									<div class="item-input-wrap">
 										<textarea class="resizable" placeholder="Quantity" id="product-quantity" name="quantity" required validate></textarea>
 									</div>
 								</div>
 							</li>
-							<div class="row display-flex">
-								<div class="col-100 align-content-space-around">
-									<li class="item-content item-input">
+									<li class="col-95 item-content item-input">
 										<div class="item-inner">
 											<div class="item-input-wrap">
 												<textarea class="resizable" placeholder="Shop" id="product-shop" name="shop" required validate></textarea>
 											</div>
 										</div>
-										<a class="button popup-open popup-shop-list" href="#" data-popup=".popup-shop-list"><i class="icon f7-icons">cart</i></a>
-										<a class="button popup-open popup-shop-list" href="#" data-popup=".popup-shop-list"><i class="icon material-icons if-md">cart</i></a>
+										<i class="icon f7-icons popup-open popup-shop-list" data-popup=".popup-shop-list">cart</i>
 									</li>
-								</div>
-							</div>
 						</ul>
 					</div>
 				</div>
@@ -125,10 +115,31 @@
     },
     on: {
       pageInit: function(e, page) {
+        const barcodeIcon = document.getElementById('product-barcode');
         const popUpUl = document.getElementById('popup-shops');
         const productShopInput = document.getElementById('product-shop');
         const cameraButton = document.getElementById('take-picture');
         const albumButton = document.getElementById('photo-album');
+
+        // Barcode 
+        function scanBarcode() {
+          cordova.plugins.barcodeScanner.scan(
+            function (result) {
+              document.getElementById('product-code').value = result.text;
+            },
+            function (error) {
+              alert("Scanning failed: " + error);
+            },
+            {
+              preferFrontCamera : false, // iOS and Android
+              showFlipCameraButton : false, // iOS and Android
+              showTorchButton : false, // iOS and Android
+              torchOn: false, // Android, launch with the torch switched on (if available)
+              disableAnimations : true, // iOS
+              disableSuccessBeep: false // iOS and Android
+            }
+          );
+        }
 
         // Pop up shop list
         $$(document).on('click', '.popup-shop-list', function () {
@@ -178,6 +189,7 @@
           var srcType = Camera.PictureSourceType.CAMERA;
           var options = setOptions(srcType);
           navigator.camera.getPicture(function cameraSuccess(imageUrl) {
+              // Cordova Bug getPicture doesn't work properly
               displayImage(imageUrl);
           }, function cameraError(error) {
               console.debug("Unable to take picture: " + error, "app");
@@ -189,6 +201,7 @@
           var srcType = Camera.PictureSourceType.SAVEDPHOTOALBUM;
           var options = setOptions(srcType);
           navigator.camera.getPicture(function cameraSuccess(imageUrl) {
+              // Cordova Bug getPicture doesn't work properly
               displayImage(imageUrl);
           }, function cameraError(error) {
               console.debug("Unable to obtain picture: " + error, "app");
@@ -201,6 +214,7 @@
           elem.src = "data:image/jpeg;base64," + img; 
         }
 
+       barcodeIcon.addEventListener('click', scanBarcode); 
        cameraButton.addEventListener('click', openCamera);
        albumButton.addEventListener('click', openFilePicker);
       } // pageInit

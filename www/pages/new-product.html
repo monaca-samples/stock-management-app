@@ -10,7 +10,7 @@
 						<span class="if-not-md">Back</span>
 					</a>
 				</div>
-				<div class="title">Product</div>
+				<div class="title">New Product</div>
 			</div>
 		</div>
 		<!-- Page content-->
@@ -18,54 +18,44 @@
 			<form class="list" id="new-product-form">
 				<div class="list">
 					<div class="list no-hairlines-md">
-						<ul>
-							<div class="row display-flex">
-								<div class="col-95 align-content-space-around">
-									<li class="item-content item-input">
-										<div class="item-inner">
-											<div class="item-input-wrap">
-												<textarea class="resizable" placeholder="Code" id="product-code" name="code" required validate></textarea>
-											</div>
-										</div>
-										<i class="icon f7-icons">barcode_viewfinder</i>
-										<i class="icon material-icons if-md">barcode_viewfinder</i>
-									</li>
+						<ul class="row">
+							<li class="col-95 item-content item-input">
+								<div class="row item-inner">
+									<div class="item-input-wrap">
+										<textarea class="resizable" placeholder="Code" id="product-code" name="code" required validate></textarea>
+									</div>
 								</div>
-							</div>
-							<li class="item-content item-input">
+								<i class="icon f7-icons" id="product-barcode">barcode_viewfinder</i>
+							</li>
+							<li class="col-100 item-content item-input">
 								<div class="item-inner">
 									<div class="item-input-wrap">
 										<textarea class="resizable" placeholder="Name" id="product-name" name="name" required validate></textarea>
 									</div>
 								</div>
 							</li>
-							<li class="item-content item-input">
+							<li class="col-100 item-content item-input">
 								<div class="item-inner">
 									<div class="item-input-wrap">
 										<textarea class="resizable" placeholder="Price" id="product-price" name="price" required validate></textarea>
 									</div>
 								</div>
 							</li>
-							<li class="item-content item-input">
+							<li class="col-100 item-content item-input">
 								<div class="item-inner">
 									<div class="item-input-wrap">
 										<textarea class="resizable" placeholder="Quantity" id="product-quantity" name="quantity" required validate></textarea>
 									</div>
 								</div>
 							</li>
-							<div class="row display-flex">
-								<div class="col-100 align-content-space-around">
-									<li class="item-content item-input">
-										<div class="item-inner">
-											<div class="item-input-wrap">
-												<textarea class="resizable" placeholder="Shop" id="product-shop" name="shop" required validate></textarea>
-											</div>
-										</div>
-										<a class="button popup-open popup-shop-list" href="#" data-popup=".popup-shop-list"><i class="icon f7-icons">cart</i></a>
-										<a class="button popup-open popup-shop-list" href="#" data-popup=".popup-shop-list"><i class="icon material-icons if-md">cart</i></a>
-									</li>
+							<li class="col-95 item-content item-input">
+								<div class="item-inner">
+									<div class="item-input-wrap">
+										<textarea class="resizable" placeholder="Shop" id="product-shop" name="shop" required validate></textarea>
+									</div>
 								</div>
-							</div>
+								<i class="icon f7-icons popup-open popup-shop-list" data-popup=".popup-shop-list">cart</i>
+							</li>
 						</ul>
 					</div>
 				</div>
@@ -89,10 +79,10 @@
 				</div>
 				<!-- Picture -->
 				<div class="block display-flex justify-content-center">
-          <div>
-            <img style="width:200px;height:150px" id="imageFile" src="assets/pictures/camera.png">
-             <div id="uploading-picture" class="display-flex justify-content-center"></div>
-          </div>
+					<div>
+						<img style="width:200px;height:150px" id="imageFile" src="assets/pictures/camera.png">
+						<div id="uploading-picture" class="display-flex justify-content-center"></div>
+					</div>
 				</div>
 				<!-- Button -->
 				<div class="block">
@@ -125,11 +115,32 @@
     },
     on: {
       pageInit: function(e, page) {
-        const popUpUl = document.getElementById('popup-shops');
+        const popUpBarcode = document.getElementById('product-barcode');
         const productShopInput = document.getElementById('product-shop');
+        const popUpUl = document.getElementById('popup-shops');
         const cameraButton = document.getElementById('take-picture');
         const albumButton = document.getElementById('photo-album');
         const uploadingPictureDiv = document.getElementById('uploading-picture');
+
+        // Barcode 
+        function scanBarcode() {
+          cordova.plugins.barcodeScanner.scan(
+            function (result) {
+              document.getElementById('product-code').value = result.text;
+            },
+            function (error) {
+              alert("Scanning failed: " + error);
+            },
+            {
+              preferFrontCamera : false, // iOS and Android
+              showFlipCameraButton : false, // iOS and Android
+              showTorchButton : false, // iOS and Android
+              torchOn: false, // Android, launch with the torch switched on (if available)
+              disableAnimations : true, // iOS
+              disableSuccessBeep: false // iOS and Android
+            }
+          );
+        }
 
         // Pop up shop list
         $$(document).on('click', '.popup-shop-list', function () {
@@ -179,6 +190,7 @@
           var srcType = Camera.PictureSourceType.CAMERA;
           var options = setOptions(srcType);
           navigator.camera.getPicture(function cameraSuccess(imageUrl) {
+              // Cordova Bug getPicture doesn't work properly
               displayImage(imageUrl);
           }, function cameraError(error) {
               console.debug("Unable to take picture: " + error, "app");
@@ -190,6 +202,7 @@
           var srcType = Camera.PictureSourceType.SAVEDPHOTOALBUM;
           var options = setOptions(srcType);
           navigator.camera.getPicture(function cameraSuccess(imageUrl) {
+              // Cordova Bug getPicture doesn't work properly
               displayImage(imageUrl);
           }, function cameraError(error) {
               console.debug("Unable to obtain picture: " + error, "app");
@@ -198,8 +211,8 @@
 
         // Add picture to DOM
         function displayImage(img) {
-          var elem = document.getElementById('imageFile');
-          elem.src = "data:image/jpeg;base64," + img; 
+          let image = document.getElementById('imageFile');
+          image.src = "data:image/jpeg;base64," + img; 
         }
 
         // Uploading picture
@@ -250,6 +263,7 @@
             });
         }
 
+        // Check if the user added a picture or not
         function checkPicture(jsonObject) {
           try {
             const img = document.getElementById("imageFile").src.substring("data:image/jpeg;base64,".length);
@@ -279,6 +293,7 @@
           } else app.dialog.alert('Please fill out the form first.', '');
         });
 
+       popUpBarcode.addEventListener('click', scanBarcode);
        cameraButton.addEventListener('click', openCamera);
        albumButton.addEventListener('click', openFilePicker);
       } // pageInit
