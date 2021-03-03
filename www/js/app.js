@@ -207,19 +207,57 @@ $$(document).on('click', '.get-product-details-data', function () {
 
 // Save the edited product data
 $$(document).on('click', '.edited-product-data', function () {
-  if (app.methods.isProductFormEmpty()) {
-      db.collection('products').doc(productId).update({
-        code: document.getElementById('product-code').value,
-        name: document.getElementById('product-name').value,
-        price: document.getElementById('product-price').value,
-        quantity: document.getElementById('product-quantity').value,
-        shop: document.getElementById('product-shop').value
-      });
+  // Uploading picture
+  function uploadImageToFirebaseStorage(filename, img) {
+    const storageRef = firebase.storage().ref('products/' + filename);
+    const uploadTask = storageRef.putString(img, 'base64');
 
-    app.dialog.alert('Saved product details.', '');
+    uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
+      function (snapshot) {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        document.getElementById('uploading-picture').innerHTML = 'Upload is ' + Math.trunc(progress) + '% done';
+
+        if (progress == 100)
+          app.dialog.alert('Saved product details.', '');
+
+        switch (snapshot.state) {
+          case firebase.storage.TaskState.PAUSED:
+            console.log('Upload is paused');
+            break;
+          case firebase.storage.TaskState.RUNNING:
+            console.log('Upload is running');
+            break;
+        }
+      },
+      function (error) {
+        switch (error.code) {
+          case 'storage/unauthorized':
+            break;
+          case 'storage/canceled':
+            break;
+          case 'storage/unknown':
+            break;
+          case 'storage/invalid-format':
+            break;
+        }
+      });
+  }
+
+  if (app.methods.isProductFormEmpty()) {
+    const jsonObject = app.methods.dataToJson('#edit-product-form');
+    const img = document.getElementById("imageFile").src.substring("data:image/jpeg;base64,".length);
+    uploadImageToFirebaseStorage(jsonObject.code + '.jpg', img);;
+
+    db.collection('products').doc(productId).update({
+      code: document.getElementById('product-code').value,
+      name: document.getElementById('product-name').value,
+      price: document.getElementById('product-price').value,
+      quantity: document.getElementById('product-quantity').value,
+      shop: document.getElementById('product-shop').value
+    });
+ 
   } else app.dialog.alert('Please fill out the form first.', '');
 });
-
 
 // Execute functions
 initFirebase();

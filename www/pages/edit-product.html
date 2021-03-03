@@ -48,14 +48,14 @@
 									</div>
 								</div>
 							</li>
-									<li class="col-95 item-content item-input">
-										<div class="item-inner">
-											<div class="item-input-wrap">
-												<textarea class="resizable" placeholder="Shop" id="product-shop" name="shop" required validate></textarea>
-											</div>
-										</div>
-										<i class="icon f7-icons popup-open popup-shop-list" data-popup=".popup-shop-list">cart</i>
-									</li>
+							<li class="col-95 item-content item-input">
+								<div class="item-inner">
+									<div class="item-input-wrap">
+										<textarea class="resizable" placeholder="Shop" id="product-shop" name="shop" required validate></textarea>
+									</div>
+								</div>
+								<i class="icon f7-icons popup-open popup-shop-list" data-popup=".popup-shop-list">cart</i>
+							</li>
 						</ul>
 					</div>
 				</div>
@@ -81,6 +81,7 @@
 				<div class="block display-flex justify-content-center">
 					<div>
 						<img style="width:200px;height:150px" id="imageFile" src="assets/pictures/camera.png">
+            <div id="uploading-picture" class="display-flex justify-content-center"></div>
 					</div>
 				</div>
 				<!-- Button -->
@@ -119,6 +120,7 @@
         const productShopInput = document.getElementById('product-shop');
         const cameraButton = document.getElementById('take-picture');
         const albumButton = document.getElementById('photo-album');
+        const uploadingPictureDiv = document.getElementById('uploading-picture');
 
         // Barcode 
         function scanBarcode() {
@@ -145,15 +147,14 @@
             let result = '';
             snapshot.docs.forEach(doc => {
               const data = doc.data();
-              result += `
-                          <li>
-                          <a href="#" class="item-content item-link popup-close">
-                            <div class="item-inner">
-                              <div data-shop-id="${doc.id}" data-shop-name="${data.name}" class="get-shop-name item-title">${data.name}</div>
-                            </div>
-                          </a>
-                          </li>
-                          `;
+              result +=
+                `<li>
+                  <a href="#" class="item-content item-link popup-close">
+                    <div class="item-inner">
+                      <div data-shop-id="${doc.id}" data-shop-name="${data.name}" class="get-shop-name item-title">${data.name}</div>
+                    </div>
+                    </a>
+                </li>`;
             });
 
             popUpUl.innerHTML = result;
@@ -210,63 +211,6 @@
         function displayImage(img) {
           let image = document.getElementById('imageFile');
           image.src = "data:image/jpeg;base64," + img;
-        }
-
-        // Uploading picture
-        function uploadImageToFirebaseStorage(filename, img) {
-          const storageRef = firebase.storage().ref('products/' + filename);
-          const uploadTask = storageRef.putString(img, 'base64');
-
-          uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
-            function(snapshot) {
-              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-              console.log('Upload is ' + Math.trunc(progress) + '% done');
-              uploadingPictureDiv.innerHTML = 'Upload is ' + Math.trunc(progress) + '% done';
-
-              if (progress == 100) 
-                app.dialog.alert('Product added to the products list.', '');
-
-              switch (snapshot.state) {
-                case firebase.storage.TaskState.PAUSED:
-                  console.log('Upload is paused');
-                  break;
-                case firebase.storage.TaskState.RUNNING:
-                  console.log('Upload is running');
-                  break;
-              }
-            },
-
-            function(error) {
-              switch (error.code) {
-                case 'storage/unauthorized':
-                  break;
-                case 'storage/canceled':
-                  break;
-                case 'storage/unknown':
-                  break;
-                case 'storage/invalid-format':
-                  break;
-              }
-            },
-
-            function() {
-              uploadTask.snapshot.storageRef.getDownloadURL().then(function(url) {
-                console.log('File available at', url);
-              });
-            });
-        }
-
-        // Check if the user added a picture or not
-        function checkPicture(jsonObject) {
-          try {
-            console.log("hello");
-            const img = document.getElementById("imageFile").src.substring("data:image/jpeg;base64,".length);
-            uploadImageToFirebaseStorage(jsonObject.code + '.jpg', img);
-            return true;
-          } catch {
-            app.dialog.alert('Please upload a picture!', '');
-            return false;
-          }
         }
 
         barcodeIcon.addEventListener('click', scanBarcode);

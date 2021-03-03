@@ -1,6 +1,6 @@
 <template>
 	<div class="page" data-name="product-list">
-    <!-- Navbar -->
+		<!-- Navbar -->
 		<div class="navbar">
 			<div class="navbar-bg"></div>
 			<div class="navbar-inner sliding">
@@ -13,7 +13,7 @@
 				<div class="title">Product List</div>
 			</div>
 		</div>
-    <!-- Page content -->
+		<!-- Page content -->
 		<div class="page-content">
 			<div id="product-list"></div>
 		</div>
@@ -32,13 +32,13 @@
         let productId = null;
 
         // Subtract quantity
-        $$(document).on('click', '.update-quantity-minus', function () {
+        $$(document).on('click', '.update-quantity-minus', function() {
           productId = $$(this).data('product-id');
           changeQuantity('update-quantity-minus', productId, $$(this).data('quantity'));
         });
 
         // Add quantity
-        $$(document).on('click', '.update-quantity-plus', function () {
+        $$(document).on('click', '.update-quantity-plus', function() {
           productId = $$(this).data('product-id');
           changeQuantity('update-quantity-plus', productId, $$(this).data('quantity'));
         });
@@ -48,19 +48,19 @@
           let newProductQuantity = 0;
           const idValue = document.getElementsByClassName(className)[0].id;
 
-          if(idValue == "plus") 
+          if (idValue == "plus")
             newProductQuantity = parseInt(productQuantity) + 1;
-          if(idValue == "minus") 
-            if(parseInt(productQuantity) > 0) 
+          if (idValue == "minus")
+            if (parseInt(productQuantity) > 0)
               newProductQuantity = parseInt(productQuantity) - 1;
-          
+
           db.collection('products').doc(productId).update({
             quantity: newProductQuantity,
           });
         }
 
         // To get the picture from the database 
-        function getImage (data) {
+        function getImage(data) {
           const storageRef = firebase.storage().ref();
           const filename = 'products/' + data.code + '.jpg';
           const ref = storageRef.child(filename);
@@ -80,25 +80,25 @@
                 break;
             }
           });
-        }; 
+        };
 
         const getRealTimeUpdatesFirebase = () => {
-          db.collection('products').onSnapshot((doc) => {
+        db.collection('products').onSnapshot((doc) => {
             let result = '';
             doc.docs.forEach((doc) => {
               const data = doc.data();
               result += `
-                              <div class="card-bg block block-strong inset">
-                <div class="display-flex justify-content-space-between">
-                  <div>
-                    <p>Product Code: <span>${data.code}</span></p>
-                    <p>Name: <span>${data.name}</span></p>
-                    <p>Price: <span>${data.price}</span></p>
-                    <p>Quantity: <span">${data.quantity}</span></p>
-                  </div>
-                  <i class="icon f7-icons">
-                    <a href="/edit-product/${doc.id}/" data-product-id="${doc.id}" class="get-product-details-data">pencil</a>
-                  </i>
+                <div class="card-bg block block-strong inset">
+                  <div class="display-flex justify-content-space-between">
+                    <div>
+                      <p>Product Code: <span>${data.code}</span></p>
+                      <p>Name: <span>${data.name}</span></p>
+                      <p>Price: <span>${data.price}</span></p>
+                      <p>Quantity: <span">${data.quantity}</span></p>
+                    </div>
+                    <i class="icon f7-icons">
+                      <a href="/edit-product/${doc.id}/" data-product-id="${doc.id}" class="get-product-details-data">pencil</a>
+                    </i>
                 </div>
                 <div class="block display-flex justify-content-center">
                   <div>
@@ -111,17 +111,21 @@
                     <div id="plus" class="stepper-button-plus update-quantity-plus" data-quantity="${data.quantity}" data-product-id="${doc.id}"></div>
                   </div>
                 </div>   
-                </div>
-                `;
+              </div>
+              `;
 
-                getImage(data);
-            });
-
-            productListDiv.innerHTML = result;
+            getImage(data);
           });
-        }
+          productListDiv.innerHTML = result;
+        });
+      }
+    getRealTimeUpdatesFirebase();
 
-        getRealTimeUpdatesFirebase();
+    // If the user edits a product check for changes in the DB again
+    $$(document).on('page:reinit', function (e) {
+      getRealTimeUpdatesFirebase();
+    });
+
     } // pageInit
   }
 }

@@ -195,7 +195,7 @@
 </html>
 
 <script>
-  const productListResultDiv = document.getElementById('product-list-result');
+	const productListResultDiv = document.getElementById('product-list-result');
   let productId = null;
 
   // Subtract quantity
@@ -290,5 +290,10 @@
   }
 
   getRealTimeUpdatesFirebase();
+
+  // If the user edits a product check for changes in the DB again
+  $$(document).on('page:reinit', function (e) {
+    getRealTimeUpdatesFirebase();
+  })
 
 </script>
