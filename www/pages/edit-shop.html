@@ -94,15 +94,17 @@
     on: {
       pageInit: function(e, page) {
         let map = null;
-
+        let chosenPositionMarker = {};
         const currentLocationBtn = document.getElementById('current-location');
 
         // onSuccess Callback
         // This method accepts a Position object, which contains the current GPS coordinates
-        let onSuccess = function(position) {
-            L.marker([position.coords.latitude, position.coords.longitude]).addTo(map)
+        let onSuccess = function(p) {
+            L.marker([p.coords.latitude, p.coords.longitude]).addTo(map)
           .bindPopup('Your current location.')
           .openPopup();
+
+         map.setView([p.coords.latitude, p.coords.longitude], 14);
         };
 
         // onError Callback receives a PositionError object
@@ -110,24 +112,44 @@
             app.dialog.alert('code: ' + error.code + '\n' + 'message: ' + error.message + '\n');
         }
 
+        // It will give back the current location & adds a marker to the map
         function currentLocation() {
           navigator.geolocation.getCurrentPosition(onSuccess, onError);
         }
 
-        currentLocationBtn.addEventListener('click', currentLocation);
-
-        // From Leaflet webpage tutorial
-        // + Yong-san's map details
-				if (!map) map = L.map('newShopMap', {doubleClickZoom: false}).locate({setView: true, maxZoom: 15});
-				map.setView([35.40, 139.50], 13);
+        // From Leaflet webpage tutorial + Yong-san's map details
+				if (!map) map = L.map('newShopMap', {doubleClickZoom: false}).locate({setView: true, maxZoom: 12});
+				map.setView([35.40, 139.50], 12);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
-  
-        L.marker([35.40, 139.50]).addTo(map)
-          .bindPopup('Your current location.')
-          .openPopup();
+    
+        // Able to move the map and add marker to chosen position
+        map.on('click',function(e){
+          lat = e.latlng.lat;
+          lon = e.latlng.lng;
+
+          var redIcon = new L.Icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+          });
+
+          if (chosenPositionMarker != undefined)
+            map.removeLayer(chosenPositionMarker);
+
+          chosenPositionMarker = L.marker([lat,lon], {icon: redIcon}).addTo(map)
+          .bindPopup('Your chosen position.')
+          .openPopup();  
+
+          map.setView([lat, lon], 14);
+        });
+
+        currentLocationBtn.addEventListener('click', currentLocation);
       } // pageInit
     }
   }

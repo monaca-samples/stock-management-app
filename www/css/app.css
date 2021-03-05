@@ -12,3 +12,7 @@
 .map { 
   height: 180px; 
 }
+
+.leaflet-marker-icon.selectedMarker{
+  color: red;
+}
