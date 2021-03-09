@@ -1,6 +1,5 @@
 <template>
 	<div class="page" data-name="new-shop">
-		<!-- Navbar -->
 		<div class="navbar">
 			<div class="navbar-bg"></div>
 			<div class="navbar-inner sliding">
@@ -92,8 +91,14 @@
         let chosenPositionMarker = {};
         const currentLocationBtn = document.getElementById('current-location');
 
-        // onSuccess Callback
-        // This method accepts a Position object, which contains the current GPS coordinates
+        if (!map) map = L.map('newShopMap', {doubleClickZoom: false}).locate({setView: true, maxZoom: 12});
+				map.setView([35.40, 139.50], 12);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // onSuccess callback accepts a Position object, which contains the current coordinates
         let onSuccess = function(p) {
             L.marker([p.coords.latitude, p.coords.longitude]).addTo(map)
           .bindPopup('Your current location.')
@@ -102,25 +107,17 @@
          map.setView([p.coords.latitude, p.coords.longitude], 14);
         };
 
-        // onError Callback receives a PositionError object
+        // onError callback receives a PositionError object
         function onError(error) {
             app.dialog.alert('code: ' + error.code + '\n' + 'message: ' + error.message + '\n');
         }
 
-        // It will give back the current location & adds a marker to the map
+        // Gives back the current location & adds a marker
         function currentLocation() {
           navigator.geolocation.getCurrentPosition(onSuccess, onError);
         }
-
-        // From Leaflet webpage tutorial + Yong-san's map details
-				if (!map) map = L.map('newShopMap', {doubleClickZoom: false}).locate({setView: true, maxZoom: 12});
-				map.setView([35.40, 139.50], 12);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
     
-        // Able to move the map and add marker to chosen position
+        // Move on the map and add marker to a chosen position
         map.on('click',function(e){
           lat = e.latlng.lat;
           lon = e.latlng.lng;
@@ -143,27 +140,9 @@
 
           map.setView([lat, lon], 14);
         });
-
-        // Get new shop data from form
-        $$(document).on('click', '.convert-form-to-data', function () {
-          if (app.methods.isFormEmpty()) {
-            const jsonObject = app.methods.dataToJson('#new-shop-form');
-
-            // Add data to the database
-            db.collection('shops').add({
-              'name': jsonObject.name,
-              'telephone': jsonObject.telephone,
-              'address': jsonObject.address,
-              'location': jsonObject.location,
-            });
-
-            app.methods.emptyNewShopForm();
-            app.dialog.alert('Shop added to the shop list.', '');
-          } else app.dialog.alert('Please fill out the form first.', '');
-        });
-
+        
          currentLocationBtn.addEventListener('click', currentLocation);
-      } // pageInit
+      }
     }
   }
 

@@ -74,7 +74,7 @@
 						</div>
 					</div>
 					<div class="list">
-						<ul id="popup-shops"></ul>
+						<ul id="popup-shop-list"></ul>
 					</div>
 				</div>
 				<!-- Picture -->
@@ -92,7 +92,7 @@
 						</div>
 						<div class="col-10"><span></span></div>
 						<div class="col-30 ">
-							<a href="#" id="take-picture" class="button button-raised button-fill take-picture">Camera</a>
+							<a href="#" id="photo-picture" class="button button-raised button-fill photo-picture">Camera</a>
 						</div>
 					</div>
 				</div>
@@ -115,183 +115,19 @@
     },
     on: {
       pageInit: function(e, page) {
-        const popUpBarcode = document.getElementById('product-barcode');
+        const barcodeButton = document.getElementById('product-barcode');
         const productShopInput = document.getElementById('product-shop');
-        const popUpUl = document.getElementById('popup-shops');
-        const cameraButton = document.getElementById('take-picture');
-        const albumButton = document.getElementById('photo-album');
+        const shopListPopUp = document.getElementById('popup-shop-list');
         const uploadingPictureDiv = document.getElementById('uploading-picture');
+        const albumButton = document.getElementById('photo-album');
+        const cameraButton = document.getElementById('photo-picture');
 
-        // Barcode 
-        function scanBarcode() {
-          cordova.plugins.barcodeScanner.scan(
-            function(result) {
-              document.getElementById('product-code').value = result.text;
-            },
-            function(error) {
-              alert("Scanning failed: " + error);
-            }, {
-              preferFrontCamera: false, // iOS and Android
-              showFlipCameraButton: false, // iOS and Android
-              showTorchButton: false, // iOS and Android
-              torchOn: false, // Android, launch with the torch switched on (if available)
-              disableAnimations: true, // iOS
-              disableSuccessBeep: false // iOS and Android
-            }
-          );
-        }
-
-        // Pop up shop list
-        $$(document).on('click', '.popup-shop-list', function() {
-          db.collection('shops').get().then((snapshot) => {
-            let result = '';
-            snapshot.docs.forEach(doc => {
-              const data = doc.data();
-              result += `
-                <li>
-                  <a href="#" class="item-content item-link popup-close">
-                    <div class="item-inner">
-                      <div data-shop-id="${doc.id}" data-shop-name="${data.name}" class="get-shop-name item-title">${data.name}</div>
-                    </div>
-                  </a>
-                </li>
-                `;
-            });
-
-            popUpUl.innerHTML = result;
-          });
-        });
-
-        // Get shop data from pop up and add it to the form
-        let shopId;
-        $$(document).on('click', '.get-shop-name', function() {
-          shopName = $$(this).data('shop-name');
-          shopId = $$(this).data('shop-id');
-          document.getElementById('product-shop').value = shopName;
-        });
-
-        // Set options for camera
-        function setOptions(srcType) {
-          var options = {
-            quality: 50,
-            destinationType: Camera.DestinationType.DATA_URL,
-            sourceType: srcType,
-            encodingType: Camera.EncodingType.JPEG,
-            mediaType: Camera.MediaType.PICTURE,
-            allowEdit: false,
-            correctOrientation: true
-          }
-          return options;
-        }
-
-        // Take picture with camera
-        function openCamera(selection) {
-          var srcType = Camera.PictureSourceType.CAMERA;
-          var options = setOptions(srcType);
-          navigator.camera.getPicture(function cameraSuccess(imageUrl) {
-            // Cordova Bug getPicture doesn't work properly
-            displayImage(imageUrl);
-          }, function cameraError(error) {
-            console.debug("Unable to take picture: " + error, "app");
-          }, options);
-        }
-
-        // Open gallery and choose a picture
-        function openFilePicker(selection) {
-          var srcType = Camera.PictureSourceType.SAVEDPHOTOALBUM;
-          var options = setOptions(srcType);
-          navigator.camera.getPicture(function cameraSuccess(imageUrl) {
-            // Cordova Bug getPicture doesn't work properly
-            displayImage(imageUrl);
-          }, function cameraError(error) {
-            console.debug("Unable to obtain picture: " + error, "app");
-          }, options);
-        }
-
-        // Add picture to DOM
-        function displayImage(img) {
-          let image = document.getElementById('imageFile');
-          image.src = "data:image/jpeg;base64," + img;
-        }
-
-        // Uploading picture
-        function uploadImageToFirebaseStorage(filename, img) {
-          const storageRef = firebase.storage().ref('products/' + filename);
-          const uploadTask = storageRef.putString(img, 'base64');
-
-          uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
-            function(snapshot) {
-              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-              uploadingPictureDiv.innerHTML = 'Upload is ' + Math.trunc(progress) + '% done';
-
-              if (progress == 100) {
-                app.dialog.alert('Product added to the products list.', '');
-                app.methods.emptyNewProductForm();
-                document.getElementById("imageFile").src = "assets/pictures/camera.png";
-                uploadingPictureDiv.innerHTML = "";
-              }
-
-              switch (snapshot.state) {
-                case firebase.storage.TaskState.PAUSED:
-                  console.log('Upload is paused');
-                  break;
-                case firebase.storage.TaskState.RUNNING:
-                  console.log('Upload is running');
-                  break;
-              }
-            },
-            function(error) {
-              switch (error.code) {
-                case 'storage/unauthorized':
-                  break;
-                case 'storage/canceled':
-                  break;
-                case 'storage/unknown':
-                  break;
-                case 'storage/invalid-format':
-                  break;
-              }
-            },
-            function() {
-              uploadTask.snapshot.storageRef.getDownloadURL().then(function(url) {
-                console.log('File available at', url);
-              });
-            });
-        }
-
-        // Check if the user added a picture or not
-        function checkPicture(jsonObject) {
-          try {
-            const img = document.getElementById("imageFile").src.substring("data:image/jpeg;base64,".length);
-            uploadImageToFirebaseStorage(jsonObject.code + '.jpg', img);
-            return true;
-          } catch {
-            app.dialog.alert('Please upload a picture!', '');
-            return false;
-          }
-        }
-
-        // Get new product data from form
-        $$(document).on('click', '.convert-new-product-form-to-data', function() {
-          if (app.methods.isProductFormEmpty()) {
-            const jsonObject = app.methods.dataToJson('#new-product-form');
-            if (checkPicture(jsonObject)) {
-              // Create/Add products data to the shop
-              db.collection('products').add({
-                code: jsonObject.code,
-                'name': jsonObject.name,
-                'price': jsonObject.price,
-                'quantity': jsonObject.quantity,
-                'shop': jsonObject.shop,
-              });
-            }
-          } else app.dialog.alert('Please fill out the form first.', '');
-        });
-
-        popUpBarcode.addEventListener('click', scanBarcode);
-        cameraButton.addEventListener('click', openCamera);
+        barcodeButton.addEventListener('click', scanBarcode);
+        popUpShopList(shopListPopUp);
         albumButton.addEventListener('click', openFilePicker);
-      } // pageInit
+        cameraButton.addEventListener('click', openCamera);    
+        getNewProductDataFromForm(uploadingPictureDiv);
+      } 
     }
   }
 

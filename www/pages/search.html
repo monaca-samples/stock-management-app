@@ -101,7 +101,7 @@
 						</div>
 					</div>
 					<div class="list">
-						<ul id="popup-shops"></ul>
+						<ul id="popup-shop-list"></ul>
 					</div>
 				</div>
 				<!-- Button -->
@@ -128,197 +128,26 @@
     },
     on: {
       pageInit: function(e, page) {
-        const popUpCodes = document.getElementById('popup-codes')
-        const popUpProducts = document.getElementById('popup-products')
-        const popUpShops = document.getElementById('popup-shops');
-        const productListDiv = document.getElementById('product-list');
         let productId = null;
+        const barcodeListPopUp = document.getElementById('popup-barcode-list')
+        const productListPopUp = document.getElementById('popup-product-list')
+        const shopListPopUp = document.getElementById('popup-shop-list');
+        const productListDiv = document.getElementById('product-list');
 
-        // Pop up barcode list
-        $$(document).on('click', '.popup-code-list', function () {
-          db.collection('products').get().then((snapshot) => {
-            let result = '';
-            snapshot.docs.forEach(doc => {
-              const data = doc.data();
-              result += `
-                  <li>
-                    <a href="#" class="item-content item-link popup-close">
-                      <div class="item-inner">
-                        <div data-product-code="${data.code}" class="get-product-code item-title">${data.code}</div>
-                      </div>
-                    </a>
-                  </li>
-							    `;
-              });
-
-            popUpCodes.innerHTML = result;
-          });
-        });
-
-        // Pop up product list
-        $$(document).on('click', '.popup-product-list', function () {
-          db.collection('products').get().then((snapshot) => {
-            let result = '';
-            snapshot.docs.forEach(doc => {
-              const data = doc.data();
-              result += `
-                  <li>
-                    <a href="#" class="item-content item-link popup-close">
-                      <div class="item-inner">
-                        <div data-product-name="${data.name}" class="get-product-name item-title">${data.name}</div>
-                      </div>
-                    </a>
-                  </li>
-							    `;
-              });
-
-            popUpProducts.innerHTML = result;
-          });
-        });
-
-        // Pop up shop list
-        $$(document).on('click', '.popup-shop-list', function () {
-          db.collection('shops').get().then((snapshot) => {
-            let result = '';
-            snapshot.docs.forEach(doc => {
-              const data = doc.data();
-              result += `
-                  <li>
-                    <a href="#" class="item-content item-link popup-close">
-                      <div class="item-inner">
-                        <div data-shop-id="${doc.id}" data-shop-name="${data.name}" class="get-shop-name item-title">${data.name}</div>
-                      </div>
-                    </a>
-                  </li>
-							    `;
-              });
-
-            popUpShops.innerHTML = result;
-          });
-        });
-
-        // Get barcode data from pop up and add it to the form
-        $$(document).on('click', '.get-product-code', function () {
-          productCode = $$(this).data('product-code');
-          document.getElementById('product-code').value = productCode;
-        });
-
-        // Get product name data from pop up and add it to the form
-        $$(document).on('click', '.get-product-name', function () {
-          productName = $$(this).data('product-name');
-          document.getElementById('product-name').value = productName;
-        });
-
-        // Get shop name data from pop up and add it to the form
-        let shopId;
-        $$(document).on('click', '.get-shop-name', function () {
-          shopName = $$(this).data('shop-name');
-          shopId = $$(this).data('shop-id');
-          document.getElementById('product-shop').value = shopName;
-        });
-
-        // To get the picture from the database 
-        function getImage(data) {
-          const storageRef = firebase.storage().ref();
-          const filename = 'products/' + data.code + '.jpg';
-          const ref = storageRef.child(filename);
-
-          // Get the download URL
-          ref.getDownloadURL().then(function(url) {
-            document.getElementById(`${data.code}-img`).src = url;
-          }).catch(function(error) {
-            switch (error.code) {
-              case 'storage/object-not-found':
-                break;
-              case 'storage/unauthorized':
-                break;
-              case 'storage/canceled':
-                break;
-              case 'storage/unknown':
-                break;
-            }
-          });
-        };
-
-        // Search by two filled field
-        const twoFieldSearch = (stringName, fieldName, stringName2, fieldName2) => {
-          db.collection('products').where(stringName, '==', fieldName).where(stringName2, '==', fieldName2).get().then((snapshot) => {
-              let result = '';
-              snapshot.docs.forEach(doc => {
-                const data = doc.data();
-                result += `
-                  <div class="card-bg block block-strong inset">
-                    <div class="display-flex justify-content-space-between">
-                      <div>
-                        <p>Product Code: <span>${data.code}</span></p>
-                        <p>Name: <span>${data.name}</span></p>
-                        <p>Price: <span>${data.price}</span></p>
-                        <p>Quantity: <span">${data.quantity}</span></p>
-                      </div>
-                      <i class="icon f7-icons">
-                        <a href="/edit-product/${doc.id}/" data-product-id="${doc.id}" class="get-product-details-data">pencil</a>
-                      </i>
-                  </div>
-                  <div class="block display-flex justify-content-center">
-                    <div>
-                      <img style="width:200px;height:150px" id="${data.code}-img" src="assets/pictures/camera.png">
-                    </div>
-                  </div>
-                  <div class="display-flex justify-content-center">
-                    <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
-                      <div id="minus" class="stepper-button-minus update-quantity-minus" data-quantity="${data.quantity}" data-product-id="${doc.id}"></div>
-                      <div id="plus" class="stepper-button-plus update-quantity-plus" data-quantity="${data.quantity}" data-product-id="${doc.id}"></div>
-                    </div>
-                  </div>   
-                </div>
-                  `;
-
-                 getImage(data);
-              });
-              productListDiv.innerHTML = result;
-              });
-        }
-
-        // Search by one filled field
-        const oneFieldSearch = (stringName, fieldName) => {
-          db.collection('products').where(stringName, '==', fieldName).get().then((snapshot) => {
-              let result = '';
-              snapshot.docs.forEach(doc => {
-                const data = doc.data();
-                result += `
-                 <div class="card-bg block block-strong inset">
-                     <p>Product Code: <span>${data.code}</span></p>
-                     <p>Product Name: <span>${data.name}</span></p>
-                     <p>Price: <span>${data.price}</span></p>
-                     <p>Quantity: <span id="search-quantity">${data.quantity}</span></p>
-                     <div class="block display-flex justify-content-center">
-                       <img style="width:200px;height:150px" id="${data.code}-img" src="assets/pictures/camera.png"/>
-                     </div>
-                     <div class="display-flex justify-content-space-around">
-                       <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
-                         <div id="search-minus" class="stepper-button-minus update-search-quantity-minus" data-search-quantity="${data.quantity}" data-search-product-id="${doc.id}"></div>
-                         <div id="search-plus" class="stepper-button-plus update-search-quantity-plus" data-search-quantity="${data.quantity}" data-search-product-id="${doc.id}"></div>
-                       </div>
-                     </div>
-                   </div>
-                 `;
-
-                 getImage(data);
-              });
-              productListDiv.innerHTML = result;
-              });
-        }
+        popUpBarcodeList(barcodeListPopUp);
+        popUpProductList(productListPopUp);
+        popUpShopList(shopListPopUp);
 
         // Real time update with Firebase
         const getRealTimeUpdatesFirebase = () => {
             const jsonObject = app.methods.dataToJson('#search-product-form');
 
             if(jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop == "") {
-              oneFieldSearch('code', jsonObject.code);
+              oneFieldSearch(productListDiv, 'code', jsonObject.code);
             } else if(jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop == "") {
-                oneFieldSearch('name', jsonObject.name);
+                oneFieldSearch(productListDiv, 'name', jsonObject.name);
             } else if(jsonObject.code == "" && jsonObject.name == "" && jsonObject.shop != "") {
-                oneFieldSearch('shop', jsonObject.shop);
+                oneFieldSearch(productListDiv, 'shop', jsonObject.shop);
             } else if(jsonObject.code != "" && jsonObject.name != "" && jsonObject.shop == "") {
                 twoFieldSearch('code', jsonObject.code, 'name', jsonObject.name);
             } else if(jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop != "") {

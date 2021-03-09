@@ -71,7 +71,7 @@
 						</div>
 					</div>
 				</div>
-				<div id="newShopMap" class="map"></div>
+				<div id="editShopMap" class="map"></div>
 				<br>
         <!-- Button -->
 				<div class="row display-flex justify-content-center">
@@ -97,8 +97,14 @@
         let chosenPositionMarker = {};
         const currentLocationBtn = document.getElementById('current-location');
 
-        // onSuccess Callback
-        // This method accepts a Position object, which contains the current GPS coordinates
+        if (!map) map = L.map('editShopMap', {doubleClickZoom: false}).locate({setView: true, maxZoom: 12});
+				map.setView([35.40, 139.50], 12);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // onSuccess callback accepts a Position object, which contains the current coordinates
         let onSuccess = function(p) {
             L.marker([p.coords.latitude, p.coords.longitude]).addTo(map)
           .bindPopup('Your current location.')
@@ -107,25 +113,17 @@
          map.setView([p.coords.latitude, p.coords.longitude], 14);
         };
 
-        // onError Callback receives a PositionError object
+        // onError callback receives a PositionError object
         function onError(error) {
             app.dialog.alert('code: ' + error.code + '\n' + 'message: ' + error.message + '\n');
         }
 
-        // It will give back the current location & adds a marker to the map
+        // Gives back the current location & adds a marker
         function currentLocation() {
           navigator.geolocation.getCurrentPosition(onSuccess, onError);
         }
-
-        // From Leaflet webpage tutorial + Yong-san's map details
-				if (!map) map = L.map('newShopMap', {doubleClickZoom: false}).locate({setView: true, maxZoom: 12});
-				map.setView([35.40, 139.50], 12);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
     
-        // Able to move the map and add marker to chosen position
+        // Move on the map and add marker to a chosen position
         map.on('click',function(e){
           lat = e.latlng.lat;
           lon = e.latlng.lng;
@@ -150,7 +148,7 @@
         });
 
         currentLocationBtn.addEventListener('click', currentLocation);
-      } // pageInit
+      } 
     }
   }
 

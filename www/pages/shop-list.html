@@ -1,11 +1,10 @@
 <template>
 	<div class="page" data-name="shop-list">
-    <!-- Navbar -->
 		<div class="navbar">
 			<div class="navbar-bg"></div>
 			<div class="navbar-inner sliding">
 				<div class="left">
-					<a href="#" class="link back" >
+					<a href="#" class="link back">
 						<i class="icon icon-back"></i>
 						<span class="if-not-md">Back</span>
 					</a>
@@ -13,9 +12,8 @@
 				<div class="title">Shops</div>
 			</div>
 		</div>
-    <!-- Page content -->
 		<div class="page-content">
-			<div id="shop-list-result"></div>
+			<div id="shop-list"></div>
 		</div>
 	</div>
 </template>
@@ -28,35 +26,9 @@
     },
     on: {
       pageInit: function(e, page) {
-        const shopListResultDiv = document.getElementById('shop-list-result');
-
-        const getRealTimeUpdatesFirebase = () => {
-          db.collection('shops').onSnapshot((doc) => {
-            let result = '';
-            doc.docs.forEach((doc) => {
-              const data = doc.data();
-              result += `
-                <div class=" card-bg block block-strong inset display-flex flex-direction-row">
-                  <div>
-                    <p>Name: <span>${data.name}</span></p>
-          	        <p>Tel: <span>${data.telephone}</span></p>
-                    <p>Address: <span>${data.address}</span></p>
-                  </div>
-                  <div class="align-self-flex-start">
-					          <i class="icon f7-icons">
-                      <a href="/edit-shop/${doc.id}/" data-shop-id="${doc.id}" class="get-shop-details-data">pencil</a>
-                    </i>
-				          </div>
-                </div>
-                `;
-            });
-            
-            shopListResultDiv.innerHTML = result;
-          });
-        }
-        
-        getRealTimeUpdatesFirebase();
-    } // pageInit
+        const shopListDiv = document.getElementById('shop-list');
+        if(useDatabaseApi) getRealTimeUpdatesForShops(shopListDiv);
+    }
   }
 }
 </script>
