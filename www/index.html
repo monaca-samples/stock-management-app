@@ -17,7 +17,7 @@
 	<meta name="theme-color" content="#007aff">
 	<meta name="format-detection" content="telephone=no">
 	<meta name="msapplication-tap-highlight" content="no">
-	<title>Stock Management</title>
+	<title>Stock Management Sample App</title>
 
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -205,10 +205,10 @@
   // const Item = localStorage.getItem("key");
   // console.log(Item);
 
-  if(useDatabaseApi) getRealTimeUpdatesForProducts(productListHomeDiv, true);
+  if(useDatabaseApi) getRealTimeUpdatesForProducts(productListHomeDiv, "HOME");
   
   $$(document).on('page:reinit', function (e) {
-    if(useDatabaseApi) getRealTimeUpdatesForProducts(productListHomeDiv, false);
+    if(useDatabaseApi) getRealTimeUpdatesForProducts(productListHomeDiv, "HOME");
   });
 
 </script>

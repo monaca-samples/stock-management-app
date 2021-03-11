@@ -10,7 +10,7 @@ Framework7 app created with following options:
   "type": [
     "web"
   ],
-  "name": "framework7-core-tab-view",
+  "name": "Stock Management Sample App",
   "framework": "core",
   "template": "tabs",
   "bundler": false,

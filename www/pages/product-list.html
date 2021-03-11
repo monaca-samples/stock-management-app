@@ -27,10 +27,10 @@
     on: {
       pageInit: function(e, page) {
         const productListDiv = document.getElementById('product-list');
-        if(useDatabaseApi) getRealTimeUpdatesForProducts(productListDiv, false);
+        if(useDatabaseApi) getRealTimeUpdatesForProducts(productListDiv, "PRODUCT");
 
         $$(document).on('page:reinit', function (e) {
-          if(useDatabaseApi) getRealTimeUpdatesForProducts(productListDiv, false);
+          if(useDatabaseApi) getRealTimeUpdatesForProducts(productListDiv, "PRODUCT");
         });
     }
   }

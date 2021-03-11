@@ -28,7 +28,7 @@ if (initFirebase) {
 /* - - - - - - - - - - - - - - - - -
    Methods for the Firebase Database 
 - - - - - - - - - - - - - - - - - - */
-// Add new items to the database
+// Add new items to the Shop List
 function addNewShop(jsonObject) {
   db.collection('shops').add({
     'name': jsonObject.name,
@@ -38,6 +38,7 @@ function addNewShop(jsonObject) {
   });
 }
 
+// Add new items to the Product List
 function addNewProduct(jsonObject) {
   db.collection('products').add({
     code: jsonObject.code,
@@ -49,7 +50,7 @@ function addNewProduct(jsonObject) {
 }
 
 // Uploading picture
-function uploadImageToFirebaseStorage(elementName, fileName, img) {
+function uploadImageToFirebaseStorage(elementName, fileName, img, edit) {
   const storageRef = firebase.storage().ref('products/' + fileName);
   const uploadTask = storageRef.putString(img, 'base64');
 
@@ -59,10 +60,14 @@ function uploadImageToFirebaseStorage(elementName, fileName, img) {
       elementName.innerHTML = 'Upload is ' + Math.trunc(progress) + '% done';
 
       if (progress == 100) {
-        app.dialog.alert('Product added to the products list.', '');
-        app.methods.emptyNewProductForm();
-        document.getElementById("imageFile").src = "assets/pictures/camera.png";
-        elementName.innerHTML = "";
+        if (edit) {
+          app.dialog.alert('Saved product details.', '');
+        } else {
+          app.dialog.alert('Product added to the products list.', '');
+          app.methods.emptyNewProductForm();
+          document.getElementById("imageFile").src = "assets/pictures/camera.png";
+          elementName.innerHTML = "";
+        }
       }
 
       switch (snapshot.state) {
@@ -89,16 +94,19 @@ function uploadImageToFirebaseStorage(elementName, fileName, img) {
 }
 
 // To get the picture from the database 
-function getImage(data, homePage) {
+function getImage(data, pageName) {
   const storageRef = firebase.storage().ref();
   const filename = 'products/' + data.code + '.jpg';
   const ref = storageRef.child(filename);
 
   // Get the download URL
   ref.getDownloadURL().then(function (url) {
-    if (homePage)
+    if (pageName == "HOME")
       document.getElementById(`${data.code}`).src = url;
-    else document.getElementById(`${data.code}-img`).src = url;
+    else if (pageName == "EDIT")
+      document.getElementById('imageFile').src = url;
+    else if (pageName == "PRODUCT")
+      document.getElementById(`${data.code}-img`).src = url;
   }).catch(function (error) {
     switch (error.code) {
       case 'storage/object-not-found':
@@ -128,15 +136,15 @@ const oneFieldSearch = (elementName, stringName, fieldName) => {
           <div class="block display-flex justify-content-center">
             <img style="width:200px;height:150px" id="${data.code}-img" src="assets/pictures/camera.png" />
           </div>
-          <div class="display-flex justify-content-space-around">
+          <div class="display-flex justify-content-center">
             <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
-              <div id="search-minus" class="stepper-button-minus update-search-quantity-minus" data-search-quantity="${data.quantity}" data-search-product-id="${doc.id}"></div>
-              <div id="search-plus" class="stepper-button-plus update-search-quantity-plus" data-search-quantity="${data.quantity}" data-search-product-id="${doc.id}"></div>
+              <div id="minus" class="stepper-button-minus update-quantity-minus" data-quantity="${data.quantity}" data-product-id="${doc.id}"></div>
+              <div id="plus" class="stepper-button-plus update-quantity-plus" data-quantity="${data.quantity}" data-product-id="${doc.id}"></div>
             </div>
-          </div>
+          </div>   
         </div>`;
 
-      getImage(data);
+      getImage(data, "PRODUCT");
     });
     elementName.innerHTML = result;
   });
@@ -157,21 +165,40 @@ const twoFieldSearch = (elementName, stringName, fieldName, stringName2, fieldNa
           <div class="block display-flex justify-content-center">
             <img style="width:200px;height:150px" id="${data.code}-img" src="assets/pictures/camera.png" />
           </div>
-          <div class="display-flex justify-content-space-around">
+         <div class="display-flex justify-content-center">
             <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
-              <div id="search-minus" class="stepper-button-minus update-search-quantity-minus" data-search-quantity="${data.quantity}" data-search-product-id="${doc.id}"></div>
-              <div id="search-plus" class="stepper-button-plus update-search-quantity-plus" data-search-quantity="${data.quantity}" data-search-product-id="${doc.id}"></div>
+              <div id="minus" class="stepper-button-minus update-quantity-minus" data-quantity="${data.quantity}" data-product-id="${doc.id}"></div>
+              <div id="plus" class="stepper-button-plus update-quantity-plus" data-quantity="${data.quantity}" data-product-id="${doc.id}"></div>
             </div>
-          </div>
+          </div>   
         </div>`;
 
-      getImage(data);
+      getImage(data, "PRODUCT");
     });
     elementName.innerHTML = result;
   });
 }
 
-// Get real time updates with Firebase
+// Real time update with Firebase for the Search
+const getRealTimeUpdatesForSearch = (elementName) => {
+  const jsonObject = app.methods.dataToJson('#search-product-form');
+
+  if (jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop == "") {
+    oneFieldSearch(elementName, 'code', jsonObject.code);
+  } else if (jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop == "") {
+    oneFieldSearch(elementName, 'name', jsonObject.name);
+  } else if (jsonObject.code == "" && jsonObject.name == "" && jsonObject.shop != "") {
+    oneFieldSearch(elementName, 'shop', jsonObject.shop);
+  } else if (jsonObject.code != "" && jsonObject.name != "" && jsonObject.shop == "") {
+    twoFieldSearch(elementName, 'code', jsonObject.code, 'name', jsonObject.name);
+  } else if (jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop != "") {
+    twoFieldSearch(elementName, 'code', jsonObject.code, 'shop', jsonObject.shop);
+  } else if (jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop != "") {
+    twoFieldSearch(elementName, 'name', jsonObject.name, 'shop', jsonObject.shop);
+  }
+}
+
+// Real time update with Firebase for the Shops
 const getRealTimeUpdatesForShops = (elementName) => {
   db.collection('shops').onSnapshot((doc) => {
     let result = '';
@@ -196,7 +223,8 @@ const getRealTimeUpdatesForShops = (elementName) => {
   });
 }
 
-const getRealTimeUpdatesForProducts = (elementName, homePage) => {
+// Real time update with Firebase for the Products
+const getRealTimeUpdatesForProducts = (elementName, pageName) => {
   db.collection('products').onSnapshot((doc) => {
     let result = '';
     doc.docs.forEach((doc) => {
@@ -216,9 +244,9 @@ const getRealTimeUpdatesForProducts = (elementName, homePage) => {
           </div>
           <div class="block display-flex justify-content-center">
             <div>`;
-      if (homePage)
+      if (pageName == "HOME")
         result += `<img style="width:200px;height:150px" id="${data.code}" src="assets/pictures/camera.png">`
-      else
+      else if (pageName == "PRODUCT")
         result += `<img style="width:200px;height:150px" id="${data.code}-img" src="assets/pictures/camera.png">`
       result += `
             </div>
@@ -231,7 +259,7 @@ const getRealTimeUpdatesForProducts = (elementName, homePage) => {
           </div>   
         </div>`;
 
-      getImage(data, homePage);
+      getImage(data, pageName);
     });
     elementName.innerHTML = result;
   });

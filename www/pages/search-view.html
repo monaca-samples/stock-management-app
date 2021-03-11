@@ -126,97 +126,15 @@
         const productListPopUp = document.getElementById('popup-product-list')
         const shopListPopUp = document.getElementById('popup-shop-list');
         const productListDiv = document.getElementById('product-list');
-        let productId = null;
 
         popUpBarcodeList(barcodeListPopUp);
         popUpProductList(productListPopUp);
         popUpShopList(shopListPopUp);
-
-        // To get the picture from the database 
-        function getImage(data) {
-          const storageRef = firebase.storage().ref();
-          const filename = 'products/' + data.code + '.jpg';
-          const ref = storageRef.child(filename);
-
-          // Get the download URL
-          ref.getDownloadURL().then(function(url) {
-            document.getElementById(`${data.code}-img`).src = url;
-          }).catch(function(error) {
-            switch (error.code) {
-              case 'storage/object-not-found':
-                break;
-              case 'storage/unauthorized':
-                break;
-              case 'storage/canceled':
-                break;
-              case 'storage/unknown':
-                break;
-            }
-          });
-        };   
-
-        // Real time update with Firebase
-        const getRealTimeUpdatesFirebase = () => {
-          const jsonObject = app.methods.dataToJson('#search-product-form');
-
-          if (jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop == "") {
-            oneFieldSearch(productListDiv, 'code', jsonObject.code);
-          } else if (jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop == "") {
-            oneFieldSearch(productListDiv, 'name', jsonObject.name);
-          } else if (jsonObject.code == "" && jsonObject.name == "" && jsonObject.shop != "") {
-            oneFieldSearch(productListDiv, 'shop', jsonObject.shop);
-          } else if (jsonObject.code != "" && jsonObject.name != "" && jsonObject.shop == "") {
-            twoFieldSearch('code', jsonObject.code, 'name', jsonObject.name);
-          } else if (jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop != "") {
-            twoFieldSearch('code', jsonObject.code, 'shop', jsonObject.shop);
-          } else if (jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop != "") {
-            twoFieldSearch('name', jsonObject.name, 'shop', jsonObject.shop);
-          }
-        }
-
-        // Get query
-        $$(document).on('click', '.convert-product-form-to-data', function() {
-          if (app.methods.isSearchFormEmpty()) getRealTimeUpdatesFirebase();
-          else app.dialog.alert('Please fill out the form first.', '');
-        });
-
-        // Subtract quantity
-        $$(document).on('click', '.update-search-quantity-minus', function() {
-          productId = $$(this).data('search-product-id');
-          changeQuantity('update-search-quantity-minus', productId, $$(this).data('search-quantity'));
-        });
-
-        // Add quantity
-        $$(document).on('click', '.update-search-quantity-plus', function() {
-          productId = $$(this).data('search-product-id');
-          changeQuantity('update-search-quantity-plus', productId, $$(this).data('search-quantity'));
-        });
-
-        // Function to add/subtract quantity
-        const changeQuantity = (className, productId, productQuantity) => {
-          let newProductQuantity = 0;
-          const idValue = document.getElementsByClassName(className)[0].id;
-
-          if (idValue == "search-plus")
-            newProductQuantity = parseInt(productQuantity) + 1;
-          if (idValue == "search-minus")
-            if (parseInt(productQuantity) > 0)
-              newProductQuantity = parseInt(productQuantity) - 1;
-
-          db.collection('products').doc(productId).update({
-            quantity: newProductQuantity,
-          });
-          // Real time update on page
-          getRealTimeUpdatesFirebase();
-        }
-
-        // If the user changes view and comes back 
-        // to the Search page check the db for updates
-        $$(document).on('page:tabshow', function(e) {
-          getRealTimeUpdatesFirebase();
-        });
-      } // pageInit
+        addQuantity(productListDiv);
+        subtractQuantity(productListDiv);
+        getQuery(productListDiv);
+        onTabShow(productListDiv);
+      } 
     }
   }
-
 </script>

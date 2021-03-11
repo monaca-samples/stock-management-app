@@ -29,7 +29,7 @@ var app = new Framework7({
 
       return jsonObject;
     },
-    // Checks if the form (new shop) has any empty entry
+    // Checks if the New Shop form has any empty entry
     isNewShopFormEmpty: function () {
       if (document.getElementById('shop-name').value == "" ||
         document.getElementById('shop-telephone').value == "" ||
@@ -39,7 +39,7 @@ var app = new Framework7({
 
       return true;
     },
-    // Checks if the form (new product) has any empty entry
+    // Checks if the New Product form has any empty entry
     isProductFormEmpty: function () {
       if (document.getElementById('product-code').value == "" ||
         document.getElementById('product-name').value == "" ||
@@ -50,7 +50,7 @@ var app = new Framework7({
 
       return true;
     },
-    // Checks if the form (search) has any empty entry
+    // Checks if the Search form has any empty entry
     isSearchFormEmpty: function () {
       if (document.getElementById('product-code').value == "" &&
         document.getElementById('product-name').value == "" &&
@@ -94,131 +94,6 @@ document.addEventListener("deviceready", onDeviceReady, false);
 function onDeviceReady() {
   console.log("PhoneGap is ready");
 }
-
-// Get shop details data
-$$(document).on('click', '.get-shop-details-data', function () {
-  shopId = $$(this).data('shop-id');
-
-  db.collection('shops').where(firebase.firestore.FieldPath.documentId(), '==', shopId).get().then((snapshot) => {
-    snapshot.docs.forEach(doc => {
-      const data = doc.data();
-      document.getElementById('shop-name').value = data.name;
-      document.getElementById('shop-telephone').value = data.telephone;
-      document.getElementById('shop-address').value = data.address;
-      document.getElementById('shop-location').value = data.location;
-    });
-  });
-});
-
-// Save the edited shop data
-$$(document).on('click', '.edited-shop-data', function () {
-  if (app.methods.isNewShopFormEmpty()) {
-
-    db.collection('shops').doc(shopId).update({
-      name: document.getElementById('shop-name').value,
-      telephone: document.getElementById('shop-telephone').value,
-      address: document.getElementById('shop-address').value,
-      location: document.getElementById('shop-location').value
-    });
-
-    app.dialog.alert('Saved shop details.', '');
-  } else app.dialog.alert('Please fill out the form first.', '');
-});
-
-// Get product details data
-$$(document).on('click', '.get-product-details-data', function () {
-  productId = $$(this).data('product-id');
-
-  // To get the picture from the database 
-  function getImage(data) {
-    const storageRef = firebase.storage().ref();
-    const filename = 'products/' + data.code + '.jpg';
-    const ref = storageRef.child(filename);
-
-    // Get the download URL
-    ref.getDownloadURL().then(function (url) {
-      document.getElementById('imageFile').src = url;
-    }).catch(function (error) {
-      switch (error.code) {
-        case 'storage/object-not-found':
-          break;
-        case 'storage/unauthorized':
-          break;
-        case 'storage/canceled':
-          break;
-        case 'storage/unknown':
-          break;
-      }
-    });
-  };
-
-  db.collection('products').where(firebase.firestore.FieldPath.documentId(), '==', productId).get().then((snapshot) => {
-    snapshot.docs.forEach(doc => {
-      const data = doc.data();
-      document.getElementById('product-code').value = data.code;
-      document.getElementById('product-name').value = data.name;
-      document.getElementById('product-price').value = data.price;
-      document.getElementById('product-quantity').value = data.quantity;
-      document.getElementById('product-shop').value = data.shop;
-
-      getImage(data);
-    });
-  });
-});
-
-// Save the edited product data
-$$(document).on('click', '.edited-product-data', function () {
-  // Uploading picture
-  function uploadImageToFirebaseStorage(filename, img) {
-    const storageRef = firebase.storage().ref('products/' + filename);
-    const uploadTask = storageRef.putString(img, 'base64');
-
-    uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
-      function (snapshot) {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        document.getElementById('uploading-picture').innerHTML = 'Upload is ' + Math.trunc(progress) + '% done';
-
-        if (progress == 100)
-          app.dialog.alert('Saved product details.', '');
-
-        switch (snapshot.state) {
-          case firebase.storage.TaskState.PAUSED:
-            console.log('Upload is paused');
-            break;
-          case firebase.storage.TaskState.RUNNING:
-            console.log('Upload is running');
-            break;
-        }
-      },
-      function (error) {
-        switch (error.code) {
-          case 'storage/unauthorized':
-            break;
-          case 'storage/canceled':
-            break;
-          case 'storage/unknown':
-            break;
-          case 'storage/invalid-format':
-            break;
-        }
-      });
-  }
-
-  if (app.methods.isProductFormEmpty()) {
-    const jsonObject = app.methods.dataToJson('#edit-product-form');
-    const img = document.getElementById("imageFile").src.substring("data:image/jpeg;base64,".length);
-    uploadImageToFirebaseStorage(jsonObject.code + '.jpg', img);;
-
-    db.collection('products').doc(productId).update({
-      code: document.getElementById('product-code').value,
-      name: document.getElementById('product-name').value,
-      price: document.getElementById('product-price').value,
-      quantity: document.getElementById('product-quantity').value,
-      shop: document.getElementById('product-shop').value
-    });
-
-  } else app.dialog.alert('Please fill out the form first.', '');
-});
 
 /* - - - - - - - - - - - - - - - -
    Methods for the barcode plugin
@@ -294,11 +169,12 @@ function displayImage(img) {
 // Pop up to list all the added barcodes
 function popUpBarcodeList(elementName) {
   $$(document).on('click', '.popup-code-list', function () {
-    db.collection('products').get().then((snapshot) => {
-      let result = '';
-      snapshot.docs.forEach(doc => {
-        const data = doc.data();
-        result += `
+    if (useDatabaseApi) {
+      db.collection('products').get().then((snapshot) => {
+        let result = '';
+        snapshot.docs.forEach(doc => {
+          const data = doc.data();
+          result += `
           <li>
             <a href="#" class="item-content item-link popup-close">
               <div class="item-inner">
@@ -306,21 +182,23 @@ function popUpBarcodeList(elementName) {
               </div>
             </a>
           </li>`;
-      });
+        });
 
-      elementName.innerHTML = result;
-    });
+        elementName.innerHTML = result;
+      });
+    }
   });
 }
 
 // Pop up to list all the products
 function popUpProductList(elementName) {
   $$(document).on('click', '.popup-product-list', function () {
-    db.collection('products').get().then((snapshot) => {
-      let result = '';
-      snapshot.docs.forEach(doc => {
-        const data = doc.data();
-        result += `
+    if (useDatabaseApi) {
+      db.collection('products').get().then((snapshot) => {
+        let result = '';
+        snapshot.docs.forEach(doc => {
+          const data = doc.data();
+          result += `
           <li>
             <a href="#" class="item-content item-link popup-close">
               <div class="item-inner">
@@ -328,21 +206,23 @@ function popUpProductList(elementName) {
               </div>
             </a>
           </li>`;
-      });
+        });
 
-      elementName.innerHTML = result;
-    });
+        elementName.innerHTML = result;
+      });
+    }
   });
 }
 
 // Pop up to list all the shops
 function popUpShopList(elementName) {
   $$(document).on('click', '.popup-shop-list', function () {
-    db.collection('shops').get().then((snapshot) => {
-      let result = '';
-      snapshot.docs.forEach(doc => {
-        const data = doc.data();
-        result += `
+    if (useDatabaseApi) {
+      db.collection('shops').get().then((snapshot) => {
+        let result = '';
+        snapshot.docs.forEach(doc => {
+          const data = doc.data();
+          result += `
         <li>
           <a href="#" class="item-content item-link popup-close">
             <div class="item-inner">
@@ -350,10 +230,11 @@ function popUpShopList(elementName) {
             </div>
           </a>
         </li>`;
-      });
+        });
 
-      elementName.innerHTML = result;
-    });
+        elementName.innerHTML = result;
+      });
+    }
   });
 }
 
@@ -403,11 +284,12 @@ function getNewProductDataFromForm(elementName) {
   });
 }
 
-// Check if the user added a picture or not
+// Check if the user added a picture or not to the New Product form
 function checkPicture(elementName, jsonObject) {
   try {
     const img = document.getElementById("imageFile").src.substring("data:image/jpeg;base64,".length);
-    uploadImageToFirebaseStorage(elementName, jsonObject.code + '.jpg', img);
+    if (useDatabaseApi) 
+      uploadImageToFirebaseStorage(elementName, jsonObject.code + '.jpg', img);
     return true;
   } catch {
     app.dialog.alert('Please upload a picture!', '');
@@ -415,27 +297,152 @@ function checkPicture(elementName, jsonObject) {
   }
 }
 
+// Get shop details data
+$$(document).on('click', '.get-shop-details-data', function () {
+  shopId = $$(this).data('shop-id');
+
+  if (useDatabaseApi) {
+    db.collection('shops').where(firebase.firestore.FieldPath.documentId(), '==', shopId).get().then((snapshot) => {
+      snapshot.docs.forEach(doc => {
+        const data = doc.data();
+        document.getElementById('shop-name').value = data.name;
+        document.getElementById('shop-telephone').value = data.telephone;
+        document.getElementById('shop-address').value = data.address;
+        document.getElementById('shop-location').value = data.location;
+      });
+    });
+  }
+});
+
+// Save the edited shop data
+$$(document).on('click', '.edited-shop-data', function () {
+  if (app.methods.isNewShopFormEmpty()) {
+
+    if (useDatabaseApi) {
+      db.collection('shops').doc(shopId).update({
+        name: document.getElementById('shop-name').value,
+        telephone: document.getElementById('shop-telephone').value,
+        address: document.getElementById('shop-address').value,
+        location: document.getElementById('shop-location').value
+      });
+    }
+
+    app.dialog.alert('Saved shop details.', '');
+  } else app.dialog.alert('Please fill out the form first.', '');
+});
+
+// Get product details data
+$$(document).on('click', '.get-product-details-data', function () {
+  productId = $$(this).data('product-id');
+
+  if (useDatabaseApi) {
+    db.collection('products').where(firebase.firestore.FieldPath.documentId(), '==', productId).get().then((snapshot) => {
+      snapshot.docs.forEach(doc => {
+        const data = doc.data();
+        document.getElementById('product-code').value = data.code;
+        document.getElementById('product-name').value = data.name;
+        document.getElementById('product-price').value = data.price;
+        document.getElementById('product-quantity').value = data.quantity;
+        document.getElementById('product-shop').value = data.shop;
+
+        getImage(data, "EDIT");
+      });
+    });
+  }
+});
+
+// Save the edited product data
+function saveEditedProductData(elementName) {
+  $$(document).on('click', '.edited-product-data', function () {
+    if (app.methods.isProductFormEmpty()) {
+      const jsonObject = app.methods.dataToJson('#edit-product-form');
+      const img = document.getElementById("imageFile").src.substring("data:image/jpeg;base64,".length);
+
+      if (useDatabaseApi) {
+        uploadImageToFirebaseStorage(elementName, jsonObject.code + '.jpg', img, true);
+
+        db.collection('products').doc(productId).update({
+          code: document.getElementById('product-code').value,
+          name: document.getElementById('product-name').value,
+          price: document.getElementById('product-price').value,
+          quantity: document.getElementById('product-quantity').value,
+          shop: document.getElementById('product-shop').value
+        });
+      }
+    } else app.dialog.alert('Please fill out the form first.', '');
+  });
+}
+
 /* - - - - - - - - - - -
    Methods for the maps
 - - - - - - - - - - - -  */
+// onSuccess callback accepts a Position object, which contains the current coordinates
+let onSuccess = function (map, p) {
+  L.marker([p.coords.latitude, p.coords.longitude]).addTo(map)
+    .bindPopup('Your current location.')
+    .openPopup();
 
+  map.setView([p.coords.latitude, p.coords.longitude], 14);
+};
+
+// onError callback receives a PositionError object
+function onError(error) {
+  app.dialog.alert('code: ' + error.code + '\n' + 'message: ' + error.message + '\n');
+}
+
+// Gives back the current location & adds a marker
+function currentLocation(map) {
+  navigator.geolocation.getCurrentPosition(function (position) {
+    onSuccess(map, position)
+  }, onError);
+}
+
+// Move on the map and add marker to a chosen position
+function moveOnTheMap(map, chosenPositionMarker) {
+  map.on('click', function (e) {
+    lat = e.latlng.lat;
+    lon = e.latlng.lng;
+
+    var redIcon = new L.Icon({
+      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41]
+    });
+
+    if (chosenPositionMarker != undefined)
+      map.removeLayer(chosenPositionMarker);
+
+    chosenPositionMarker = L.marker([lat, lon], { icon: redIcon }).addTo(map)
+      .bindPopup('Your chosen position.')
+      .openPopup();
+
+    map.setView([lat, lon], 14);
+  });
+}
 /* - - - - - - - - - - - - - - - - -
    Methods for the product quantity
 - - - - - - - - - - - - - - - - - - */
 // Subtract quantity
-$$(document).on('click', '.update-quantity-minus', function () {
-  productId = $$(this).data('product-id');
-  changeQuantity('update-quantity-minus', productId, $$(this).data('quantity'));
-});
+function subtractQuantity(elementName) {
+  $$(document).on('click', '.update-quantity-minus', function () {
+    productId = $$(this).data('product-id');
+    changeQuantity(elementName, 'update-quantity-minus', productId, $$(this).data('quantity'));
+  });
+}
 
 // Add quantity
-$$(document).on('click', '.update-quantity-plus', function () {
-  productId = $$(this).data('product-id');
-  changeQuantity('update-quantity-plus', productId, $$(this).data('quantity'));
-});
+function addQuantity(elementName) {
+  $$(document).on('click', '.update-quantity-plus', function () {
+    productId = $$(this).data('product-id');
+    changeQuantity(elementName, 'update-quantity-plus', productId, $$(this).data('quantity'));
+  });
+}
 
 // Function to add/subtract quantity
-const changeQuantity = (className, productId, productQuantity) => {
+const changeQuantity = (elementName, className, productId, productQuantity) => {
   let newProductQuantity = 0;
   const idValue = document.getElementsByClassName(className)[0].id;
 
@@ -446,7 +453,30 @@ const changeQuantity = (className, productId, productQuantity) => {
       newProductQuantity = parseInt(productQuantity) - 1;
 
   // Update Firebase 
-  db.collection('products').doc(productId).update({
-    quantity: newProductQuantity,
+  if (useDatabaseApi) {
+    db.collection('products').doc(productId).update({
+      quantity: newProductQuantity,
+    });
+    getRealTimeUpdatesForSearch(elementName);
+  }
+}
+
+/* - - - - - - - - - - - - - - -
+   Methods for the Search pages
+- - - - - - - - - - - - - - - - */
+// Get query
+function getQuery(elementName) {
+  $$(document).on('click', '.convert-product-form-to-data', function () {
+    if (app.methods.isSearchFormEmpty())
+      if (useDatabaseApi) getRealTimeUpdatesForSearch(elementName);
+      else app.dialog.alert('Please fill out the form first.', '');
+  });
+}
+
+// If the user changes view and comes back 
+// to the Search tab check the db for updates
+function onTabShow(elementName) {
+  $$(document).on('page:tabshow', function (e) {
+    if (useDatabaseApi) getRealTimeUpdatesForSearch(elementName);
   });
 }
