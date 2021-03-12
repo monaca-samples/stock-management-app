@@ -1,58 +1,32 @@
-# framework7-core-tab-view
+# Stock Management Sample Application
 
-## Framework7 CLI Options
+## UI
 
-Framework7 app created with following options:
-
-```
-{
-  "cwd": "/Users/asial/Documents/framework7-core-tab-view",
-  "type": [
-    "web"
-  ],
-  "name": "Stock Management Sample App",
-  "framework": "core",
-  "template": "tabs",
-  "bundler": false,
-  "theming": {
-    "customColor": false,
-    "color": "#007aff",
-    "darkTheme": false,
-    "iconFonts": true,
-    "fillBars": false
-  },
-  "customBuild": false
-}
-```
-
-## NPM Scripts
-
-* 🔥 `start` - run development server
-* 🔧 `serve` - run development server
-## Assets
-
-Assets (icons, splash screens) source images located in `assets-src` folder. To generate your own icons and splash screen images, you will need to replace all assets in this directory with your own images (pay attention to image size and format), and run the following command in the project directory:
-
-```
-framework7 assets
-```
-
-Or launch UI where you will be able to change icons and splash screens:
-
-```
-framework7 assets --ui
-```
-
-## Documentation & Resources
+Created with Framework 7.
 
 * [Framework7 Core Documentation](https://framework7.io/docs/)
-
-
-
 * [Framework7 Icons Reference](https://framework7.io/icons/)
 * [Community Forum](https://forum.framework7.io)
 
-## Support Framework7
+## Database
 
-Love Framework7? Support project by donating or pledging on patreon:
-https://patreon.com/vladimirkharlampidi
+You have to configure and initialize Firebase to use it, otherwise data is saved within localStorage.
+
+- [Firebase Cloud Firestore](https://firebase.google.com/docs/firestore/quickstart)
+- [Firebase Storage](https://firebase.google.com/docs/storage/web/start) If you get a 403 error, please check the Firebase Storage Rules.
+
+## Barcode
+
+- [PhoneGap BarcodeScanner Plugin](https://docs.monaca.io/en/reference/third_party_phonegap/phonegap_plugin_barcodescanner)
+
+## Camera
+
+- [Cordova Camera Plugin](https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-camera/)
+
+## Geolocation
+
+- [Cordova Geolocation Plugin](https://cordova.apache.org/docs/en/10.x/reference/cordova-plugin-geolocation/)
+
+## Map
+
+- [Leaflet JS](https://leafletjs.com/)
