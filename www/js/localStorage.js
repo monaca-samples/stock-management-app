@@ -55,19 +55,28 @@ function getImageDataURL(img) {
 
 // To get the picture from the database 
 function getImageFromLocalStorage(jsonObject, pageName) {
-  let imageData = localStorage.getItem(jsonObject.code + '.jpg');
+  const DEFAULT = 'assets/pictures/camera.png';
+  try {
+    const imageData = localStorage.getItem(jsonObject.code + '.jpg');
+    if (pageName == "EDIT") {
+      document.getElementById('imageFile').src = imageData;
+    }
+    return imageData || DEFAULT;
+  } catch (e) {
+    return DEFAULT; // default picture if any error occured
+  }
   // Picture URL
   // console.log(imageData); 
 
   // Getting error for this
   // if (pageName == "HOME") {
-  //   document.getElementById(`${jsonObject.code}`).src = "data:image/jpg;base64," + imageData;
+  //   document.getElementById(`${jsonObject.code}`).src = imageData;
   // }
   // else if (pageName == "EDIT") {
-  //   document.getElementById('imageFile').src = "data:image/jpg;base64," + imageData;
+  //   document.getElementById('imageFile').src = imageData;
   // }
   // else if (pageName == "PRODUCT") {
-  //   document.getElementById(`${jsonObject.code}_img`).src = "data:image/jpg;base64," + imageData;
+  //   document.getElementById(`${jsonObject.code}_img`).src = imageData;
   // }
 }
 
@@ -77,6 +86,7 @@ const oneFieldSearchLocalStorage = (elementName, stringName, objectName) => {
   for (let i = 0; i < localStorage.length; i++) {
     if (localStorage.getItem('Product' + i)) {
       const jsonObject = JSON.parse(localStorage.getItem('Product' + i));
+      const imageSource = getImageFromLocalStorage(jsonObject, "PRODUCT");
       if (stringName == jsonObject[objectName]) {
         result += `
         <div class="card-bg block block-strong inset">
@@ -85,7 +95,7 @@ const oneFieldSearchLocalStorage = (elementName, stringName, objectName) => {
           <p>Price: <span>${jsonObject.price}</span></p>
           <p>Quantity: <span id="search-quantity">${jsonObject.quantity}</span></p>
           <div class="block display-flex justify-content-center">
-            <img style="width:200px;height:150px" id="${jsonObject.code}_img" src="assets/pictures/camera.png" />
+            <img style="width:200px;height:150px" id="${jsonObject.code}_img" src="${imageSource}" />
           </div>
           <div class="display-flex justify-content-center">
             <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
@@ -94,8 +104,6 @@ const oneFieldSearchLocalStorage = (elementName, stringName, objectName) => {
             </div>
           </div>   
         </div>`;
-
-        getImageFromLocalStorage(jsonObject, "PRODUCT"); // NOT WORKING YET
       }
     }
   }
@@ -108,6 +116,7 @@ const twoFieldSearchLocalStorage = (elementName, stringName, objectName, stringN
   for (let i = 0; i < localStorage.length; i++) {
     if (localStorage.getItem('Product' + i)) {
       const jsonObject = JSON.parse(localStorage.getItem('Product' + i));
+      const imageSource = getImageFromLocalStorage(jsonObject, "PRODUCT");
       if (stringName == jsonObject[objectName] && stringName2 == jsonObject[objectName2]) {
         result += `
         <div class="card-bg block block-strong inset">
@@ -116,7 +125,7 @@ const twoFieldSearchLocalStorage = (elementName, stringName, objectName, stringN
           <p>Price: <span>${jsonObject.price}</span></p>
           <p>Quantity: <span id="search-quantity">${jsonObject.quantity}</span></p>
           <div class="block display-flex justify-content-center">
-            <img style="width:200px;height:150px" id="${jsonObject.code}_img" src="assets/pictures/camera.png" />
+            <img style="width:200px;height:150px" id="${jsonObject.code}_img" src="${imageSource}" />
           </div>
          <div class="display-flex justify-content-center">
             <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
@@ -125,8 +134,6 @@ const twoFieldSearchLocalStorage = (elementName, stringName, objectName, stringN
             </div>
           </div>   
         </div>`;
-
-        getImageFromLocalStorage(jsonObject, "PRODUCT"); // NOT WORKING YET
       }
     }
   }
@@ -185,6 +192,7 @@ const getProductsFromLocalStorage = (elementName, pageName) => {
   for (let i = 0; i < localStorage.length; i++) {
     if (localStorage.getItem('Product' + i)) {
       const jsonObject = JSON.parse(localStorage.getItem('Product' + i));
+      const imageSource = getImageFromLocalStorage(jsonObject, pageName);
       result += `
       <div class="card-bg block block-strong inset">
         <div class="display-flex justify-content-space-between">
@@ -201,9 +209,9 @@ const getProductsFromLocalStorage = (elementName, pageName) => {
           <div class="block display-flex justify-content-center">
             <div>`;
       if (pageName == "HOME")
-        result += `<img style="width:200px;height:150px" id="${jsonObject.code}" src="assets/pictures/camera.png">`
+        result += `<img style="width:200px;height:150px" id="${jsonObject.code}" src="${imageSource}">`
       else if (pageName == "PRODUCT")
-        result += `<img style="width:200px;height:150px" id="${jsonObject.code}_img" src="assets/pictures/camera.png">`
+        result += `<img style="width:200px;height:150px" id="${jsonObject.code}_img" src="${imageSource}">`
       result += `
             </div>
           </div>
@@ -214,8 +222,6 @@ const getProductsFromLocalStorage = (elementName, pageName) => {
             </div>
           </div>   
         </div>`;
-
-      getImageFromLocalStorage(jsonObject, pageName); // NOT WORKING YET
     }
   }
 
