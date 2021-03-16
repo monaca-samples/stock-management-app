@@ -193,7 +193,8 @@
 		<script src="js/routes.js"></script>
 		<!-- App scripts -->
 		<script src="js/app.js"></script>
-		<script src="js/config.js"></script>
+		<script src="js/database.js"></script>
+    <script src="js/localStorage.js"></script>
 </body>
 </html>
 
@@ -201,14 +202,12 @@
 	let productId = null;
 	const productListHomeDiv = document.getElementById('product-list-result');
 
-  // localStorage.setItem("key","value");
-  // const Item = localStorage.getItem("key");
-  // console.log(Item);
-
   if(useDatabaseApi) getRealTimeUpdatesForProducts(productListHomeDiv, "HOME");
+  else getProductsFromLocalStorage(productListHomeDiv, "HOME");
   
   $$(document).on('page:reinit', function (e) {
     if(useDatabaseApi) getRealTimeUpdatesForProducts(productListHomeDiv, "HOME");
+    else getProductsFromLocalStorage(productListHomeDiv, "HOME");
   });
 
 </script>

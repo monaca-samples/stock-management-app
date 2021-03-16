@@ -65,7 +65,7 @@
 						</div>
 					</div>
 					<div class="list">
-						<ul id="popup-codes"></ul>
+						<ul id="popup-barcode-list"></ul>
 					</div>
 				</div>
 				<!-- Pop up product list -->
@@ -83,7 +83,7 @@
 						</div>
 					</div>
 					<div class="list">
-						<ul id="popup-products"></ul>
+						<ul id="popup-product-list"></ul>
 					</div>
 				</div>
 				<!-- Pop up shop list -->
@@ -128,7 +128,6 @@
     },
     on: {
       pageInit: function(e, page) {
-        let productId = null;
         const barcodeListPopUp = document.getElementById('popup-barcode-list')
         const productListPopUp = document.getElementById('popup-product-list')
         const shopListPopUp = document.getElementById('popup-shop-list');

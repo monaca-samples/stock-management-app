@@ -186,6 +186,23 @@ function popUpBarcodeList(elementName) {
 
         elementName.innerHTML = result;
       });
+    } else {
+      let result = '';
+      for (let i = 0; i < localStorage.length; i++) {
+        if (localStorage.getItem('Product' + i)) {
+          const jsonObject = JSON.parse(localStorage.getItem('Product' + i));
+          result += `
+          <li>
+            <a href="#" class="item-content item-link popup-close">
+              <div class="item-inner">
+                <div data-product-code="${jsonObject.code}" class="get-product-code item-title">${jsonObject.code}</div>
+              </div>
+            </a>
+          </li>`;
+        }
+      }
+
+      elementName.innerHTML = result;
     }
   });
 }
@@ -210,6 +227,23 @@ function popUpProductList(elementName) {
 
         elementName.innerHTML = result;
       });
+    } else {
+      let result = '';
+      for (let i = 0; i < localStorage.length; i++) {
+        if (localStorage.getItem('Product' + i)) {
+          const jsonObject = JSON.parse(localStorage.getItem('Product' + i));
+          result += `
+          <li>
+            <a href="#" class="item-content item-link popup-close">
+              <div class="item-inner">
+                <div data-product-name="${jsonObject.name}" class="get-product-name item-title">${jsonObject.name}</div>
+              </div>
+            </a>
+          </li>`;
+        }
+      }
+
+      elementName.innerHTML = result;
     }
   });
 }
@@ -223,17 +257,34 @@ function popUpShopList(elementName) {
         snapshot.docs.forEach(doc => {
           const data = doc.data();
           result += `
-        <li>
-          <a href="#" class="item-content item-link popup-close">
-            <div class="item-inner">
-              <div data-shop-id="${doc.id}" data-shop-name="${data.name}" class="get-shop-name item-title">${data.name}</div>
-            </div>
-          </a>
-        </li>`;
+            <li>
+              <a href="#" class="item-content item-link popup-close">
+                <div class="item-inner">
+                  <div data-shop-id="${doc.id}" data-shop-name="${data.name}" class="get-shop-name item-title">${data.name}</div>
+                </div>
+              </a>
+            </li>`;
         });
 
         elementName.innerHTML = result;
       });
+    } else {
+      let result = '';
+      for (let i = 0; i < localStorage.length; i++) {
+        if (localStorage.getItem('Shop' + i)) {
+          const jsonObject = JSON.parse(localStorage.getItem('Shop' + i));
+          result += `
+          <li>
+            <a href="#" class="item-content item-link popup-close">
+              <div class="item-inner">
+                <div data-shop-id="${'Shop' + i}" data-shop-name="${jsonObject.name}" class="get-shop-name item-title">${jsonObject.name}</div>
+              </div>
+            </a>
+          </li>`;
+        }
+      }
+
+      elementName.innerHTML = result;
     }
   });
 }
@@ -263,14 +314,16 @@ $$(document).on('click', '.get-shop-name', function () {
 /* - - - - - - - - - - - - - - 
    Get data from the forms
 - - - - - - - - - - - - - - - */
+let i = 0;
 // Get new shop data 
 $$(document).on('click', '.convert-form-to-data', function () {
   if (app.methods.isNewShopFormEmpty()) {
     const jsonObject = app.methods.dataToJson('#new-shop-form');
     if (useDatabaseApi) addNewShop(jsonObject); // Add new shop to the database
+    else addNewShopToLocalStorage(jsonObject);
     app.methods.emptyNewShopForm();
     app.dialog.alert('Shop added to the shop list.', '');
-  } else app.dialog.alert('Please fill out the form first1', '');
+  } else app.dialog.alert('Please fill out the form first.', '');
 });
 
 // Get new product data 
@@ -278,8 +331,10 @@ function getNewProductDataFromForm(elementName) {
   $$(document).on('click', '.convert-new-product-form-to-data', function () {
     if (app.methods.isProductFormEmpty()) {
       const jsonObject = app.methods.dataToJson('#new-product-form');
-      if (checkPicture(elementName, jsonObject))
+      if (checkPicture(elementName, jsonObject)) {
         if (useDatabaseApi) addNewProduct(jsonObject); // Create/add new product to the database
+        else addNewProductToLocalStorage(jsonObject);
+      }
     } else app.dialog.alert('Please fill out the form first.', '');
   });
 }
@@ -287,9 +342,14 @@ function getNewProductDataFromForm(elementName) {
 // Check if the user added a picture or not to the New Product form
 function checkPicture(elementName, jsonObject) {
   try {
-    const img = document.getElementById("imageFile").src.substring("data:image/jpeg;base64,".length);
-    if (useDatabaseApi) 
+    if (useDatabaseApi) {
+      const img = document.getElementById("imageFile").src.substring("data:image/jpeg;base64,".length);
       uploadImageToFirebaseStorage(elementName, jsonObject.code + '.jpg', img);
+    }
+    else {
+      const img = document.getElementById("imageFile");
+      uploadImageToLocalStorage(jsonObject.code + '.jpg', img); // NOT WORKING YET
+    }
     return true;
   } catch {
     app.dialog.alert('Please upload a picture!', '');
@@ -311,13 +371,31 @@ $$(document).on('click', '.get-shop-details-data', function () {
         document.getElementById('shop-location').value = data.location;
       });
     });
+  } else {
+    for (let i = 0; i < localStorage.length; i++) {
+      if ('Shop' + i == shopId) {
+        const jsonObject = JSON.parse(localStorage.getItem('Shop' + i));
+        $$(document).on('page:init', '.page[data-name="edit-shop"]', function () {
+          shopDataForLocalStorage(jsonObject);
+        });
+        $$(document).on('page:afterin', '.page[data-name="edit-shop"]', function () {
+          shopDataForLocalStorage(jsonObject);
+        });
+      }
+    }
   }
 });
+
+function shopDataForLocalStorage(jsonObject) {
+  document.getElementById('shop-name').value = jsonObject.name;
+  document.getElementById('shop-telephone').value = jsonObject.telephone;
+  document.getElementById('shop-address').value = jsonObject.address;
+  document.getElementById('shop-location').value = jsonObject.location;
+}
 
 // Save the edited shop data
 $$(document).on('click', '.edited-shop-data', function () {
   if (app.methods.isNewShopFormEmpty()) {
-
     if (useDatabaseApi) {
       db.collection('shops').doc(shopId).update({
         name: document.getElementById('shop-name').value,
@@ -325,6 +403,19 @@ $$(document).on('click', '.edited-shop-data', function () {
         address: document.getElementById('shop-address').value,
         location: document.getElementById('shop-location').value
       });
+    } else {
+      for (let i = 0; i < localStorage.length; i++) {
+        if ('Shop' + i == shopId) {
+          let editedShop = {
+            'name': document.getElementById('shop-name').value,
+            'telephone': document.getElementById('shop-telephone').value,
+            'address': document.getElementById('shop-address').value,
+            'location': document.getElementById('shop-location').value,
+          }
+
+          localStorage.setItem(shopId, JSON.stringify(editedShop));
+        }
+      }
     }
 
     app.dialog.alert('Saved shop details.', '');
@@ -348,8 +439,30 @@ $$(document).on('click', '.get-product-details-data', function () {
         getImage(data, "EDIT");
       });
     });
+  } else {
+    for (let i = 0; i < localStorage.length; i++) {
+      if ('Product' + i == productId) {
+        const jsonObject = JSON.parse(localStorage.getItem('Product' + i));
+        $$(document).on('page:init', '.page[data-name="edit-product"]', function () {
+          productDataForLocalStorage(jsonObject);
+        });
+        $$(document).on('page:afterin', '.page[data-name="edit-product"]', function () {
+          productDataForLocalStorage(jsonObject);
+        });
+
+        getImageFromLocalStorage(jsonObject, "EDIT"); // NOT WORKING YET
+      }
+    }
   }
 });
+
+function productDataForLocalStorage(jsonObject) {
+  document.getElementById('product-code').value = jsonObject.code;
+  document.getElementById('product-name').value = jsonObject.name;
+  document.getElementById('product-price').value = jsonObject.price;
+  document.getElementById('product-quantity').value = jsonObject.quantity;
+  document.getElementById('product-shop').value = jsonObject.shop;
+}
 
 // Save the edited product data
 function saveEditedProductData(elementName) {
@@ -368,6 +481,23 @@ function saveEditedProductData(elementName) {
           quantity: document.getElementById('product-quantity').value,
           shop: document.getElementById('product-shop').value
         });
+      } else {
+        // NOT WORKING YET
+        uploadImageToLocalStorage(jsonObject.code + '.jpg', img, true);
+
+        for (let i = 0; i < localStorage.length; i++) {
+          if ('Product' + i == productId) {
+            let editedProduct = {
+              'code': document.getElementById('product-code').value,
+              'name': document.getElementById('product-name').value,
+              'price': document.getElementById('product-price').value,
+              'quantity': document.getElementById('product-quantity').value,
+              'shop': document.getElementById('product-shop').value
+            }
+
+            localStorage.setItem(productId, JSON.stringify(editedProduct));
+          }
+        }
       }
     } else app.dialog.alert('Please fill out the form first.', '');
   });
@@ -422,6 +552,7 @@ function moveOnTheMap(map, chosenPositionMarker) {
     map.setView([lat, lon], 14);
   });
 }
+
 /* - - - - - - - - - - - - - - - - -
    Methods for the product quantity
 - - - - - - - - - - - - - - - - - - */
@@ -430,6 +561,7 @@ function subtractQuantity(elementName) {
   $$(document).on('click', '.update-quantity-minus', function () {
     productId = $$(this).data('product-id');
     changeQuantity(elementName, 'update-quantity-minus', productId, $$(this).data('quantity'));
+    location.reload(true);
   });
 }
 
@@ -438,6 +570,7 @@ function addQuantity(elementName) {
   $$(document).on('click', '.update-quantity-plus', function () {
     productId = $$(this).data('product-id');
     changeQuantity(elementName, 'update-quantity-plus', productId, $$(this).data('quantity'));
+    location.reload(true);
   });
 }
 
@@ -458,6 +591,22 @@ const changeQuantity = (elementName, className, productId, productQuantity) => {
       quantity: newProductQuantity,
     });
     getRealTimeUpdatesForSearch(elementName);
+  } else {
+    for (let i = 0; i < localStorage.length; i++) {
+      if ('Product' + i == productId) {
+        const jsonObject = JSON.parse(localStorage.getItem('Product' + i));
+        let changedProduct = {
+          'code': jsonObject.code,
+          'name': jsonObject.name,
+          'price': jsonObject.price,
+          'quantity': newProductQuantity,
+          'shop': jsonObject.shop
+        }
+
+        localStorage.setItem(productId, JSON.stringify(changedProduct));
+        
+      }
+    }
   }
 }
 
@@ -467,16 +616,10 @@ const changeQuantity = (elementName, className, productId, productQuantity) => {
 // Get query
 function getQuery(elementName) {
   $$(document).on('click', '.convert-product-form-to-data', function () {
-    if (app.methods.isSearchFormEmpty())
+    if (app.methods.isSearchFormEmpty()) {
       if (useDatabaseApi) getRealTimeUpdatesForSearch(elementName);
-      else app.dialog.alert('Please fill out the form first.', '');
-  });
-}
-
-// If the user changes view and comes back 
-// to the Search tab check the db for updates
-function onTabShow(elementName) {
-  $$(document).on('page:tabshow', function (e) {
-    if (useDatabaseApi) getRealTimeUpdatesForSearch(elementName);
+      else localStorageUpdateForSearch(elementName);
+    }
+    else app.dialog.alert('Please fill out the form first.', '');
   });
 }

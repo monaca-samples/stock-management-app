@@ -22,6 +22,12 @@
       pageInit: function(e, page) {
         const shopListViewDiv = document.getElementById('shop-list-view');
         if(useDatabaseApi) getRealTimeUpdatesForShops(shopListViewDiv);
+        else getShopsFromLocalStorage(shopListViewDiv);
+
+        $$(document).on('page:reinit', function (e) {
+          if(useDatabaseApi) getRealTimeUpdatesForShops(shopListViewDiv);
+          else getShopsFromLocalStorage(shopListViewDiv);
+        });
     } 
   }
 }

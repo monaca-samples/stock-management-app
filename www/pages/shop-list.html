@@ -28,6 +28,7 @@
       pageInit: function(e, page) {
         const shopListDiv = document.getElementById('shop-list');
         if(useDatabaseApi) getRealTimeUpdatesForShops(shopListDiv);
+        else getShopsFromLocalStorage(shopListDiv);
     }
   }
 }

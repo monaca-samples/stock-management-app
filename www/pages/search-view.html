@@ -133,8 +133,15 @@
         addQuantity(productListDiv);
         subtractQuantity(productListDiv);
         getQuery(productListDiv);
-        onTabShow(productListDiv);
+        
+        // If the user changes view and comes back 
+        // to the Search tab check the db for updates
+        $$(document).on('page:tabshow', function (e) {
+          if (useDatabaseApi) getRealTimeUpdatesForSearch(productListDiv);
+          else localStorageUpdateForSearch(productListDiv);
+        });
       } 
     }
   }
+
 </script>
