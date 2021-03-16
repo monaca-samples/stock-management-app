@@ -1,6 +1,6 @@
-var $$ = Dom7;
+const $$ = Dom7;
 
-var app = new Framework7({
+const app = new Framework7({
   root: '#app', // App root element
   name: 'framework7-core-tab-view', // App name
   theme: 'auto', // Automatic theme detection
@@ -23,7 +23,7 @@ var app = new Framework7({
   methods: {
     // Converts a form to a JSON object
     dataToJson: function (formIdName) {
-      var formData = app.form.convertToData(formIdName);
+      const formData = app.form.convertToData(formIdName);
       const jsonString = JSON.stringify(formData);
       const jsonObject = JSON.parse(jsonString);
 
@@ -121,7 +121,7 @@ function scanBarcode() {
 - - - - - - - - - - - - - - - - - */
 // Set options for camera
 function setOptions(srcType) {
-  var options = {
+  const options = {
     quality: 50,
     destinationType: Camera.DestinationType.DATA_URL,
     sourceType: srcType,
@@ -135,8 +135,8 @@ function setOptions(srcType) {
 
 // Take picture with camera
 function openCamera(selection) {
-  var srcType = Camera.PictureSourceType.CAMERA;
-  var options = setOptions(srcType);
+  const srcType = Camera.PictureSourceType.CAMERA;
+  const options = setOptions(srcType);
   navigator.camera.getPicture(function cameraSuccess(imageUrl) {
     // Cordova Bug getPicture doesn't work properly
     displayImage(imageUrl);
@@ -147,8 +147,8 @@ function openCamera(selection) {
 
 // Open gallery and choose a picture
 function openFilePicker(selection) {
-  var srcType = Camera.PictureSourceType.SAVEDPHOTOALBUM;
-  var options = setOptions(srcType);
+  const srcType = Camera.PictureSourceType.SAVEDPHOTOALBUM;
+  const options = setOptions(srcType);
   navigator.camera.getPicture(function cameraSuccess(imageUrl) {
     // Cordova bug getPicture doesn't work properly
     displayImage(imageUrl);
@@ -343,7 +343,7 @@ function getNewProductDataFromForm(elementName) {
 function checkPicture(elementName, jsonObject) {
   try {
     if (useDatabaseApi) {
-      const img = document.getElementById("imageFile").src.substring("data:image/jpeg;base64,".length);
+      const img = document.getElementById("imageFile").src.substring(23);
       uploadImageToFirebaseStorage(elementName, jsonObject.code + '.jpg', img);
     }
     else {
@@ -469,10 +469,11 @@ function saveEditedProductData(elementName) {
   $$(document).on('click', '.edited-product-data', function () {
     if (app.methods.isProductFormEmpty()) {
       const jsonObject = app.methods.dataToJson('#edit-product-form');
-      const img = document.getElementById("imageFile").src.substring("data:image/jpeg;base64,".length);
+      const img = document.getElementById("imageFile").src.substring(23);
 
       if (useDatabaseApi) {
         uploadImageToFirebaseStorage(elementName, jsonObject.code + '.jpg', img, true);
+        
 
         db.collection('products').doc(productId).update({
           code: document.getElementById('product-code').value,
@@ -533,7 +534,7 @@ function moveOnTheMap(map, chosenPositionMarker) {
     lat = e.latlng.lat;
     lon = e.latlng.lng;
 
-    var redIcon = new L.Icon({
+    let redIcon = new L.Icon({
       iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
       shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
       iconSize: [25, 41],
@@ -561,7 +562,6 @@ function subtractQuantity(elementName) {
   $$(document).on('click', '.update-quantity-minus', function () {
     productId = $$(this).data('product-id');
     changeQuantity(elementName, 'update-quantity-minus', productId, $$(this).data('quantity'));
-    location.reload(true);
   });
 }
 
@@ -570,7 +570,6 @@ function addQuantity(elementName) {
   $$(document).on('click', '.update-quantity-plus', function () {
     productId = $$(this).data('product-id');
     changeQuantity(elementName, 'update-quantity-plus', productId, $$(this).data('quantity'));
-    location.reload(true);
   });
 }
 
@@ -604,7 +603,7 @@ const changeQuantity = (elementName, className, productId, productQuantity) => {
         }
 
         localStorage.setItem(productId, JSON.stringify(changedProduct));
-        
+        location.reload(true);
       }
     }
   }

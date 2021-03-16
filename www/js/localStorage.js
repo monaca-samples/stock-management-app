@@ -1,6 +1,7 @@
 /* - - - - - - - - - - - - - - - - -
    Methods for the localStorage
 - - - - - - - - - - - - - - - - - - */
+
 // Add new items to the Shop List
 function addNewShopToLocalStorage(jsonObject) {
   let newShop = {
@@ -66,7 +67,7 @@ function getImageFromLocalStorage(jsonObject, pageName) {
   //   document.getElementById('imageFile').src = "data:image/jpg;base64," + imageData;
   // }
   // else if (pageName == "PRODUCT") {
-  //   document.getElementById(`${jsonObject.code}-img`).src = "data:image/jpg;base64," + imageData;
+  //   document.getElementById(`${jsonObject.code}_img`).src = "data:image/jpg;base64," + imageData;
   // }
 }
 
@@ -84,7 +85,7 @@ const oneFieldSearchLocalStorage = (elementName, stringName, objectName) => {
           <p>Price: <span>${jsonObject.price}</span></p>
           <p>Quantity: <span id="search-quantity">${jsonObject.quantity}</span></p>
           <div class="block display-flex justify-content-center">
-            <img style="width:200px;height:150px" id="${jsonObject.code}-img" src="assets/pictures/camera.png" />
+            <img style="width:200px;height:150px" id="${jsonObject.code}_img" src="assets/pictures/camera.png" />
           </div>
           <div class="display-flex justify-content-center">
             <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
@@ -115,7 +116,7 @@ const twoFieldSearchLocalStorage = (elementName, stringName, objectName, stringN
           <p>Price: <span>${jsonObject.price}</span></p>
           <p>Quantity: <span id="search-quantity">${jsonObject.quantity}</span></p>
           <div class="block display-flex justify-content-center">
-            <img style="width:200px;height:150px" id="${jsonObject.code}-img" src="assets/pictures/camera.png" />
+            <img style="width:200px;height:150px" id="${jsonObject.code}_img" src="assets/pictures/camera.png" />
           </div>
          <div class="display-flex justify-content-center">
             <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
@@ -202,7 +203,7 @@ const getProductsFromLocalStorage = (elementName, pageName) => {
       if (pageName == "HOME")
         result += `<img style="width:200px;height:150px" id="${jsonObject.code}" src="assets/pictures/camera.png">`
       else if (pageName == "PRODUCT")
-        result += `<img style="width:200px;height:150px" id="${jsonObject.code}-img" src="assets/pictures/camera.png">`
+        result += `<img style="width:200px;height:150px" id="${jsonObject.code}_img" src="assets/pictures/camera.png">`
       result += `
             </div>
           </div>

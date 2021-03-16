@@ -1,24 +1,6 @@
-/* - - - - - - - - - - - - - - - - - - - - - - 
-   Configurations for the Firebase Database
-- - - - - - - - - - - - - - - - - - - - - - -  */
-let db = null;
-let useDatabaseApi = false;
-
-// Firebase configuration and initialization
-// const initFirebase = () => {
-//   const firebaseConfig = {
-//     apiKey: "AIzaSyA6Q9GHEPm9sEUxi4zFJkdDnsu8K5-hg1U",
-//     authDomain: "monaca-stock-management.firebaseapp.com",
-//     projectId: "monaca-stock-management",
-//     storageBucket: "monaca-stock-management.appspot.com",
-//     messagingSenderId: "788776392831",
-//     appId: "1:788776392831:web:8ca3c8e735392adf26474a",
-//     measurementId: "G-B84QMRWKF5"
-//   };
-
-//   firebase.initializeApp(firebaseConfig);
-//   db = firebase.firestore();
-// };
+/* - - - - - - - - - - - - - - - - -
+   Methods for the Firebase Database 
+- - - - - - - - - - - - - - - - - - */
 
 try {
   if (initFirebase) {
@@ -30,9 +12,6 @@ try {
   console.log('Data is saved to the localStorage.');
 }
 
-/* - - - - - - - - - - - - - - - - -
-   Methods for the Firebase Database 
-- - - - - - - - - - - - - - - - - - */
 // Add new items to the Shop List
 function addNewShop(jsonObject) {
   db.collection('shops').add({
@@ -111,7 +90,7 @@ function getImage(data, pageName) {
     else if (pageName == "EDIT")
       document.getElementById('imageFile').src = url;
     else if (pageName == "PRODUCT")
-      document.getElementById(`${data.code}-img`).src = url;
+      document.getElementById(`${data.code}_img`).src = url;
   }).catch(function (error) {
     switch (error.code) {
       case 'storage/object-not-found':
@@ -139,7 +118,7 @@ const oneFieldSearch = (elementName, stringName, fieldName) => {
           <p>Price: <span>${data.price}</span></p>
           <p>Quantity: <span id="search-quantity">${data.quantity}</span></p>
           <div class="block display-flex justify-content-center">
-            <img style="width:200px;height:150px" id="${data.code}-img" src="assets/pictures/camera.png" />
+            <img style="width:200px;height:150px" id="${data.code}_img" src="assets/pictures/camera.png" />
           </div>
           <div class="display-flex justify-content-center">
             <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
@@ -168,7 +147,7 @@ const twoFieldSearch = (elementName, stringName, fieldName, stringName2, fieldNa
           <p>Price: <span>${data.price}</span></p>
           <p>Quantity: <span id="search-quantity">${data.quantity}</span></p>
           <div class="block display-flex justify-content-center">
-            <img style="width:200px;height:150px" id="${data.code}-img" src="assets/pictures/camera.png" />
+            <img style="width:200px;height:150px" id="${data.code}_img" src="assets/pictures/camera.png" />
           </div>
          <div class="display-flex justify-content-center">
             <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
@@ -252,7 +231,7 @@ const getRealTimeUpdatesForProducts = (elementName, pageName) => {
       if (pageName == "HOME")
         result += `<img style="width:200px;height:150px" id="${data.code}" src="assets/pictures/camera.png">`
       else if (pageName == "PRODUCT")
-        result += `<img style="width:200px;height:150px" id="${data.code}-img" src="assets/pictures/camera.png">`
+        result += `<img style="width:200px;height:150px" id="${data.code}_img" src="assets/pictures/camera.png">`
       result += `
             </div>
           </div>

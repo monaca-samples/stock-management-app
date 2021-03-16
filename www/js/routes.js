@@ -1,5 +1,5 @@
 
-var routes = [
+const routes = [
   {
     name: 'home',
     path: '/',
