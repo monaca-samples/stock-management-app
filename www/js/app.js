@@ -468,12 +468,12 @@ $$(document).on('click', '.get-product-details-data', function () {
         const jsonObject = JSON.parse(localStorage.getItem('Product' + i));
         $$(document).on('page:init', '.page[data-name="edit-product"]', function () {
           productDataForLocalStorage(jsonObject);
+          getImageFromLocalStorage(jsonObject, "EDIT");
         });
         $$(document).on('page:afterin', '.page[data-name="edit-product"]', function () {
           productDataForLocalStorage(jsonObject);
+          getImageFromLocalStorage(jsonObject, "EDIT");
         });
-
-        getImageFromLocalStorage(jsonObject, "EDIT"); // NOT WORKING YET
       }
     }
   }
