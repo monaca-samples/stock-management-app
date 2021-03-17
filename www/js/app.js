@@ -116,6 +116,29 @@ function scanBarcode() {
   );
 }
 
+const getProductInfoWithYahoo = (barcode) => {
+  const yahooApiKey = 'dj00aiZpPW40WFV4SDhDVnd2SSZzPWNvbnN1bWVyc2VjcmV0Jng9ZjA-';
+  const proxyurl = "https://cors-anywhere.herokuapp.com/";
+  //const url = `https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch?appid=${yahooApiKey}&jan_code=${barcode}`;
+  const url = `https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch?appid=<${yahooApiKey}>&query=nike`
+  fetch(proxyurl + url)
+  .then(response => response.json())
+  .then(data => {
+    console.log(data);
+    console.log(data.hits);
+    console.log(data.hits[0].name);
+    if (data && data.hits && data.hits.length) {
+      productNameInput.value = data.hits[0].name;
+    } else {
+      productNameInput.value = 'Product Not Found.';
+    }
+  }).catch(err => {
+    alert(err);
+    console.log(err);
+  });
+};
+      getProductInfoWithYahoo(4984279120316);
+
 /* - - - - - - - - - - - - - - - -
    Methods for the camera plugin
 - - - - - - - - - - - - - - - - - */
