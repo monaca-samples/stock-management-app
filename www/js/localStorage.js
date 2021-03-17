@@ -47,7 +47,7 @@ function getImageDataURL(img) {
   canvas.height = img.height;
 
   let context = canvas.getContext('2d');
-  context.drawImage(img, 0, 0);
+  context.drawImage(img, 0, 0, 200, 150);
 
   let dataURL = canvas.toDataURL('image/jpg');
   return  dataURL;
@@ -65,19 +65,6 @@ function getImageFromLocalStorage(jsonObject, pageName) {
   } catch (e) {
     return DEFAULT; // default picture if any error occured
   }
-  // Picture URL
-  // console.log(imageData); 
-
-  // Getting error for this
-  // if (pageName == "HOME") {
-  //   document.getElementById(`${jsonObject.code}`).src = imageData;
-  // }
-  // else if (pageName == "EDIT") {
-  //   document.getElementById('imageFile').src = imageData;
-  // }
-  // else if (pageName == "PRODUCT") {
-  //   document.getElementById(`${jsonObject.code}_img`).src = imageData;
-  // }
 }
 
 // Search by one filled field
@@ -138,7 +125,6 @@ const twoFieldSearchLocalStorage = (elementName, stringName, objectName, stringN
     }
   }
   elementName.innerHTML = result;
-
 }
 
 // Update for the Search
@@ -187,7 +173,6 @@ function getShopsFromLocalStorage(elementName) {
 
 // Retrieve saved Products from localStorage
 const getProductsFromLocalStorage = (elementName, pageName) => {
-  console.log(localStorage.length);
   let result = '';
   for (let i = 0; i < localStorage.length; i++) {
     if (localStorage.getItem('Product' + i)) {

@@ -116,28 +116,27 @@ function scanBarcode() {
   );
 }
 
-const getProductInfoWithYahoo = (barcode) => {
-  const yahooApiKey = 'dj00aiZpPW40WFV4SDhDVnd2SSZzPWNvbnN1bWVyc2VjcmV0Jng9ZjA-';
-  const proxyurl = "https://cors-anywhere.herokuapp.com/";
-  //const url = `https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch?appid=${yahooApiKey}&jan_code=${barcode}`;
-  const url = `https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch?appid=<${yahooApiKey}>&query=nike`
-  fetch(proxyurl + url)
-  .then(response => response.json())
-  .then(data => {
-    console.log(data);
-    console.log(data.hits);
-    console.log(data.hits[0].name);
-    if (data && data.hits && data.hits.length) {
-      productNameInput.value = data.hits[0].name;
-    } else {
-      productNameInput.value = 'Product Not Found.';
-    }
-  }).catch(err => {
-    alert(err);
-    console.log(err);
-  });
-};
-      getProductInfoWithYahoo(4984279120316);
+/* - - - - - - - - - - - - - - - - - -
+   Methods for Yahoo Barcode Lookup
+- - - - - - - - - - - - - - - - - - - */
+// const getProductInfoWithYahoo = (barcode) => {
+//   const yahooApiKey = 'dj00aiZpPW40WFV4SDhDVnd2SSZzPWNvbnN1bWVyc2VjcmV0Jng9ZjA-';
+//   const proxyurl = "https://cors-anywhere.herokuapp.com/";
+//   //const url = `https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch?appid=${yahooApiKey}&jan_code=${barcode}`;
+//   const url = `https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch?appid=<${yahooApiKey}>&query=nike`
+//   fetch(proxyurl + url)
+//   .then(response => response.json())
+//   .then(data => {
+//     if (data && data.hits && data.hits.length) {
+//       productNameInput.value = data.hits[0].name;
+//     } else {
+//       productNameInput.value = 'Product Not Found.';
+//     }
+//   }).catch(err => {
+//     alert(err);
+//     console.log(err);
+//   });
+// };
 
 /* - - - - - - - - - - - - - - - -
    Methods for the camera plugin
@@ -371,7 +370,7 @@ function checkPicture(elementName, jsonObject) {
     }
     else {
       const img = document.getElementById("imageFile");
-      uploadImageToLocalStorage(jsonObject.code + '.jpg', img); // NOT WORKING YET
+      uploadImageToLocalStorage(jsonObject.code + '.jpg', img); 
     }
     return true;
   } catch {
@@ -492,11 +491,10 @@ function saveEditedProductData(elementName) {
   $$(document).on('click', '.edited-product-data', function () {
     if (app.methods.isProductFormEmpty()) {
       const jsonObject = app.methods.dataToJson('#edit-product-form');
-      const img = document.getElementById("imageFile").src.substring(23);
 
       if (useDatabaseApi) {
+        const img = document.getElementById("imageFile").src.substring(23);
         uploadImageToFirebaseStorage(elementName, jsonObject.code + '.jpg', img, true);
-        
 
         db.collection('products').doc(productId).update({
           code: document.getElementById('product-code').value,
@@ -506,7 +504,7 @@ function saveEditedProductData(elementName) {
           shop: document.getElementById('product-shop').value
         });
       } else {
-        // NOT WORKING YET
+        const img = document.getElementById("imageFile");
         uploadImageToLocalStorage(jsonObject.code + '.jpg', img, true);
 
         for (let i = 0; i < localStorage.length; i++) {
