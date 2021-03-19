@@ -39,7 +39,7 @@
 										<span class="input-clear-button"></span>
 									</div>
 								</div>
-								<i class="icon f7-icons popup-open popup-saved-shop-list" data-popup=".popup-saved-shop-list">cart</i>
+								<i class="icon f7-icons popup-open popup-shop-list" data-popup=".popup-shop-list">cart</i>
 							</li>
 						</ul>
 					</div>
@@ -81,7 +81,7 @@
 					</div>
 				</div>
 				<!-- Pop up shop list -->
-				<div class="popup popup-saved-shop-list">
+				<div class="popup popup-shop-list">
 						<div class="navbar">
 							<div class="navbar-bg"></div>
 							<div class="navbar-inner sliding">
@@ -95,7 +95,7 @@
 							</div>
 						</div>
 						<div class="list">
-							<ul id="popup-saved-shop-list"></ul>
+							<ul id="popup-shop-list"></ul>
 						</div>
 				</div>
 				<!-- Button -->
@@ -124,12 +124,12 @@
       pageInit: function(e, page) {
         const barcodeListPopUp = document.getElementById('popup-barcode-list')
         const productListPopUp = document.getElementById('popup-product-list')
-        const savedShopListPopUp = document.getElementById('popup-saved-shop-list');
+        const shopListPopUp = document.getElementById('popup-shop-list');
         const productListDiv = document.getElementById('product-list');
 
         popUpBarcodeList(barcodeListPopUp);
         popUpProductList(productListPopUp);
-        popUpSavedShopList(savedShopListPopUp);
+        popUpShopList(shopListPopUp);
         addQuantity(productListDiv);
         subtractQuantity(productListDiv);
         getQuery(productListDiv);

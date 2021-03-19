@@ -131,7 +131,7 @@ const oneFieldSearch = (elementName, stringName, fieldName) => {
           </div>   
         </div>`;
 
-      getImage(data, "PRODUCT");
+      if (data.image == "") getImage(data, "PRODUCT");
     });
     elementName.innerHTML = result;
   });
@@ -162,7 +162,7 @@ const twoFieldSearch = (elementName, stringName, fieldName, stringName2, fieldNa
           </div>   
         </div>`;
 
-      getImage(data, "PRODUCT");
+      if (data.image == "") getImage(data, "PRODUCT");
     });
     elementName.innerHTML = result;
   });
@@ -256,7 +256,7 @@ const getRealTimeUpdatesForProducts = (elementName, pageName) => {
           </div>   
         </div>`;
 
-      getImage(data, pageName);
+      if (data.image == "") getImage(data, pageName);
     });
     elementName.innerHTML = result;
   });
