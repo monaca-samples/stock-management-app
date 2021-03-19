@@ -47,7 +47,7 @@ function getImageDataURL(img) {
   canvas.height = img.height;
 
   let context = canvas.getContext('2d');
-  context.drawImage(img, 0, 0, 200, 150);
+  context.drawImage(img, 0, 0, 146, 146);
 
   let dataURL = canvas.toDataURL('image/jpg');
   return  dataURL;
@@ -82,7 +82,7 @@ const oneFieldSearchLocalStorage = (elementName, stringName, objectName) => {
           <p>Price: <span>${jsonObject.price}</span></p>
           <p>Quantity: <span id="search-quantity">${jsonObject.quantity}</span></p>
           <div class="block display-flex justify-content-center">
-            <img style="width:200px;height:150px" id="${jsonObject.code}_img" src="${imageSource}" />
+            <img style="width:146px;height:146px" id="${jsonObject.code}_img" src="${imageSource}" />
           </div>
           <div class="display-flex justify-content-center">
             <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
@@ -112,7 +112,7 @@ const twoFieldSearchLocalStorage = (elementName, stringName, objectName, stringN
           <p>Price: <span>${jsonObject.price}</span></p>
           <p>Quantity: <span id="search-quantity">${jsonObject.quantity}</span></p>
           <div class="block display-flex justify-content-center">
-            <img style="width:200px;height:150px" id="${jsonObject.code}_img" src="${imageSource}" />
+            <img style="width:146px;height:146px" id="${jsonObject.code}_img" src="${imageSource}" />
           </div>
          <div class="display-flex justify-content-center">
             <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
@@ -184,6 +184,7 @@ const getProductsFromLocalStorage = (elementName, pageName) => {
           <div>
             <p>Product Code: <span>${jsonObject.code}</span></p>
             <p>Name: <span>${jsonObject.name}</span></p>
+            <p>Shop: <span>${jsonObject.shop}</span></p>
             <p>Price: <span>${jsonObject.price}</span></p>
             <p>Quantity: <span">${jsonObject.quantity}</span></p>
           </div>
@@ -194,9 +195,9 @@ const getProductsFromLocalStorage = (elementName, pageName) => {
           <div class="block display-flex justify-content-center">
             <div>`;
       if (pageName == "HOME")
-        result += `<img style="width:200px;height:150px" id="${jsonObject.code}" src="${imageSource}">`
+        result += `<img style="width:146px;height:146px" id="${jsonObject.code}" src="${imageSource}">`
       else if (pageName == "PRODUCT")
-        result += `<img style="width:200px;height:150px" id="${jsonObject.code}_img" src="${imageSource}">`
+        result += `<img style="width:146px;height:146px" id="${jsonObject.code}_img" src="${imageSource}">`
       result += `
             </div>
           </div>

@@ -102,6 +102,7 @@ function scanBarcode() {
   cordova.plugins.barcodeScanner.scan(
     function (result) {
       document.getElementById('product-code').value = result.text;
+      getProductInfoWithYahoo(result.text);
     },
     function (error) {
       alert("Scanning failed: " + error);
@@ -119,24 +120,34 @@ function scanBarcode() {
 /* - - - - - - - - - - - - - - - - - -
    Methods for Yahoo Barcode Lookup
 - - - - - - - - - - - - - - - - - - - */
-// const getProductInfoWithYahoo = (barcode) => {
-//   const yahooApiKey = 'dj00aiZpPW40WFV4SDhDVnd2SSZzPWNvbnN1bWVyc2VjcmV0Jng9ZjA-';
-//   const proxyurl = "https://cors-anywhere.herokuapp.com/";
-//   //const url = `https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch?appid=${yahooApiKey}&jan_code=${barcode}`;
-//   const url = `https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch?appid=<${yahooApiKey}>&query=nike`
-//   fetch(proxyurl + url)
-//   .then(response => response.json())
-//   .then(data => {
-//     if (data && data.hits && data.hits.length) {
-//       productNameInput.value = data.hits[0].name;
-//     } else {
-//       productNameInput.value = 'Product Not Found.';
-//     }
-//   }).catch(err => {
-//     alert(err);
-//     console.log(err);
-//   });
-// };
+const getProductInfoWithYahoo = (barcode) => {
+  try {
+    const url = `https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch?appid=${yahooApiKey}&jan_code=${barcode}`;
+    fetch(proxyurl + url)
+      .then(response => response.json())
+      .then(data => {
+        cordova.plugin.http.get('https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch', {
+          appid: yahooApiKey,
+          jan_code: barcode
+        }, {}, function (response) {
+          const data = JSON.parse(response.data);
+          if (data && data.hits && data.hits.length) {
+            document.getElementById('product-name').value = data.hits[0].name;
+            document.getElementById('product-price').value = "¥" + data.hits[0].price;
+            document.getElementById('product-quantity').value = 1;
+            //document.getElementById('product-shop').value = data.hits[2].seller.name;
+            document.getElementById('imageFile').src = data.hits[0].image.medium;
+          } else
+            app.dialog.alert('Please add the details by yourself.', 'Product Not Found');
+        }, function (response) {
+          console.error(response.error);
+        });
+      });
+  }
+  catch {
+    console.log("The Yahoo API Key or the Proxy Server is not defined.");
+  }
+};
 
 /* - - - - - - - - - - - - - - - -
    Methods for the camera plugin
@@ -270,9 +281,86 @@ function popUpProductList(elementName) {
   });
 }
 
-// Pop up to list all the shops
+// Pop up to list all the shops 
+// (saved ones OR shops from the API according to the barcode)
 function popUpShopList(elementName) {
   $$(document).on('click', '.popup-shop-list', function () {
+    // let yahooResult = '';
+    // let barcode = document.getElementById('product-code').value;
+
+    // if (yahooApiKey && proxyurl) {
+    //   const url = `https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch?appid=${yahooApiKey}&jan_code=${barcode}`;
+    //   fetch(proxyurl + url)
+    //     .then(response => response.json())
+    //     .then(data => {
+    //       cordova.plugin.http.get('https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch', {
+    //         appid: yahooApiKey,
+    //         jan_code: barcode
+    //       }, {}, function (response) {
+    //         const data = JSON.parse(response.data);
+    //         if (data && data.hits && data.hits.length) {
+    //           for (let i = 0; i < data.hits.length; i++) {
+    //             yahooResult += `
+    //               <li>
+    //                 <a href="#" class="item-content item-link popup-close">
+    //                   <div class="item-inner">
+    //                     <div data-shop-name="${data.hits[i].seller.name}" class="get-shop-name item-title">${data.hits[i].seller.name}</div>
+    //                   </div>
+    //                 </a>
+    //               </li>`;
+    //           }
+
+    //           elementName.innerHTML = yahooResult;
+    //         }
+    //       }, function (response) {
+    //         console.error(response.error);
+    //       });
+    //     });
+    // }
+    // else
+    //   console.log("The Yahoo API Key or the Proxy Server is not defined.");
+
+    if (useDatabaseApi) {
+      db.collection('shops').get().then((snapshot) => {
+        let result = '';
+        snapshot.docs.forEach(doc => {
+          const data = doc.data();
+          result += `
+            <li>
+              <a href="#" class="item-content item-link popup-close">
+                <div class="item-inner">
+                  <div data-shop-id="${doc.id}" data-shop-name="${data.name}" class="get-shop-name item-title">${data.name}</div>
+                </div>
+              </a>
+            </li>`;
+        });
+
+        elementName.innerHTML += result;
+      });
+    } else {
+      let result = '';
+      for (let i = 0; i < localStorage.length; i++) {
+        if (localStorage.getItem('Shop' + i)) {
+          const jsonObject = JSON.parse(localStorage.getItem('Shop' + i));
+          result += `
+          <li>
+            <a href="#" class="item-content item-link popup-close">
+              <div class="item-inner">
+                <div data-shop-id="${'Shop' + i}" data-shop-name="${jsonObject.name}" class="get-shop-name item-title">${jsonObject.name}</div>
+              </div>
+            </a>
+          </li>`;
+        }
+      }
+
+      elementName.innerHTML += result;
+    }
+  });
+}
+
+// Pop up for the Search
+function popUpSavedShopList(elementName) {
+  $$(document).on('click', '.popup-saved-shop-list', function () {
     if (useDatabaseApi) {
       db.collection('shops').get().then((snapshot) => {
         let result = '';
@@ -353,9 +441,16 @@ function getNewProductDataFromForm(elementName) {
   $$(document).on('click', '.convert-new-product-form-to-data', function () {
     if (app.methods.isProductFormEmpty()) {
       const jsonObject = app.methods.dataToJson('#new-product-form');
-      if (checkPicture(elementName, jsonObject)) {
-        if (useDatabaseApi) addNewProduct(jsonObject); // Create/add new product to the database
-        else addNewProductToLocalStorage(jsonObject);
+
+      if (yahooApiKey && proxyurl) {
+        let imgSrc = document.getElementById("imageFile").src;
+        addNewProduct(jsonObject, imgSrc);
+        app.dialog.alert('Product added to the products list.', '');
+      } else {
+        if (checkPicture(elementName, jsonObject)) {
+          if (useDatabaseApi) addNewProduct(jsonObject); // Create/add new product to the database
+          else addNewProductToLocalStorage(jsonObject);
+        }
       }
     } else app.dialog.alert('Please fill out the form first.', '');
   });
@@ -365,12 +460,12 @@ function getNewProductDataFromForm(elementName) {
 function checkPicture(elementName, jsonObject) {
   try {
     if (useDatabaseApi) {
-      const img = document.getElementById("imageFile").src.substring(23);
+      let img = document.getElementById("imageFile").src.substring(23);
       uploadImageToFirebaseStorage(elementName, jsonObject.code + '.jpg', img);
     }
     else {
       const img = document.getElementById("imageFile");
-      uploadImageToLocalStorage(jsonObject.code + '.jpg', img); 
+      uploadImageToLocalStorage(jsonObject.code + '.jpg', img);
     }
     return true;
   } catch {
@@ -458,6 +553,9 @@ $$(document).on('click', '.get-product-details-data', function () {
         document.getElementById('product-quantity').value = data.quantity;
         document.getElementById('product-shop').value = data.shop;
 
+        if (yahooApiKey && proxyurl)
+          document.getElementById("imageFile").src = data.image;
+
         getImage(data, "EDIT");
       });
     });
@@ -493,16 +591,20 @@ function saveEditedProductData(elementName) {
       const jsonObject = app.methods.dataToJson('#edit-product-form');
 
       if (useDatabaseApi) {
-        const img = document.getElementById("imageFile").src.substring(23);
-        uploadImageToFirebaseStorage(elementName, jsonObject.code + '.jpg', img, true);
+        if (!yahooApiKey) {
+          const img = document.getElementById("imageFile").src.substring(23);
+          uploadImageToFirebaseStorage(elementName, jsonObject.code + '.jpg', img, true);
+        }
 
         db.collection('products').doc(productId).update({
           code: document.getElementById('product-code').value,
           name: document.getElementById('product-name').value,
           price: document.getElementById('product-price').value,
           quantity: document.getElementById('product-quantity').value,
-          shop: document.getElementById('product-shop').value
+          shop: document.getElementById('product-shop').value,
+          image: yahooApiKey ? document.getElementById("imageFile").src : ""
         });
+
       } else {
         const img = document.getElementById("imageFile");
         uploadImageToLocalStorage(jsonObject.code + '.jpg', img, true);

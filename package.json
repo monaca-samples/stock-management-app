@@ -18,7 +18,8 @@
             "monaca-plugin-monaca-core": {},
             "cordova-plugin-geolocation": {},
             "cordova-plugin-camera": {},
-            "phonegap-plugin-barcodescanner": {}
+            "phonegap-plugin-barcodescanner": {},
+            "cordova-plugin-advanced-http": {}
         }
     },
     "browserslist": [
@@ -45,6 +46,7 @@
     "devDependencies": {
         "browser-sync": "^2.26.7",
         "cordova": "^10.0.0",
+        "cordova-plugin-advanced-http": "^3.1.0",
         "cpy-cli": "^3.1.1",
         "eslint": "^7.21.0",
         "eslint-plugin-html": "^6.1.2"

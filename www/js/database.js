@@ -4,8 +4,8 @@
 
 try {
   if (initFirebase) {
-  useDatabaseApi = true;
-  initFirebase(); // initialize Firebase
+    useDatabaseApi = true;
+    initFirebase(); // initialize Firebase
   }
 } catch {
   console.log('Firebase is not initialized.')
@@ -23,13 +23,14 @@ function addNewShop(jsonObject) {
 }
 
 // Add new items to the Product List
-function addNewProduct(jsonObject) {
+function addNewProduct(jsonObject, imgSrc) {
   db.collection('products').add({
     code: jsonObject.code,
     'name': jsonObject.name,
     'price': jsonObject.price,
     'quantity': jsonObject.quantity,
     'shop': jsonObject.shop,
+    'image': imgSrc
   });
 }
 
@@ -117,8 +118,10 @@ const oneFieldSearch = (elementName, stringName, fieldName) => {
           <p>Product Name: <span>${data.name}</span></p>
           <p>Price: <span>${data.price}</span></p>
           <p>Quantity: <span id="search-quantity">${data.quantity}</span></p>
-          <div class="block display-flex justify-content-center">
-            <img style="width:200px;height:150px" id="${data.code}_img" src="assets/pictures/camera.png" />
+          <div class="block display-flex justify-content-center">`
+      if (yahooApiKey && proxyurl)
+        result += `<img style="width:146px;height:146px" id="${data.code}_img" src="${data.image}"/>`
+      result += `
           </div>
           <div class="display-flex justify-content-center">
             <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
@@ -146,8 +149,10 @@ const twoFieldSearch = (elementName, stringName, fieldName, stringName2, fieldNa
           <p>Product Name: <span>${data.name}</span></p>
           <p>Price: <span>${data.price}</span></p>
           <p>Quantity: <span id="search-quantity">${data.quantity}</span></p>
-          <div class="block display-flex justify-content-center">
-            <img style="width:200px;height:150px" id="${data.code}_img" src="assets/pictures/camera.png" />
+          <div class="block display-flex justify-content-center">`
+      if (yahooApiKey && proxyurl)
+        result += `<img style="width:146px;height:146px" id="${data.code}_img" src="${data.image}"/>`
+      result += `
           </div>
          <div class="display-flex justify-content-center">
             <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
@@ -219,8 +224,9 @@ const getRealTimeUpdatesForProducts = (elementName, pageName) => {
             <div>
               <p>Product Code: <span>${data.code}</span></p>
               <p>Name: <span>${data.name}</span></p>
+              <p>Shop: <span>${data.shop}</span></p>
               <p>Price: <span>${data.price}</span></p>
-              <p>Quantity: <span">${data.quantity}</span></p>
+              <p>Quantity: <span>${data.quantity}</span></p>
             </div>
             <i class="icon f7-icons">
               <a href="/edit-product/${doc.id}/" data-product-id="${doc.id}" class="get-product-details-data">pencil</a>
@@ -228,10 +234,17 @@ const getRealTimeUpdatesForProducts = (elementName, pageName) => {
           </div>
           <div class="block display-flex justify-content-center">
             <div>`;
-      if (pageName == "HOME")
-        result += `<img style="width:200px;height:150px" id="${data.code}" src="assets/pictures/camera.png">`
-      else if (pageName == "PRODUCT")
-        result += `<img style="width:200px;height:150px" id="${data.code}_img" src="assets/pictures/camera.png">`
+      if (yahooApiKey && proxyurl) {
+        if (pageName == "HOME")
+          result += `<img style="width:146px;height:146px" id="${data.code}" src="${data.image}"/>`
+        else if (pageName == "PRODUCT")
+          result += `<img style="width:146px;height:146px" id="${data.code}_img" src="${data.image}"/>`
+      } else {
+        if (pageName == "HOME")
+          result += `<img style="width:146px;height:146px" id="${data.code}" src="assets/pictures/camera.png">`
+        else if (pageName == "PRODUCT")
+          result += `<img style="width:146px;height:146px" id="${data.code}_img" src="assets/pictures/camera.png">`
+      }
       result += `
             </div>
           </div>
