@@ -1,9 +1,9 @@
 const $$ = Dom7;
 
 const app = new Framework7({
-  root: '#app', // App root element
-  name: 'framework7-core-tab-view', // App name
-  theme: 'auto', // Automatic theme detection
+  root: "#app", // App root element
+  name: "framework7-core-tab-view", // App name
+  theme: "auto", // Automatic theme detection
 
   view: {
     stackPages: true, // For navigation between multi-level pages
@@ -12,7 +12,7 @@ const app = new Framework7({
   navbar: {
     mdCenterTitle: true,
     iosCenterTitle: true,
-    auroraCenterTitle: true
+    auroraCenterTitle: true,
   },
   data: function () {
     return {
@@ -31,55 +31,61 @@ const app = new Framework7({
     },
     // Checks if the New Shop form has any empty entry
     isNewShopFormEmpty: function () {
-      if (document.getElementById('shop-name').value == "" ||
-        document.getElementById('shop-telephone').value == "" ||
-        document.getElementById('shop-address').value == "" ||
-        document.getElementById('shop-location').value == "")
+      if (
+        document.getElementById("shop-name").value == "" ||
+        document.getElementById("shop-telephone").value == "" ||
+        document.getElementById("shop-address").value == "" ||
+        document.getElementById("shop-location").value == ""
+      )
         return false;
 
       return true;
     },
     // Checks if the New Product form has any empty entry
     isProductFormEmpty: function () {
-      if (document.getElementById('product-code').value == "" ||
-        document.getElementById('product-name').value == "" ||
-        document.getElementById('product-price').value == "" ||
-        document.getElementById('product-quantity').value == "" ||
-        document.getElementById('product-shop').value == "")
+      if (
+        document.getElementById("product-code").value == "" ||
+        document.getElementById("product-name").value == "" ||
+        document.getElementById("product-price").value == "" ||
+        document.getElementById("product-quantity").value == "" ||
+        document.getElementById("product-shop").value == ""
+      )
         return false;
 
       return true;
     },
     // Checks if the Search form has any empty entry
     isSearchFormEmpty: function () {
-      if (document.getElementById('product-code').value == "" &&
-        document.getElementById('product-name').value == "" &&
-        document.getElementById('product-shop').value == "")
+      if (
+        document.getElementById("product-code").value == "" &&
+        document.getElementById("product-name").value == "" &&
+        document.getElementById("product-shop").value == ""
+      )
         return false;
 
       return true;
     },
     // After submitting a New Shop it will empty the inputs
     emptyNewShopForm: function () {
-      document.getElementById('shop-name').value = "";
-      document.getElementById('shop-telephone').value = "";
-      document.getElementById('shop-address').value = "";
-      document.getElementById('shop-location').value = "";
+      document.getElementById("shop-name").value = "";
+      document.getElementById("shop-telephone").value = "";
+      document.getElementById("shop-address").value = "";
+      document.getElementById("shop-location").value = "";
     },
     // After submitting a New Product it will empty the inputs
     emptyNewProductForm: function () {
-      document.getElementById('product-code').value = "";
-      document.getElementById('product-name').value = "";
-      document.getElementById('product-price').value = "";
-      document.getElementById('product-quantity').value = "";
-      document.getElementById('product-shop').value = "";
+      document.getElementById("product-code").value = "";
+      document.getElementById("product-name").value = "";
+      document.getElementById("product-price").value = "";
+      document.getElementById("product-quantity").value = "";
+      document.getElementById("product-shop").value = "";
     },
     // After clicking Clear button it will empty the inputs and the search result
     emptySearchForm: function () {
-      document.getElementById('product-code').value = "";
-      document.getElementById('product-name').value = "";
-      document.getElementById('product-shop').value = "";
-      document.getElementById('product-list').innerText = "";
+      document.getElementById("product-code").value = "";
+      document.getElementById("product-name").value = "";
+      document.getElementById("product-shop").value = "";
+      document.getElementById("product-list").innerText = "";
     },
   },
   // App routes
@@ -101,18 +107,19 @@ function onDeviceReady() {
 function scanBarcode() {
   cordova.plugins.barcodeScanner.scan(
     function (result) {
-      document.getElementById('product-code').value = result.text;
+      document.getElementById("product-code").value = result.text;
       getProductInfoWithYahoo(result.text);
     },
     function (error) {
       alert("Scanning failed: " + error);
-    }, {
+    },
+    {
       preferFrontCamera: false,
       showFlipCameraButton: false,
       showTorchButton: false,
       torchOn: false,
       disableAnimations: true,
-      disableSuccessBeep: false
+      disableSuccessBeep: false,
     }
   );
 }
@@ -123,28 +130,31 @@ function scanBarcode() {
 const getProductInfoWithYahoo = (barcode) => {
   try {
     const url = `https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch?appid=${yahooApiKey}&jan_code=${barcode}`;
-    fetch(proxyurl + url)
-      .then(response => response.json())
-      .then(data => {
-        cordova.plugin.http.get('https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch', {
-          appid: yahooApiKey,
-          jan_code: barcode
-        }, {}, function (response) {
-          const data = JSON.parse(response.data);
-          if (data && data.hits && data.hits.length) {
-            document.getElementById('product-name').value = data.hits[0].name;
-            document.getElementById('product-price').value = "¥" + data.hits[0].price;
-            document.getElementById('product-quantity').value = 1;
-            //document.getElementById('product-shop').value = data.hits[2].seller.name;
-            document.getElementById('imageFile').src = data.hits[0].image.medium;
-          } else
-            app.dialog.alert('Please add the details by yourself.', 'Product Not Found');
-        }, function (response) {
+    fetch(proxyurl + url).then((response) => response.json()).then((data) => {cordova.plugin.http.get("https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch",
+    {
+      appid: yahooApiKey,
+      jan_code: barcode,
+    },
+    {},
+      function (response) {
+        const data = JSON.parse(response.data);
+        if (data && data.hits && data.hits.length) {
+          document.getElementById("product-name").value = data.hits[0].name;
+          document.getElementById("product-price").value = "¥" + data.hits[0].price;
+          document.getElementById("product-quantity").value = 1;
+          //document.getElementById('product-shop').value = data.hits[2].seller.name;
+          document.getElementById("imageFile").src = data.hits[0].image.medium;
+        } else app.dialog.alert(
+            "Please add the details by yourself.",
+            "Product Not Found"
+          );
+        },
+        function (response) {
           console.error(response.error);
-        });
-      });
-  }
-  catch {
+        }
+      );
+    });
+  } catch {
     console.log("The Yahoo API Key or the Proxy Server is not defined.");
   }
 };
@@ -161,8 +171,8 @@ function setOptions(srcType) {
     encodingType: Camera.EncodingType.JPEG,
     mediaType: Camera.MediaType.PICTURE,
     allowEdit: false,
-    correctOrientation: true
-  }
+    correctOrientation: true,
+  };
   return options;
 }
 
@@ -170,29 +180,37 @@ function setOptions(srcType) {
 function openCamera(selection) {
   const srcType = Camera.PictureSourceType.CAMERA;
   const options = setOptions(srcType);
-  navigator.camera.getPicture(function cameraSuccess(imageUrl) {
-    // Cordova Bug getPicture doesn't work properly
-    displayImage(imageUrl);
-  }, function cameraError(error) {
-    console.debug("Unable to take picture: " + error, "app");
-  }, options);
+  navigator.camera.getPicture(
+    function cameraSuccess(imageUrl) {
+      // Cordova Bug getPicture doesn't work properly
+      displayImage(imageUrl);
+    },
+    function cameraError(error) {
+      console.debug("Unable to take picture: " + error, "app");
+    },
+    options
+  );
 }
 
 // Open gallery and choose a picture
 function openFilePicker(selection) {
   const srcType = Camera.PictureSourceType.SAVEDPHOTOALBUM;
   const options = setOptions(srcType);
-  navigator.camera.getPicture(function cameraSuccess(imageUrl) {
-    // Cordova bug getPicture doesn't work properly
-    displayImage(imageUrl);
-  }, function cameraError(error) {
-    console.debug("Unable to obtain picture: " + error, "app");
-  }, options);
+  navigator.camera.getPicture(
+    function cameraSuccess(imageUrl) {
+      // Cordova bug getPicture doesn't work properly
+      displayImage(imageUrl);
+    },
+    function cameraError(error) {
+      console.debug("Unable to obtain picture: " + error, "app");
+    },
+    options
+  );
 }
 
 // Add picture to DOM
 function displayImage(img) {
-  let image = document.getElementById('imageFile');
+  let image = document.getElementById("imageFile");
   image.src = "data:image/jpeg;base64," + img;
 }
 
@@ -201,37 +219,59 @@ function displayImage(img) {
 - - - - - - - */
 // Pop up to list all the added barcodes
 function popUpBarcodeList(elementName) {
-  $$(document).on('click', '.popup-code-list', function () {
+  $$(document).on("click", ".popup-code-list", function () {
     if (useDatabaseApi) {
-      db.collection('products').get().then((snapshot) => {
-        let result = '';
-        snapshot.docs.forEach(doc => {
-          const data = doc.data();
-          result += `
+      let count = 0;
+      db.collection("products")
+        .get()
+        .then((snapshot) => {
+          let result = "";
+          snapshot.docs.forEach((doc) => {
+            count++;
+            const data = doc.data();
+            result += `
           <li>
-            <a href="#" class="item-content item-link popup-close">
-              <div class="item-inner">
-                <div data-product-code="${data.code}" class="get-product-code item-title">${data.code}</div>
+            <a href="#" class="item-link popup-close">
+              <div class="item-content">
+                <div data-product-code="${data.code}" class="item-inner item-title get-product-code">${data.code}</div>
               </div>
             </a>
           </li>`;
-        });
+          });
 
-        elementName.innerHTML = result;
-      });
+          if (count == 0) {
+            result += `
+              <li>
+                <div class="item-content">
+                  <div class="item-inner display-flex justify-content-center">There are no barcodes added to the database.</div>
+                </div>
+              </li>`;
+          }
+
+          elementName.innerHTML = result;
+        });
     } else {
-      let result = '';
-      for (let i = 0; i < localStorage.length; i++) {
-        if (localStorage.getItem('Product' + i)) {
-          const jsonObject = JSON.parse(localStorage.getItem('Product' + i));
-          result += `
-          <li>
-            <a href="#" class="item-content item-link popup-close">
-              <div class="item-inner">
-                <div data-product-code="${jsonObject.code}" class="get-product-code item-title">${jsonObject.code}</div>
-              </div>
-            </a>
-          </li>`;
+      let result = "";
+      if (localStorage.length == 0) {
+        result += `
+              <li>
+                  <div class="item-content">
+                    <div class="item-inner display-flex justify-content-center">There are no barcodes added to the database.</div>
+                  </div>
+              </li>`;
+      } else {
+        for (let i = 0; i < localStorage.length; i++) {
+          if (localStorage.getItem("Product" + i)) {
+            const jsonObject = JSON.parse(localStorage.getItem("Product" + i));
+            result += `
+              <li>
+                <a href="#" class="item-link popup-close">
+                  <div class="item-content">
+                    <div data-product-code="${jsonObject.code}" class="item-inner get-product-code item-title">${jsonObject.code}</div>
+                  </div>
+                </a>
+              </li>`;
+          }
         }
       }
 
@@ -242,37 +282,59 @@ function popUpBarcodeList(elementName) {
 
 // Pop up to list all the products
 function popUpProductList(elementName) {
-  $$(document).on('click', '.popup-product-list', function () {
+  $$(document).on("click", ".popup-product-list", function () {
     if (useDatabaseApi) {
-      db.collection('products').get().then((snapshot) => {
-        let result = '';
-        snapshot.docs.forEach(doc => {
-          const data = doc.data();
-          result += `
+      let count = 0;
+      db.collection("products")
+        .get()
+        .then((snapshot) => {
+          let result = "";
+          snapshot.docs.forEach((doc) => {
+            count++;
+            const data = doc.data();
+            result += `
           <li>
-            <a href="#" class="item-content item-link popup-close">
-              <div class="item-inner">
-                <div data-product-name="${data.name}" class="get-product-name item-title">${data.name}</div>
+            <a href="#" class="item-link popup-close">
+              <div class="item-content">
+                <div data-product-name="${data.name}" class="item-inner item-title get-product-name">${data.name}</div>
               </div>
             </a>
           </li>`;
-        });
+          });
 
-        elementName.innerHTML = result;
-      });
+          if (count == 0) {
+            result += `
+              <li>
+                <div class="item-content">
+                  <div class="item-inner display-flex justify-content-center">There are no products added to the database.</div>
+                </div>
+              </li>`;
+          }
+
+          elementName.innerHTML = result;
+        });
     } else {
-      let result = '';
-      for (let i = 0; i < localStorage.length; i++) {
-        if (localStorage.getItem('Product' + i)) {
-          const jsonObject = JSON.parse(localStorage.getItem('Product' + i));
-          result += `
+      let result = "";
+      if (localStorage.length == 0) {
+        result += `
+        	<li>
+         	<div class="item-content">
+          	<div class="item-inner display-flex justify-content-center">There are no products added to the database.</div>
+          </div>
+         </li>`;
+      } else {
+        for (let i = 0; i < localStorage.length; i++) {
+          if (localStorage.getItem("Product" + i)) {
+            const jsonObject = JSON.parse(localStorage.getItem("Product" + i));
+            result += `
           <li>
-            <a href="#" class="item-content item-link popup-close">
-              <div class="item-inner">
-                <div data-product-name="${jsonObject.name}" class="get-product-name item-title">${jsonObject.name}</div>
-              </div>
+            <a href="#" class="item-link popup-close">
+            <div class="item-content">
+              <div data-product-name="${jsonObject.name}" class="item-inner item-title get-product-name>${jsonObject.name}</div>
+            </div>
             </a>
           </li>`;
+          }
         }
       }
 
@@ -281,39 +343,61 @@ function popUpProductList(elementName) {
   });
 }
 
-// Pop up to list all the saved shops 
+// Pop up to list all the saved shops
 function popUpShopList(elementName) {
-  $$(document).on('click', '.popup-shop-list', function () {
+  $$(document).on("click", ".popup-shop-list", function () {
     if (useDatabaseApi) {
-      db.collection('shops').get().then((snapshot) => {
-        let result = '';
-        snapshot.docs.forEach(doc => {
-          const data = doc.data();
-          result += `
+      let count = 0;
+      db.collection("shops")
+        .get()
+        .then((snapshot) => {
+          let result = "";
+          snapshot.docs.forEach((doc) => {
+            count++;
+            const data = doc.data();
+            result += `
             <li>
-              <a href="#" class="item-content item-link popup-close">
-                <div class="item-inner">
-                  <div data-shop-id="${doc.id}" data-shop-name="${data.name}" class="get-shop-name item-title">${data.name}</div>
+              <a href="#" class="item-link popup-close">
+                <div class="item-content">
+                  <div data-shop-id="${doc.id}" data-shop-name="${data.name}" class="item-inner item-title get-shop-name">${data.name}</div>
                 </div>
               </a>
             </li>`;
-        });
+          });
 
-        elementName.innerHTML = result;
-      });
+          if (count == 0) {
+            result += `
+              <li>
+                <div class="item-content">
+                  <div class="item-inner display-flex justify-content-center">There are no shops added to the database.</div>
+                </div>
+              </li>`;
+          }
+
+          elementName.innerHTML = result;
+        });
     } else {
-      let result = '';
-      for (let i = 0; i < localStorage.length; i++) {
-        if (localStorage.getItem('Shop' + i)) {
-          const jsonObject = JSON.parse(localStorage.getItem('Shop' + i));
-          result += `
+      let result = "";
+      if (localStorage.length == 0) {
+        result += `
           <li>
-            <a href="#" class="item-content item-link popup-close">
-              <div class="item-inner">
-                <div data-shop-id="${'Shop' + i}" data-shop-name="${jsonObject.name}" class="get-shop-name item-title">${jsonObject.name}</div>
+            <div class="item-content">
+              <div class="item-inner display-flex justify-content-center">There are no shops added to the database.</div>
+            </div>
+          </li>`;
+      } else {
+        for (let i = 0; i < localStorage.length; i++) {
+          if (localStorage.getItem("Shop" + i)) {
+            const jsonObject = JSON.parse(localStorage.getItem("Shop" + i));
+            result += `
+          <li>
+            <a href="#" class="item-link popup-close">
+              <div class="item-content">
+                <div data-shop-id="${"Shop" + i}" data-shop-name="${jsonObject.name}" class="item-inner item-title get-shop-name">${jsonObject.name}</div>
               </div>
             </a>
           </li>`;
+          }
         }
       }
 
@@ -326,56 +410,63 @@ function popUpShopList(elementName) {
    Get data from the pop ups
 - - - - - - - - - - - - - - - - */
 // Get barcode data from pop up and add it to the form
-$$(document).on('click', '.get-product-code', function () {
-  productCode = $$(this).data('product-code');
-  document.getElementById('product-code').value = productCode;
+$$(document).on("click", ".get-product-code", function () {
+  productCode = $$(this).data("product-code");
+  document.getElementById("product-code").value = productCode;
 });
 
 // Get product name data from pop up and add it to the form
-$$(document).on('click', '.get-product-name', function () {
-  productName = $$(this).data('product-name');
-  document.getElementById('product-name').value = productName;
+$$(document).on("click", ".get-product-name", function () {
+  productName = $$(this).data("product-name");
+  document.getElementById("product-name").value = productName;
 });
 
 // Get shop name from shop list pop up and add it to the form
-$$(document).on('click', '.get-shop-name', function () {
-  shopName = $$(this).data('shop-name');
-  shopId = $$(this).data('shop-id');
-  document.getElementById('product-shop').value = shopName;
+$$(document).on("click", ".get-shop-name", function () {
+  shopName = $$(this).data("shop-name");
+  shopId = $$(this).data("shop-id");
+  document.getElementById("product-shop").value = shopName;
 });
 
 /* - - - - - - - - - - - - - - 
    Get data from the forms
 - - - - - - - - - - - - - - - */
 let i = 0;
-// Get new shop data 
-$$(document).on('click', '.convert-form-to-data', function () {
+// Get new shop data
+$$(document).on("click", ".convert-form-to-data", function () {
   if (app.methods.isNewShopFormEmpty()) {
-    const jsonObject = app.methods.dataToJson('#new-shop-form');
-    if (useDatabaseApi) addNewShop(jsonObject); // Add new shop to the database
+    const jsonObject = app.methods.dataToJson("#new-shop-form");
+    if (useDatabaseApi) addNewShop(jsonObject);
+    // Add new shop to the database
     else addNewShopToLocalStorage(jsonObject);
     app.methods.emptyNewShopForm();
-    app.dialog.alert('Shop added to the shop list.', '');
-  } else app.dialog.alert('Please fill out the form first.', '');
+    app.dialog.alert("Shop added to the shop list.", "");
+  } else app.dialog.alert("Please fill out the form first.", "");
 });
 
-// Get new product data 
+// Get new product data
 function getNewProductDataFromForm(elementName) {
-  $$(document).on('click', '.convert-new-product-form-to-data', function () {
+  $$(document).on("click", ".convert-new-product-form-to-data", function () {
     if (app.methods.isProductFormEmpty()) {
-      const jsonObject = app.methods.dataToJson('#new-product-form');
+      const jsonObject = app.methods.dataToJson("#new-product-form");
 
       if (yahooApiKey && proxyurl) {
         let imgSrc = document.getElementById("imageFile").src;
-        addNewProduct(jsonObject, imgSrc);
-        app.dialog.alert('Product added to the products list.', '');
+        if (imgSrc.includes("data")) {
+          checkPicture(elementName, jsonObject);
+          addNewProductToLocalStorage(jsonObject);
+        } else {
+          addNewProductToLocalStorage(jsonObject, imgSrc);
+          app.dialog.alert("Product added to the products list.", "");
+        }
       } else {
         if (checkPicture(elementName, jsonObject)) {
-          if (useDatabaseApi) addNewProduct(jsonObject); // Create/add new product to the database
+          if (useDatabaseApi) addNewProduct(jsonObject);
+          // Create/add new product to the database
           else addNewProductToLocalStorage(jsonObject);
         }
       }
-    } else app.dialog.alert('Please fill out the form first.', '');
+    } else app.dialog.alert("Please fill out the form first.", "");
   });
 }
 
@@ -384,180 +475,234 @@ function checkPicture(elementName, jsonObject) {
   try {
     if (useDatabaseApi) {
       let img = document.getElementById("imageFile").src.substring(23);
-      uploadImageToFirebaseStorage(elementName, jsonObject.code + '.jpg', img);
-    }
-    else {
+      uploadImageToFirebaseStorage(elementName, jsonObject.code + ".jpg", img);
+    } else {
       const img = document.getElementById("imageFile");
-      uploadImageToLocalStorage(jsonObject.code + '.jpg', img);
+      uploadImageToLocalStorage(jsonObject.code + ".jpg", img);
     }
     return true;
   } catch {
-    app.dialog.alert('Please upload a picture!', '');
+    app.dialog.alert("Please upload a picture!", "");
     return false;
   }
 }
 
 // Get shop details data
-$$(document).on('click', '.get-shop-details-data', function () {
-  shopId = $$(this).data('shop-id');
+$$(document).on("click", ".get-shop-details-data", function () {
+  shopId = $$(this).data("shop-id");
 
   if (useDatabaseApi) {
-    db.collection('shops').where(firebase.firestore.FieldPath.documentId(), '==', shopId).get().then((snapshot) => {
-      snapshot.docs.forEach(doc => {
-        const data = doc.data();
-        document.getElementById('shop-name').value = data.name;
-        document.getElementById('shop-telephone').value = data.telephone;
-        document.getElementById('shop-address').value = data.address;
-        document.getElementById('shop-location').value = data.location;
+    db.collection("shops")
+      .where(firebase.firestore.FieldPath.documentId(), "==", shopId)
+      .get()
+      .then((snapshot) => {
+        snapshot.docs.forEach((doc) => {
+          const data = doc.data();
+          document.getElementById("shop-name").value = data.name;
+          document.getElementById("shop-telephone").value = data.telephone;
+          document.getElementById("shop-address").value = data.address;
+          document.getElementById("shop-location").value = data.location;
+        });
       });
-    });
   } else {
     for (let i = 0; i < localStorage.length; i++) {
-      if ('Shop' + i == shopId) {
-        const jsonObject = JSON.parse(localStorage.getItem('Shop' + i));
-        $$(document).on('page:init', '.page[data-name="edit-shop"]', function () {
-          shopDataForLocalStorage(jsonObject);
-        });
-        $$(document).on('page:afterin', '.page[data-name="edit-shop"]', function () {
-          shopDataForLocalStorage(jsonObject);
-        });
+      if ("Shop" + i == shopId) {
+        const jsonObject = JSON.parse(localStorage.getItem("Shop" + i));
+        $$(document).on(
+          "page:init",
+          '.page[data-name="edit-shop"]',
+          function () {
+            shopDataForLocalStorage(jsonObject);
+          }
+        );
+        $$(document).on(
+          "page:afterin",
+          '.page[data-name="edit-shop"]',
+          function () {
+            shopDataForLocalStorage(jsonObject);
+          }
+        );
       }
     }
   }
 });
 
 function shopDataForLocalStorage(jsonObject) {
-  document.getElementById('shop-name').value = jsonObject.name;
-  document.getElementById('shop-telephone').value = jsonObject.telephone;
-  document.getElementById('shop-address').value = jsonObject.address;
-  document.getElementById('shop-location').value = jsonObject.location;
+  document.getElementById("shop-name").value = jsonObject.name;
+  document.getElementById("shop-telephone").value = jsonObject.telephone;
+  document.getElementById("shop-address").value = jsonObject.address;
+  document.getElementById("shop-location").value = jsonObject.location;
 }
 
 // Save the edited shop data
-$$(document).on('click', '.edited-shop-data', function () {
+$$(document).on("click", ".edited-shop-data", function () {
   if (app.methods.isNewShopFormEmpty()) {
     if (useDatabaseApi) {
-      db.collection('shops').doc(shopId).update({
-        name: document.getElementById('shop-name').value,
-        telephone: document.getElementById('shop-telephone').value,
-        address: document.getElementById('shop-address').value,
-        location: document.getElementById('shop-location').value
-      });
+      db.collection("shops")
+        .doc(shopId)
+        .update({
+          name: document.getElementById("shop-name").value,
+          telephone: document.getElementById("shop-telephone").value,
+          address: document.getElementById("shop-address").value,
+          location: document.getElementById("shop-location").value,
+        });
     } else {
       for (let i = 0; i < localStorage.length; i++) {
-        if ('Shop' + i == shopId) {
+        if ("Shop" + i == shopId) {
           let editedShop = {
-            'name': document.getElementById('shop-name').value,
-            'telephone': document.getElementById('shop-telephone').value,
-            'address': document.getElementById('shop-address').value,
-            'location': document.getElementById('shop-location').value,
-          }
+            name: document.getElementById("shop-name").value,
+            telephone: document.getElementById("shop-telephone").value,
+            address: document.getElementById("shop-address").value,
+            location: document.getElementById("shop-location").value,
+          };
 
           localStorage.setItem(shopId, JSON.stringify(editedShop));
         }
       }
     }
 
-    app.dialog.alert('Saved shop details.', '');
-  } else app.dialog.alert('Please fill out the form first.', '');
+    app.dialog.alert("Saved shop details.", "");
+  } else app.dialog.alert("Please fill out the form first.", "");
 });
 
 // Get product details data
-$$(document).on('click', '.get-product-details-data', function () {
-  productId = $$(this).data('product-id');
+$$(document).on("click", ".get-product-details-data", function () {
+  productId = $$(this).data("product-id");
 
   if (useDatabaseApi) {
-    db.collection('products').where(firebase.firestore.FieldPath.documentId(), '==', productId).get().then((snapshot) => {
-      snapshot.docs.forEach(doc => {
-        const data = doc.data();
-        document.getElementById('product-code').value = data.code;
-        document.getElementById('product-name').value = data.name;
-        document.getElementById('product-price').value = data.price;
-        document.getElementById('product-quantity').value = data.quantity;
-        document.getElementById('product-shop').value = data.shop;
+    db.collection("products")
+      .where(firebase.firestore.FieldPath.documentId(), "==", productId)
+      .get()
+      .then((snapshot) => {
+        snapshot.docs.forEach((doc) => {
+          const data = doc.data();
+          document.getElementById("product-code").value = data.code;
+          document.getElementById("product-name").value = data.name;
+          document.getElementById("product-price").value = data.price;
+          document.getElementById("product-quantity").value = data.quantity;
+          document.getElementById("product-shop").value = data.shop;
 
-        if (yahooApiKey && proxyurl)
-          document.getElementById("imageFile").src = data.image;
+          if (yahooApiKey && proxyurl)
+            document.getElementById("imageFile").src = data.image;
 
-        if (data.image == "") getImage(data, "EDIT");
+          if (data.image == "") getImage(data, "EDIT");
+        });
       });
-    });
   } else {
     for (let i = 0; i < localStorage.length; i++) {
-      if ('Product' + i == productId) {
-        const jsonObject = JSON.parse(localStorage.getItem('Product' + i));
-        $$(document).on('page:init', '.page[data-name="edit-product"]', function () {
-          productDataForLocalStorage(jsonObject);
-          getImageFromLocalStorage(jsonObject, "EDIT");
-        });
-        $$(document).on('page:afterin', '.page[data-name="edit-product"]', function () {
-          productDataForLocalStorage(jsonObject);
-          getImageFromLocalStorage(jsonObject, "EDIT");
-        });
+      if ("Product" + i == productId) {
+        const jsonObject = JSON.parse(localStorage.getItem("Product" + i));
+        $$(document).on(
+          "page:init",
+          '.page[data-name="edit-product"]',
+          function () {
+            productDataForLocalStorage(jsonObject);
+          }
+        );
+        $$(document).on(
+          "page:afterin",
+          '.page[data-name="edit-product"]',
+          function () {
+            productDataForLocalStorage(jsonObject);
+          }
+        );
       }
     }
   }
 });
 
 function productDataForLocalStorage(jsonObject) {
-  document.getElementById('product-code').value = jsonObject.code;
-  document.getElementById('product-name').value = jsonObject.name;
-  document.getElementById('product-price').value = jsonObject.price;
-  document.getElementById('product-quantity').value = jsonObject.quantity;
-  document.getElementById('product-shop').value = jsonObject.shop;
+  document.getElementById("product-code").value = jsonObject.code;
+  document.getElementById("product-name").value = jsonObject.name;
+  document.getElementById("product-price").value = jsonObject.price;
+  document.getElementById("product-quantity").value = jsonObject.quantity;
+  document.getElementById("product-shop").value = jsonObject.shop;
+
+  if (jsonObject.image != "")
+    document.getElementById("imageFile").src = jsonObject.image;
+  else getImageFromLocalStorage(jsonObject, "EDIT");
 }
 
 // Save the edited product data
 function saveEditedProductData(elementName) {
-  $$(document).on('click', '.edited-product-data', function () {
+  $$(document).on("click", ".edited-product-data", function () {
     if (app.methods.isProductFormEmpty()) {
-      const jsonObject = app.methods.dataToJson('#edit-product-form');
+      const jsonObject = app.methods.dataToJson("#edit-product-form");
 
       if (useDatabaseApi) {
         let img = document.getElementById("imageFile").src.substring(23);
         if (document.getElementById("imageFile").src.includes("data")) {
-          uploadImageToFirebaseStorage(elementName, jsonObject.code + '.jpg', img, true);
+          uploadImageToFirebaseStorage(
+            elementName,
+            jsonObject.code + ".jpg",
+            img,
+            true
+          );
 
-          db.collection('products').doc(productId).update({
-            code: document.getElementById('product-code').value,
-            name: document.getElementById('product-name').value,
-            price: document.getElementById('product-price').value,
-            quantity: document.getElementById('product-quantity').value,
-            shop: document.getElementById('product-shop').value,
-            image: ""
-          });
+          db.collection("products")
+            .doc(productId)
+            .update({
+              code: document.getElementById("product-code").value,
+              name: document.getElementById("product-name").value,
+              price: document.getElementById("product-price").value,
+              quantity: document.getElementById("product-quantity").value,
+              shop: document.getElementById("product-shop").value,
+              image: "",
+            });
         } else {
-          db.collection('products').doc(productId).update({
-            code: document.getElementById('product-code').value,
-            name: document.getElementById('product-name').value,
-            price: document.getElementById('product-price').value,
-            quantity: document.getElementById('product-quantity').value,
-            shop: document.getElementById('product-shop').value,
-            image: document.getElementById("imageFile").src
-          });
+          db.collection("products")
+            .doc(productId)
+            .update({
+              code: document.getElementById("product-code").value,
+              name: document.getElementById("product-name").value,
+              price: document.getElementById("product-price").value,
+              quantity: document.getElementById("product-quantity").value,
+              shop: document.getElementById("product-shop").value,
+              image: document.getElementById("imageFile").src,
+            });
 
-          app.dialog.alert('Saved product details.', '');
+          //  app.dialog.alert('Saved product details.', '');
         }
-
       } else {
         const img = document.getElementById("imageFile");
-        uploadImageToLocalStorage(jsonObject.code + '.jpg', img, true);
+        if (img.src.includes("data")) {
+          uploadImageToLocalStorage(jsonObject.code + ".jpg", img, true);
+          for (let i = 0; i < localStorage.length; i++) {
+            if ("Product" + i == productId) {
+              let editedProduct = {
+                code: document.getElementById("product-code").value,
+                name: document.getElementById("product-name").value,
+                price: document.getElementById("product-price").value,
+                quantity: document.getElementById("product-quantity").value,
+                shop: document.getElementById("product-shop").value,
+                image: "",
+              };
 
-        for (let i = 0; i < localStorage.length; i++) {
-          if ('Product' + i == productId) {
-            let editedProduct = {
-              'code': document.getElementById('product-code').value,
-              'name': document.getElementById('product-name').value,
-              'price': document.getElementById('product-price').value,
-              'quantity': document.getElementById('product-quantity').value,
-              'shop': document.getElementById('product-shop').value
+              localStorage.setItem(productId, JSON.stringify(editedProduct));
             }
-
-            localStorage.setItem(productId, JSON.stringify(editedProduct));
           }
+        } else {
+          for (let i = 0; i < localStorage.length; i++) {
+            if ("Product" + i == productId) {
+              let editedProduct = {
+                code: document.getElementById("product-code").value,
+                name: document.getElementById("product-name").value,
+                price: document.getElementById("product-price").value,
+                quantity: document.getElementById("product-quantity").value,
+                shop: document.getElementById("product-shop").value,
+                image: document.getElementById("imageFile").src,
+              };
+
+              localStorage.setItem(productId, JSON.stringify(editedProduct));
+              localStorage.removeItem(
+                document.getElementById("product-code").value + ".jpg"
+              );
+            }
+          }
+          app.dialog.alert("Saved product details.1", "");
         }
       }
-    } else app.dialog.alert('Please fill out the form first.', '');
+    } else app.dialog.alert("Please fill out the form first.", "");
   });
 }
 
@@ -566,8 +711,9 @@ function saveEditedProductData(elementName) {
 - - - - - - - - - - - -  */
 // onSuccess callback accepts a Position object, which contains the current coordinates
 let onSuccess = function (map, p) {
-  L.marker([p.coords.latitude, p.coords.longitude]).addTo(map)
-    .bindPopup('Your current location.')
+  L.marker([p.coords.latitude, p.coords.longitude])
+    .addTo(map)
+    .bindPopup("Your current location.")
     .openPopup();
 
   map.setView([p.coords.latitude, p.coords.longitude], 14);
@@ -575,36 +721,41 @@ let onSuccess = function (map, p) {
 
 // onError callback receives a PositionError object
 function onError(error) {
-  app.dialog.alert('code: ' + error.code + '\n' + 'message: ' + error.message + '\n');
+  app.dialog.alert(
+    "code: " + error.code + "\n" + "message: " + error.message + "\n"
+  );
 }
 
 // Gives back the current location & adds a marker
 function currentLocation(map) {
   navigator.geolocation.getCurrentPosition(function (position) {
-    onSuccess(map, position)
+    onSuccess(map, position);
   }, onError);
 }
 
 // Move on the map and add marker to a chosen position
 function moveOnTheMap(map, chosenPositionMarker) {
-  map.on('click', function (e) {
+  map.on("click", function (e) {
     lat = e.latlng.lat;
     lon = e.latlng.lng;
 
     let redIcon = new L.Icon({
-      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+      iconUrl:
+        "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+      shadowUrl:
+        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
       iconSize: [25, 41],
       iconAnchor: [12, 41],
       popupAnchor: [1, -34],
-      shadowSize: [41, 41]
+      shadowSize: [41, 41],
     });
 
     if (chosenPositionMarker != undefined)
       map.removeLayer(chosenPositionMarker);
 
-    chosenPositionMarker = L.marker([lat, lon], { icon: redIcon }).addTo(map)
-      .bindPopup('Your chosen position.')
+    chosenPositionMarker = L.marker([lat, lon], { icon: redIcon })
+      .addTo(map)
+      .bindPopup("Your chosen position.")
       .openPopup();
 
     map.setView([lat, lon], 14);
@@ -616,17 +767,27 @@ function moveOnTheMap(map, chosenPositionMarker) {
 - - - - - - - - - - - - - - - - - - */
 // Subtract quantity
 function subtractQuantity(elementName) {
-  $$(document).on('click', '.update-quantity-minus', function () {
-    productId = $$(this).data('product-id');
-    changeQuantity(elementName, 'update-quantity-minus', productId, $$(this).data('quantity'));
+  $$(document).on("click", ".update-quantity-minus", function () {
+    productId = $$(this).data("product-id");
+    changeQuantity(
+      elementName,
+      "update-quantity-minus",
+      productId,
+      $$(this).data("quantity")
+    );
   });
 }
 
 // Add quantity
 function addQuantity(elementName) {
-  $$(document).on('click', '.update-quantity-plus', function () {
-    productId = $$(this).data('product-id');
-    changeQuantity(elementName, 'update-quantity-plus', productId, $$(this).data('quantity'));
+  $$(document).on("click", ".update-quantity-plus", function () {
+    productId = $$(this).data("product-id");
+    changeQuantity(
+      elementName,
+      "update-quantity-plus",
+      productId,
+      $$(this).data("quantity")
+    );
   });
 }
 
@@ -635,47 +796,45 @@ const changeQuantity = (elementName, className, productId, productQuantity) => {
   let newProductQuantity = 0;
   const idValue = document.getElementsByClassName(className)[0].id;
 
-  if (idValue == "plus")
-    newProductQuantity = parseInt(productQuantity) + 1;
+  if (idValue == "plus") newProductQuantity = parseInt(productQuantity) + 1;
   if (idValue == "minus")
     if (parseInt(productQuantity) > 0)
       newProductQuantity = parseInt(productQuantity) - 1;
 
-  // Update Firebase 
+  // Update Firebase
   if (useDatabaseApi) {
-    db.collection('products').doc(productId).update({
+    db.collection("products").doc(productId).update({
       quantity: newProductQuantity,
     });
     getRealTimeUpdatesForSearch(elementName);
   } else {
     for (let i = 0; i < localStorage.length; i++) {
-      if ('Product' + i == productId) {
-        const jsonObject = JSON.parse(localStorage.getItem('Product' + i));
+      if ("Product" + i == productId) {
+        const jsonObject = JSON.parse(localStorage.getItem("Product" + i));
         let changedProduct = {
-          'code': jsonObject.code,
-          'name': jsonObject.name,
-          'price': jsonObject.price,
-          'quantity': newProductQuantity,
-          'shop': jsonObject.shop
-        }
+          code: jsonObject.code,
+          name: jsonObject.name,
+          price: jsonObject.price,
+          quantity: newProductQuantity,
+          shop: jsonObject.shop,
+        };
 
         localStorage.setItem(productId, JSON.stringify(changedProduct));
         location.reload(true);
       }
     }
   }
-}
+};
 
 /* - - - - - - - - - - - - - - -
    Methods for the Search pages
 - - - - - - - - - - - - - - - - */
 // Get query
 function getQuery(elementName) {
-  $$(document).on('click', '.convert-product-form-to-data', function () {
+  $$(document).on("click", ".convert-product-form-to-data", function () {
     if (app.methods.isSearchFormEmpty()) {
       if (useDatabaseApi) getRealTimeUpdatesForSearch(elementName);
       else localStorageUpdateForSearch(elementName);
-    }
-    else app.dialog.alert('Please fill out the form first.', '');
+    } else app.dialog.alert("Please fill out the form first.", "");
   });
 }

@@ -8,7 +8,7 @@ try {
     initFirebase(); // initialize Firebase
   }
 } catch {
-  console.log('Firebase is not initialized.')
+  ('Firebase is not initialized.')
   console.log('Data is saved to the localStorage.');
 }
 
@@ -109,9 +109,11 @@ function getImage(data, pageName) {
 // Search by one filled field
 const oneFieldSearch = (elementName, stringName, fieldName) => {
   db.collection('products').where(stringName, '==', fieldName).get().then((snapshot) => {
+    let count = 0;
     let result = '';
     snapshot.docs.forEach(doc => {
       const data = doc.data();
+      count++;
       result += `
         <div class="card-bg block block-strong inset">
           <p>Product Code: <span>${data.code}</span></p>
@@ -133,6 +135,16 @@ const oneFieldSearch = (elementName, stringName, fieldName) => {
 
       if (data.image == "") getImage(data, "PRODUCT");
     });
+
+    if (count == 0) {
+      result += `
+        <div class="card-bg block block-strong inset">
+          <div class="item-content">
+            <div class="display-flex justify-content-center">There are no products added to the database.</div>
+          </div>
+        </div>`;
+    }
+
     elementName.innerHTML = result;
   });
 }
@@ -140,9 +152,11 @@ const oneFieldSearch = (elementName, stringName, fieldName) => {
 // Search by two filled field
 const twoFieldSearch = (elementName, stringName, fieldName, stringName2, fieldName2) => {
   db.collection('products').where(stringName, '==', fieldName).where(stringName2, '==', fieldName2).get().then((snapshot) => {
+    let count = 0;
     let result = '';
     snapshot.docs.forEach(doc => {
       const data = doc.data();
+      count++;
       result += `
         <div class="card-bg block block-strong inset">
           <p>Product Code: <span>${data.code}</span></p>
@@ -164,6 +178,38 @@ const twoFieldSearch = (elementName, stringName, fieldName, stringName2, fieldNa
 
       if (data.image == "") getImage(data, "PRODUCT");
     });
+
+    if (count == 0) {
+      result += `
+        <div class="card-bg block block-strong inset">
+          <div class="item-content">
+            <div class="display-flex justify-content-center">There are no products added to the database.</div>
+          </div>
+        </div>`;
+    }
+
+    elementName.innerHTML = result;
+  });
+}
+
+// Search by three filled field
+const threeFieldSearch = (elementName,stringName, fieldName, stringName2, fieldName2, stringName3, fieldName3) => {
+  db.collection('products').where(stringName, '==', fieldName).where(stringName2, '==', fieldName2).where(stringName3, '==', fieldName3).get().then((snapshot) => {
+    let count = 0;
+    let result = '';
+    snapshot.docs.forEach(doc => {
+      count++;
+    });
+
+    if (count == 0) {
+      result += `
+        <div class="card-bg block block-strong inset">
+          <div class="item-content">
+            <div class="display-flex justify-content-center">There are no products added to the database.</div>
+          </div>
+        </div>`;
+    }
+
     elementName.innerHTML = result;
   });
 }
@@ -184,14 +230,18 @@ const getRealTimeUpdatesForSearch = (elementName) => {
     twoFieldSearch(elementName, 'code', jsonObject.code, 'shop', jsonObject.shop);
   } else if (jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop != "") {
     twoFieldSearch(elementName, 'name', jsonObject.name, 'shop', jsonObject.shop);
+  } else if (jsonObject.code != "" && jsonObject.name != "" && jsonObject.shop != "") {
+    threeFieldSearch(elementName, 'code', jsonObject.code, 'name', jsonObject.name, 'code', jsonObject.code);
   }
 }
 
 // Real time update with Firebase for the Shops
 const getRealTimeUpdatesForShops = (elementName) => {
+  let count = 0;
   db.collection('shops').onSnapshot((doc) => {
     let result = '';
     doc.docs.forEach((doc) => {
+      count++;
       const data = doc.data();
       result += `
         <div class=" card-bg block block-strong inset display-flex flex-direction-row">
@@ -208,15 +258,26 @@ const getRealTimeUpdatesForShops = (elementName) => {
         </div>`;
     });
 
+    if (count == 0) {
+      result += `
+        <div class="card-bg block block-strong inset">
+          <div class="item-content">
+            <div class="item-inner display-flex justify-content-center">There are no shops added to the database.</div>
+          </div>
+        </div>`;
+    }
+
     elementName.innerHTML = result;
   });
 }
 
 // Real time update with Firebase for the Products
 const getRealTimeUpdatesForProducts = (elementName, pageName) => {
+  let count = 0;
   db.collection('products').onSnapshot((doc) => {
     let result = '';
     doc.docs.forEach((doc) => {
+      count++;
       const data = doc.data();
       result += `
         <div class="card-bg block block-strong inset">
@@ -258,6 +319,16 @@ const getRealTimeUpdatesForProducts = (elementName, pageName) => {
 
       if (data.image == "") getImage(data, pageName);
     });
+
+    if (count == 0) {
+      result += `
+        <div class="card-bg block block-strong inset">
+          <div class="item-content">
+            <div class="item-inner display-flex justify-content-center">There are no products added to the database.</div>
+          </div>
+        </div>`;
+    }
+
     elementName.innerHTML = result;
   });
 }

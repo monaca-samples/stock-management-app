@@ -9,10 +9,17 @@
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
-.map { 
-  height: 180px; 
+.map {
+  height: 180px;
 }
 
-.leaflet-marker-icon.selectedMarker{
+.leaflet-marker-icon.selectedMarker {
   color: red;
+}
+
+.short-text {
+  display: block; 
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
