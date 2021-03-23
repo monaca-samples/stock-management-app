@@ -18,7 +18,7 @@ You have to configure and initialize Firebase to use it, otherwise data is saved
 ## Barcode
 
 - [PhoneGap BarcodeScanner Plugin](https://docs.monaca.io/en/reference/third_party_phonegap/phonegap_plugin_barcodescanner)
-- [Yahoo Shopping API] (https://developer.yahoo.co.jp/webapi/shopping/shopping/v3/itemsearch.html)
+- [Yahoo Shopping API](https://developer.yahoo.co.jp/webapi/shopping/shopping/v3/itemsearch.html)
 
 ## Camera
 
