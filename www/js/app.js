@@ -222,22 +222,20 @@ function popUpBarcodeList(elementName) {
   $$(document).on("click", ".popup-code-list", function () {
     if (useDatabaseApi) {
       let count = 0;
-      db.collection("products")
-        .get()
-        .then((snapshot) => {
-          let result = "";
-          snapshot.docs.forEach((doc) => {
-            count++;
-            const data = doc.data();
-            result += `
-          <li>
-            <a href="#" class="item-link popup-close">
-              <div class="item-content">
-                <div data-product-code="${data.code}" class="item-inner item-title get-product-code">${data.code}</div>
-              </div>
-            </a>
-          </li>`;
-          });
+      db.collection("products").get().then((snapshot) => {
+        let result = "";
+        snapshot.docs.forEach((doc) => {
+          count++;
+          const data = doc.data();
+          result += `
+            <li>
+              <a href="#" class="item-link popup-close">
+                <div class="item-content">
+                  <div data-product-code="${data.code}" class="item-inner item-title get-product-code">${data.code}</div>
+                </div>
+              </a>
+            </li>`;
+        });
 
           if (count == 0) {
             result += `
@@ -285,22 +283,20 @@ function popUpProductList(elementName) {
   $$(document).on("click", ".popup-product-list", function () {
     if (useDatabaseApi) {
       let count = 0;
-      db.collection("products")
-        .get()
-        .then((snapshot) => {
-          let result = "";
-          snapshot.docs.forEach((doc) => {
-            count++;
-            const data = doc.data();
-            result += `
-          <li>
-            <a href="#" class="item-link popup-close">
-              <div class="item-content">
-                <div data-product-name="${data.name}" class="item-inner item-title get-product-name">${data.name}</div>
-              </div>
-            </a>
-          </li>`;
-          });
+      db.collection("products").get().then((snapshot) => {
+        let result = "";
+        snapshot.docs.forEach((doc) => {
+          count++;
+          const data = doc.data();
+          result += `
+            <li>
+              <a href="#" class="item-link popup-close">
+                <div class="item-content">
+                  <div data-product-name="${data.name}" class="item-inner item-title get-product-name">${data.name}</div>
+                </div>
+              </a>
+            </li>`;
+            });
 
           if (count == 0) {
             result += `
@@ -326,14 +322,15 @@ function popUpProductList(elementName) {
         for (let i = 0; i < localStorage.length; i++) {
           if (localStorage.getItem("Product" + i)) {
             const jsonObject = JSON.parse(localStorage.getItem("Product" + i));
+            console.log(jsonObject.name);
             result += `
-          <li>
-            <a href="#" class="item-link popup-close">
-            <div class="item-content">
-              <div data-product-name="${jsonObject.name}" class="item-inner item-title get-product-name>${jsonObject.name}</div>
-            </div>
-            </a>
-          </li>`;
+              <li>
+                <a href="#" class="item-link popup-close">
+                  <div class="item-content">
+                    <div data-product-name="${jsonObject.name}" class="item-inner item-title get-product-name">${jsonObject.name}</div>
+                  </div>
+                </a>
+              </li>`;
           }
         }
       }
@@ -348,14 +345,12 @@ function popUpShopList(elementName) {
   $$(document).on("click", ".popup-shop-list", function () {
     if (useDatabaseApi) {
       let count = 0;
-      db.collection("shops")
-        .get()
-        .then((snapshot) => {
-          let result = "";
-          snapshot.docs.forEach((doc) => {
-            count++;
-            const data = doc.data();
-            result += `
+      db.collection("shops").get().then((snapshot) => {
+        let result = "";
+        snapshot.docs.forEach((doc) => {
+          count++;
+          const data = doc.data();
+          result += `
             <li>
               <a href="#" class="item-link popup-close">
                 <div class="item-content">
@@ -363,19 +358,19 @@ function popUpShopList(elementName) {
                 </div>
               </a>
             </li>`;
-          });
-
-          if (count == 0) {
-            result += `
-              <li>
-                <div class="item-content">
-                  <div class="item-inner display-flex justify-content-center">There are no shops added to the database.</div>
-                </div>
-              </li>`;
-          }
-
-          elementName.innerHTML = result;
         });
+
+        if (count == 0) {
+          result += `
+            <li>
+              <div class="item-content">
+                <div class="item-inner display-flex justify-content-center">There are no shops added to the database.</div>
+              </div>
+            </li>`;
+        }
+
+        elementName.innerHTML = result;
+      });
     } else {
       let result = "";
       if (localStorage.length == 0) {
@@ -455,6 +450,7 @@ function getNewProductDataFromForm(elementName) {
         if (imgSrc.includes("data")) {
           checkPicture(elementName, jsonObject);
           addNewProductToLocalStorage(jsonObject);
+          app.dialog.alert("Product added to the products list.", "");
         } else {
           addNewProductToLocalStorage(jsonObject, imgSrc);
           app.dialog.alert("Product added to the products list.", "");
@@ -492,33 +488,24 @@ $$(document).on("click", ".get-shop-details-data", function () {
   shopId = $$(this).data("shop-id");
 
   if (useDatabaseApi) {
-    db.collection("shops")
-      .where(firebase.firestore.FieldPath.documentId(), "==", shopId)
-      .get()
-      .then((snapshot) => {
-        snapshot.docs.forEach((doc) => {
-          const data = doc.data();
-          document.getElementById("shop-name").value = data.name;
-          document.getElementById("shop-telephone").value = data.telephone;
-          document.getElementById("shop-address").value = data.address;
-          document.getElementById("shop-location").value = data.location;
-        });
+    db.collection("shops").where(firebase.firestore.FieldPath.documentId(), "==", shopId).get().then((snapshot) => {
+      snapshot.docs.forEach((doc) => {
+        const data = doc.data();
+        document.getElementById("shop-name").value = data.name;
+        document.getElementById("shop-telephone").value = data.telephone;
+        document.getElementById("shop-address").value = data.address;
+        document.getElementById("shop-location").value = data.location;
       });
+    });
   } else {
     for (let i = 0; i < localStorage.length; i++) {
       if ("Shop" + i == shopId) {
         const jsonObject = JSON.parse(localStorage.getItem("Shop" + i));
-        $$(document).on(
-          "page:init",
-          '.page[data-name="edit-shop"]',
-          function () {
+        $$(document).on("page:init", '.page[data-name="edit-shop"]', function () {
             shopDataForLocalStorage(jsonObject);
           }
         );
-        $$(document).on(
-          "page:afterin",
-          '.page[data-name="edit-shop"]',
-          function () {
+        $$(document).on("page:afterin", '.page[data-name="edit-shop"]', function () {
             shopDataForLocalStorage(jsonObject);
           }
         );
@@ -538,14 +525,12 @@ function shopDataForLocalStorage(jsonObject) {
 $$(document).on("click", ".edited-shop-data", function () {
   if (app.methods.isNewShopFormEmpty()) {
     if (useDatabaseApi) {
-      db.collection("shops")
-        .doc(shopId)
-        .update({
-          name: document.getElementById("shop-name").value,
-          telephone: document.getElementById("shop-telephone").value,
-          address: document.getElementById("shop-address").value,
-          location: document.getElementById("shop-location").value,
-        });
+      db.collection("shops").doc(shopId).update({
+        name: document.getElementById("shop-name").value,
+        telephone: document.getElementById("shop-telephone").value,
+        address: document.getElementById("shop-address").value,
+        location: document.getElementById("shop-location").value,
+      });
     } else {
       for (let i = 0; i < localStorage.length; i++) {
         if ("Shop" + i == shopId) {
@@ -570,39 +555,30 @@ $$(document).on("click", ".get-product-details-data", function () {
   productId = $$(this).data("product-id");
 
   if (useDatabaseApi) {
-    db.collection("products")
-      .where(firebase.firestore.FieldPath.documentId(), "==", productId)
-      .get()
-      .then((snapshot) => {
-        snapshot.docs.forEach((doc) => {
-          const data = doc.data();
-          document.getElementById("product-code").value = data.code;
-          document.getElementById("product-name").value = data.name;
-          document.getElementById("product-price").value = data.price;
-          document.getElementById("product-quantity").value = data.quantity;
-          document.getElementById("product-shop").value = data.shop;
+    db.collection("products").where(firebase.firestore.FieldPath.documentId(), "==", productId).get().then((snapshot) => {
+      snapshot.docs.forEach((doc) => {
+        const data = doc.data();
+        document.getElementById("product-code").value = data.code;
+        document.getElementById("product-name").value = data.name;
+        document.getElementById("product-price").value = data.price;
+        document.getElementById("product-quantity").value = data.quantity;
+        document.getElementById("product-shop").value = data.shop;
 
-          if (yahooApiKey && proxyurl)
-            document.getElementById("imageFile").src = data.image;
+        if (yahooApiKey && proxyurl)
+          document.getElementById("imageFile").src = data.image;
 
-          if (data.image == "") getImage(data, "EDIT");
-        });
+        if (data.image == "") getImage(data, "EDIT");
       });
+    });
   } else {
     for (let i = 0; i < localStorage.length; i++) {
       if ("Product" + i == productId) {
         const jsonObject = JSON.parse(localStorage.getItem("Product" + i));
-        $$(document).on(
-          "page:init",
-          '.page[data-name="edit-product"]',
-          function () {
+        $$(document).on("page:init", '.page[data-name="edit-product"]', function () {
             productDataForLocalStorage(jsonObject);
           }
         );
-        $$(document).on(
-          "page:afterin",
-          '.page[data-name="edit-product"]',
-          function () {
+        $$(document).on("page:afterin", '.page[data-name="edit-product"]', function () {
             productDataForLocalStorage(jsonObject);
           }
         );
@@ -618,7 +594,7 @@ function productDataForLocalStorage(jsonObject) {
   document.getElementById("product-quantity").value = jsonObject.quantity;
   document.getElementById("product-shop").value = jsonObject.shop;
 
-  if (jsonObject.image != "")
+  if (jsonObject.image != undefined) 
     document.getElementById("imageFile").src = jsonObject.image;
   else getImageFromLocalStorage(jsonObject, "EDIT");
 }
@@ -632,16 +608,9 @@ function saveEditedProductData(elementName) {
       if (useDatabaseApi) {
         let img = document.getElementById("imageFile").src.substring(23);
         if (document.getElementById("imageFile").src.includes("data")) {
-          uploadImageToFirebaseStorage(
-            elementName,
-            jsonObject.code + ".jpg",
-            img,
-            true
-          );
+          uploadImageToFirebaseStorage(elementName, jsonObject.code + ".jpg", img, true);
 
-          db.collection("products")
-            .doc(productId)
-            .update({
+          db.collection("products").doc(productId).update({
               code: document.getElementById("product-code").value,
               name: document.getElementById("product-name").value,
               price: document.getElementById("product-price").value,
@@ -650,9 +619,7 @@ function saveEditedProductData(elementName) {
               image: "",
             });
         } else {
-          db.collection("products")
-            .doc(productId)
-            .update({
+          db.collection("products").doc(productId).update({
               code: document.getElementById("product-code").value,
               name: document.getElementById("product-name").value,
               price: document.getElementById("product-price").value,
@@ -661,7 +628,7 @@ function saveEditedProductData(elementName) {
               image: document.getElementById("imageFile").src,
             });
 
-          //  app.dialog.alert('Saved product details.', '');
+          app.dialog.alert('Saved product details.', '');
         }
       } else {
         const img = document.getElementById("imageFile");
@@ -675,7 +642,7 @@ function saveEditedProductData(elementName) {
                 price: document.getElementById("product-price").value,
                 quantity: document.getElementById("product-quantity").value,
                 shop: document.getElementById("product-shop").value,
-                image: "",
+                image: undefined,
               };
 
               localStorage.setItem(productId, JSON.stringify(editedProduct));
@@ -694,12 +661,10 @@ function saveEditedProductData(elementName) {
               };
 
               localStorage.setItem(productId, JSON.stringify(editedProduct));
-              localStorage.removeItem(
-                document.getElementById("product-code").value + ".jpg"
-              );
+              localStorage.removeItem(document.getElementById("product-code").value + ".jpg");
             }
           }
-          app.dialog.alert("Saved product details.1", "");
+          app.dialog.alert("Saved product details.", "");
         }
       }
     } else app.dialog.alert("Please fill out the form first.", "");
@@ -721,15 +686,14 @@ let onSuccess = function (map, p) {
 
 // onError callback receives a PositionError object
 function onError(error) {
-  app.dialog.alert(
-    "code: " + error.code + "\n" + "message: " + error.message + "\n"
-  );
+  app.dialog.alert("code: " + error.code + "\n" + "message: " + error.message + "\n");
 }
 
 // Gives back the current location & adds a marker
 function currentLocation(map) {
   navigator.geolocation.getCurrentPosition(function (position) {
     onSuccess(map, position);
+    document.getElementById("shop-location").value = position.coords.latitude + " " + position.coords.longitude;
   }, onError);
 }
 
@@ -738,12 +702,11 @@ function moveOnTheMap(map, chosenPositionMarker) {
   map.on("click", function (e) {
     lat = e.latlng.lat;
     lon = e.latlng.lng;
+    document.getElementById("shop-location").value = lat + " " + lon;
 
     let redIcon = new L.Icon({
-      iconUrl:
-        "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
-      shadowUrl:
-        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+      iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+      shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
       iconSize: [25, 41],
       iconAnchor: [12, 41],
       popupAnchor: [1, -34],
@@ -760,6 +723,8 @@ function moveOnTheMap(map, chosenPositionMarker) {
 
     map.setView([lat, lon], 14);
   });
+
+  
 }
 
 /* - - - - - - - - - - - - - - - - -
@@ -769,12 +734,7 @@ function moveOnTheMap(map, chosenPositionMarker) {
 function subtractQuantity(elementName) {
   $$(document).on("click", ".update-quantity-minus", function () {
     productId = $$(this).data("product-id");
-    changeQuantity(
-      elementName,
-      "update-quantity-minus",
-      productId,
-      $$(this).data("quantity")
-    );
+    changeQuantity(elementName, "update-quantity-minus", productId, $$(this).data("quantity"));
   });
 }
 
@@ -782,12 +742,7 @@ function subtractQuantity(elementName) {
 function addQuantity(elementName) {
   $$(document).on("click", ".update-quantity-plus", function () {
     productId = $$(this).data("product-id");
-    changeQuantity(
-      elementName,
-      "update-quantity-plus",
-      productId,
-      $$(this).data("quantity")
-    );
+    changeQuantity(elementName, "update-quantity-plus", productId, $$(this).data("quantity"));
   });
 }
 
@@ -817,10 +772,11 @@ const changeQuantity = (elementName, className, productId, productQuantity) => {
           price: jsonObject.price,
           quantity: newProductQuantity,
           shop: jsonObject.shop,
+          image: jsonObject.image
         };
 
         localStorage.setItem(productId, JSON.stringify(changedProduct));
-        location.reload(true);
+        location.reload();
       }
     }
   }

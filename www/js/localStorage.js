@@ -25,10 +25,7 @@ function addNewProductToLocalStorage(jsonObject, imgSrc) {
     image: imgSrc,
   };
 
-  localStorage.setItem(
-    "Product" + localStorage.length,
-    JSON.stringify(Product)
-  );
+  localStorage.setItem("Product" + localStorage.length, JSON.stringify(Product));
 }
 
 // Uploading picture
@@ -39,7 +36,6 @@ function uploadImageToLocalStorage(fileName, img, edit) {
   if (edit) {
     app.dialog.alert("Saved product details.", "");
   } else {
-    app.dialog.alert("Product added to the products list.", "");
     app.methods.emptyNewProductForm();
     document.getElementById("imageFile").src = "assets/pictures/camera.png";
   }
@@ -61,7 +57,8 @@ function getImageDataURL(img) {
 function getImageFromLocalStorage(jsonObject, pageName) {
   const DEFAULT = "assets/pictures/camera.png";
   try {
-    const imageData = localStorage.getItem(jsonObject.code + ".jpg");
+    let imageData = localStorage.getItem(jsonObject.code + ".jpg");
+    if (jsonObject.image != undefined) imageData = jsonObject.image;
     if (pageName == "EDIT")
       document.getElementById("imageFile").src = imageData;
     return imageData || DEFAULT;
@@ -79,7 +76,7 @@ const oneFieldSearchLocalStorage = (elementName, stringName, objectName) => {
       count++;
       const jsonObject = JSON.parse(localStorage.getItem("Product" + i));
       let imageSource = getImageFromLocalStorage(jsonObject, "PRODUCT");
-      if (jsonObject.image != "") imageSource = jsonObject.image;
+      if (jsonObject.image != undefined) imageSource = jsonObject.image;
 
       if (stringName == jsonObject[objectName]) {
         result += `
@@ -123,7 +120,7 @@ const twoFieldSearchLocalStorage = (elementName, stringName, objectName, stringN
       count++;
       const jsonObject = JSON.parse(localStorage.getItem("Product" + i));
       let imageSource = getImageFromLocalStorage(jsonObject, "PRODUCT");
-      if (jsonObject.image != "") imageSource = jsonObject.image;
+      if (jsonObject.image != undefined) imageSource = jsonObject.image;
       if (
         stringName == jsonObject[objectName] && stringName2 == jsonObject[objectName2]
       ) {
@@ -248,7 +245,7 @@ const getProductsFromLocalStorage = (elementName, pageName) => {
       count++;
       const jsonObject = JSON.parse(localStorage.getItem("Product" + i));
       let imageSource = getImageFromLocalStorage(jsonObject, pageName);
-      if (jsonObject.image != "") imageSource = jsonObject.image;
+      if (jsonObject.image != undefined) imageSource = jsonObject.image;
 
       result += `
       <div class="card-bg block block-strong inset">
