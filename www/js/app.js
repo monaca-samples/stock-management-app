@@ -604,7 +604,6 @@ function saveEditedProductData(elementName) {
   $$(document).on("click", ".edited-product-data", function () {
     if (app.methods.isProductFormEmpty()) {
       const jsonObject = app.methods.dataToJson("#edit-product-form");
-
       if (useDatabaseApi) {
         let img = document.getElementById("imageFile").src.substring(23);
         if (document.getElementById("imageFile").src.includes("data")) {
@@ -633,6 +632,7 @@ function saveEditedProductData(elementName) {
       } else {
         const img = document.getElementById("imageFile");
         if (img.src.includes("data")) {
+          console.log('whz');
           uploadImageToLocalStorage(jsonObject.code + ".jpg", img, true);
           for (let i = 0; i < localStorage.length; i++) {
             if ("Product" + i == productId) {
@@ -664,6 +664,7 @@ function saveEditedProductData(elementName) {
               localStorage.removeItem(document.getElementById("product-code").value + ".jpg");
             }
           }
+
           app.dialog.alert("Saved product details.", "");
         }
       }
