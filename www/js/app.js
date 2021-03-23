@@ -322,7 +322,6 @@ function popUpProductList(elementName) {
         for (let i = 0; i < localStorage.length; i++) {
           if (localStorage.getItem("Product" + i)) {
             const jsonObject = JSON.parse(localStorage.getItem("Product" + i));
-            console.log(jsonObject.name);
             result += `
               <li>
                 <a href="#" class="item-link popup-close">
@@ -632,7 +631,6 @@ function saveEditedProductData(elementName) {
       } else {
         const img = document.getElementById("imageFile");
         if (img.src.includes("data")) {
-          console.log('whz');
           uploadImageToLocalStorage(jsonObject.code + ".jpg", img, true);
           for (let i = 0; i < localStorage.length; i++) {
             if ("Product" + i == productId) {
