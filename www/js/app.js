@@ -178,6 +178,7 @@ function setOptions(srcType) {
 
 // Take picture with camera
 function openCamera(selection) {
+  try{
   const srcType = Camera.PictureSourceType.CAMERA;
   const options = setOptions(srcType);
   navigator.camera.getPicture(
@@ -189,11 +190,15 @@ function openCamera(selection) {
       console.debug("Unable to take picture: " + error, "app");
     },
     options
-  );
+  );}
+  catch {
+    console.error("Something went wrong.");
+  }
 }
 
 // Open gallery and choose a picture
 function openFilePicker(selection) {
+  try{
   const srcType = Camera.PictureSourceType.SAVEDPHOTOALBUM;
   const options = setOptions(srcType);
   navigator.camera.getPicture(
@@ -206,6 +211,9 @@ function openFilePicker(selection) {
     },
     options
   );
+  } catch {
+    console.error("Something went wrong.");
+  }
 }
 
 // Add picture to DOM
@@ -237,40 +245,42 @@ function popUpBarcodeList(elementName) {
             </li>`;
         });
 
-          if (count == 0) {
-            result += `
-              <li>
-                <div class="item-content">
-                  <div class="item-inner display-flex justify-content-center">There are no barcodes added to the database.</div>
-                </div>
-              </li>`;
-          }
-
-          elementName.innerHTML = result;
-        });
-    } else {
-      let result = "";
-      if (localStorage.length == 0) {
-        result += `
-              <li>
-                  <div class="item-content">
-                    <div class="item-inner display-flex justify-content-center">There are no barcodes added to the database.</div>
-                  </div>
-              </li>`;
-      } else {
-        for (let i = 0; i < localStorage.length; i++) {
-          if (localStorage.getItem("Product" + i)) {
-            const jsonObject = JSON.parse(localStorage.getItem("Product" + i));
-            result += `
-              <li>
-                <a href="#" class="item-link popup-close">
-                  <div class="item-content">
-                    <div data-product-code="${jsonObject.code}" class="item-inner get-product-code item-title">${jsonObject.code}</div>
-                  </div>
-                </a>
-              </li>`;
-          }
+        if (count == 0) {
+          result += `
+            <li>
+              <div class="item-content">
+                <div class="item-inner display-flex justify-content-center">There are no barcodes added to the database.</div>
+              </div>
+            </li>`;
         }
+
+        elementName.innerHTML = result;
+      });
+    } else {
+      let count = 0;
+      let result = "";
+      for (let i = 0; i < localStorage.length; i++) {
+        if (localStorage.getItem("Product" + i)) {
+          count++;
+          const jsonObject = JSON.parse(localStorage.getItem("Product" + i));
+          result += `
+            <li>
+              <a href="#" class="item-link popup-close">
+                <div class="item-content">
+                  <div data-product-code="${jsonObject.code}" class="item-inner get-product-code item-title">${jsonObject.code}</div>
+                </div>
+              </a>
+            </li>`;
+        }
+      }
+
+      if (count == 0) {
+        result += `
+          <li>
+            <div class="item-content">
+              <div class="item-inner display-flex justify-content-center">There are no barcodes added to the database.</div>
+            </div>
+          </li>`;
       }
 
       elementName.innerHTML = result;
@@ -296,7 +306,7 @@ function popUpProductList(elementName) {
                 </div>
               </a>
             </li>`;
-            });
+          });
 
           if (count == 0) {
             result += `
@@ -310,28 +320,30 @@ function popUpProductList(elementName) {
           elementName.innerHTML = result;
         });
     } else {
+      let count = 0;
       let result = "";
-      if (localStorage.length == 0) {
-        result += `
-        	<li>
-         	<div class="item-content">
-          	<div class="item-inner display-flex justify-content-center">There are no products added to the database.</div>
-          </div>
-         </li>`;
-      } else {
-        for (let i = 0; i < localStorage.length; i++) {
-          if (localStorage.getItem("Product" + i)) {
-            const jsonObject = JSON.parse(localStorage.getItem("Product" + i));
-            result += `
-              <li>
-                <a href="#" class="item-link popup-close">
-                  <div class="item-content">
-                    <div data-product-name="${jsonObject.name}" class="item-inner item-title get-product-name">${jsonObject.name}</div>
-                  </div>
-                </a>
-              </li>`;
-          }
+      for (let i = 0; i < localStorage.length; i++) {
+        if (localStorage.getItem("Product" + i)) {
+          count++;
+          const jsonObject = JSON.parse(localStorage.getItem("Product" + i));
+          result += `
+            <li>
+              <a href="#" class="item-link popup-close">
+                <div class="item-content">
+                  <div data-product-name="${jsonObject.name}" class="item-inner item-title get-product-name">${jsonObject.name}</div>
+                </div>
+              </a>
+            </li>`;
         }
+      }
+
+      if (count == 0) {
+        result += `
+          <li>
+            <div class="item-content">
+              <div class="item-inner display-flex justify-content-center">There are no products added to the database.</div>
+            </div>
+           </li>`;
       }
 
       elementName.innerHTML = result;
@@ -371,28 +383,30 @@ function popUpShopList(elementName) {
         elementName.innerHTML = result;
       });
     } else {
+      let count = 0;
       let result = "";
-      if (localStorage.length == 0) {
+      for (let i = 0; i < localStorage.length; i++) {
+        if (localStorage.getItem("Shop" + i)) {
+          count++;
+          const jsonObject = JSON.parse(localStorage.getItem("Shop" + i));
+          result += `
+            <li>
+              <a href="#" class="item-link popup-close">
+                <div class="item-content">
+                  <div data-shop-id="${"Shop" + i}" data-shop-name="${jsonObject.name}" class="item-inner item-title get-shop-name">${jsonObject.name}</div>
+                </div>
+              </a>
+            </li>`;
+        }
+      }
+
+      if (count == 0) {
         result += `
           <li>
             <div class="item-content">
               <div class="item-inner display-flex justify-content-center">There are no shops added to the database.</div>
             </div>
           </li>`;
-      } else {
-        for (let i = 0; i < localStorage.length; i++) {
-          if (localStorage.getItem("Shop" + i)) {
-            const jsonObject = JSON.parse(localStorage.getItem("Shop" + i));
-            result += `
-          <li>
-            <a href="#" class="item-link popup-close">
-              <div class="item-content">
-                <div data-shop-id="${"Shop" + i}" data-shop-name="${jsonObject.name}" class="item-inner item-title get-shop-name">${jsonObject.name}</div>
-              </div>
-            </a>
-          </li>`;
-          }
-        }
       }
 
       elementName.innerHTML = result;
