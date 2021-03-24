@@ -13,7 +13,7 @@ try {
 }
 
 // Add new items to the Shop List
-function addNewShop(jsonObject) {
+function addNewShopToFirebase(jsonObject) {
   db.collection('shops').add({
     'name': jsonObject.name,
     'telephone': jsonObject.telephone,
@@ -23,7 +23,7 @@ function addNewShop(jsonObject) {
 }
 
 // Add new items to the Product List
-function addNewProduct(jsonObject, imgSrc) {
+function addNewProductToFirebase(jsonObject, imgSrc) {
   db.collection('products').add({
     code: jsonObject.code,
     'name': jsonObject.name,
@@ -48,7 +48,7 @@ function uploadImageToFirebaseStorage(elementName, fileName, img, edit) {
         if (edit) {
           app.dialog.alert('Saved product details.', '');
         } else {
-          app.dialog.alert('Product added to the products list.', '');
+          app.dialog.alert("Product added to the products list.", "");
           app.methods.emptyNewProductForm();
           document.getElementById("imageFile").src = "assets/pictures/camera.png";
           elementName.innerHTML = "";

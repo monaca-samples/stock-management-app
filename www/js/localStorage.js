@@ -57,7 +57,7 @@ function getImageDataURL(img) {
 function getImageFromLocalStorage(jsonObject, pageName) {
   const DEFAULT = "assets/pictures/camera.png";
   try {
-    let imageData = localStorage.getItem(jsonObject.code + ".jpg");
+    let imageData = localStorage.getItem(jsonObject.code + jsonObject.shop + ".jpg");
     if (jsonObject.image != undefined) imageData = jsonObject.image;
     if (pageName == "EDIT")
       document.getElementById("imageFile").src = imageData;

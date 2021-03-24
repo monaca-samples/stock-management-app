@@ -444,7 +444,7 @@ let i = 0;
 $$(document).on("click", ".convert-form-to-data", function () {
   if (app.methods.isNewShopFormEmpty()) {
     const jsonObject = app.methods.dataToJson("#new-shop-form");
-    if (useDatabaseApi) addNewShop(jsonObject);
+    if (useDatabaseApi) addNewShopToFirebase(jsonObject);
     // Add new shop to the database
     else addNewShopToLocalStorage(jsonObject);
     app.methods.emptyNewShopForm();
@@ -458,25 +458,81 @@ function getNewProductDataFromForm(elementName) {
     if (app.methods.isProductFormEmpty()) {
       const jsonObject = app.methods.dataToJson("#new-product-form");
 
-      if (yahooApiKey && proxyurl) {
-        let imgSrc = document.getElementById("imageFile").src;
-        if (imgSrc.includes("data")) {
-          checkPicture(elementName, jsonObject);
-          addNewProductToLocalStorage(jsonObject);
-          app.dialog.alert("Product added to the products list.", "");
-        } else {
-          addNewProductToLocalStorage(jsonObject, imgSrc);
-          app.dialog.alert("Product added to the products list.", "");
-        }
-      } else {
-        if (checkPicture(elementName, jsonObject)) {
-          if (useDatabaseApi) addNewProduct(jsonObject);
-          // Create/add new product to the database
-          else addNewProductToLocalStorage(jsonObject);
-        }
-      }
+      // Check if the product is already added to that shop (local storage, else case: Firebase)
+      if(checkIfProductIsAddedToAShop(jsonObject)) 
+        app.dialog.alert("Product is already added to this shop.", "");
+      else addNewProduct(elementName, jsonObject);
+      
     } else app.dialog.alert("Please fill out the form first.", "");
   });
+}
+
+// Check if product is duplicated
+function checkIfProductIsAddedToAShop(jsonObject) {
+  if(useDatabaseApi) {
+    let isAdded = false;
+    db.collection('products').onSnapshot((doc) => {
+      doc.docs.forEach((doc) => {
+        const data = doc.data();
+        if(data.code == jsonObject.code && data.shop == jsonObject.shop) {
+          isAdded = true;
+          console.log(isAdded);
+          console.log('egyforma');
+          console.log(data.code + " " + data.shop);
+          console.log(jsonObject.code + jsonObject.shop);
+        }
+      });
+    });
+
+    console.log(isAdded);
+
+    return isAdded;
+  } else {
+    if(localStorage.length == 0) return false;
+
+    for (let i = 0; i < localStorage.length; i++) {
+      if (localStorage.getItem("Product" + i)) {
+        const item = JSON.parse(localStorage.getItem("Product" + i));
+        if(item.code == jsonObject.code && item.shop == jsonObject.shop) 
+          return true;
+      }
+    }
+
+    return false;
+  }
+}
+
+// Adding a new product 
+function addNewProduct(elementName, jsonObject) {
+  if (yahooApiKey && proxyurl) {
+    let imgSrc = document.getElementById("imageFile").src;
+    if (imgSrc.includes("data")) {
+      console.log('1a');
+      checkPicture(elementName, jsonObject);
+      if (useDatabaseApi) {
+        addNewProductToFirebase(jsonObject, ""); 
+        console.log('1');
+      }
+      else {
+        addNewProductToLocalStorage(jsonObject);
+        app.dialog.alert("Product added to the products list.", "");
+      }
+    } else {
+      if (useDatabaseApi) {addNewProductToFirebase(jsonObject, imgSrc);
+        console.log('2');
+      }
+      else addNewProductToLocalStorage(jsonObject, imgSrc);
+      app.dialog.alert("Product added to the products list.", "");
+    }
+  } else  {
+    console.log('3a');
+    if (checkPicture(elementName, jsonObject)) {
+      if (useDatabaseApi) {addNewProductToFirebase(jsonObject, "");
+      console.log('3');
+    }
+      else addNewProductToLocalStorage(jsonObject);
+    }
+  }
 }
 
 // Check if the user added a picture or not to the New Product form
@@ -487,7 +543,7 @@ function checkPicture(elementName, jsonObject) {
       uploadImageToFirebaseStorage(elementName, jsonObject.code + ".jpg", img);
     } else {
       const img = document.getElementById("imageFile");
-      uploadImageToLocalStorage(jsonObject.code + ".jpg", img);
+      uploadImageToLocalStorage(jsonObject.code + jsonObject.shop + ".jpg", img);
     }
     return true;
   } catch {
@@ -645,7 +701,7 @@ function saveEditedProductData(elementName) {
       } else {
         const img = document.getElementById("imageFile");
         if (img.src.includes("data")) {
-          uploadImageToLocalStorage(jsonObject.code + ".jpg", img, true);
+          uploadImageToLocalStorage(jsonObject.code +  jsonObject.shop + ".jpg", img, true);
           for (let i = 0; i < localStorage.length; i++) {
             if ("Product" + i == productId) {
               let editedProduct = {
@@ -673,7 +729,7 @@ function saveEditedProductData(elementName) {
               };
 
               localStorage.setItem(productId, JSON.stringify(editedProduct));
-              localStorage.removeItem(document.getElementById("product-code").value + ".jpg");
+              localStorage.removeItem(document.getElementById("product-code").value +  document.getElementById("product-shop").value + ".jpg");
             }
           }
 
