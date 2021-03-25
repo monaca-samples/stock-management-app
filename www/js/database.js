@@ -25,7 +25,7 @@ function addNewShopToFirebase(jsonObject) {
 // Add new items to the Product List
 function addNewProductToFirebase(jsonObject, imgSrc) {
   db.collection('products').add({
-    code: jsonObject.code,
+    'code': jsonObject.code,
     'name': jsonObject.name,
     'price': jsonObject.price,
     'quantity': jsonObject.quantity,

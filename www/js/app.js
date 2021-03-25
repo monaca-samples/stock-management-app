@@ -459,35 +459,38 @@ function getNewProductDataFromForm(elementName) {
       const jsonObject = app.methods.dataToJson("#new-product-form");
 
       // Check if the product is already added to that shop (local storage, else case: Firebase)
-      if(checkIfProductIsAddedToAShop(jsonObject)) 
-        app.dialog.alert("Product is already added to this shop.", "");
-      else addNewProduct(elementName, jsonObject);
+      if(useDatabaseApi) {
+        checkIfProductIsAddedToAShopFirebase(jsonObject).then((result) => {
+          if(result) 
+            app.dialog.alert("Product is already added to this shop.", "");
+          else addNewProduct(elementName, jsonObject);
+        });
+      } else {
+        if(checkIfProductIsAddedToAShopStorage(jsonObject))
+          app.dialog.alert("Product is already added to this shop.", "");
+        else addNewProduct(elementName, jsonObject);
+      }
       
     } else app.dialog.alert("Please fill out the form first.", "");
   });
 }
 
-// Check if product is duplicated
-function checkIfProductIsAddedToAShop(jsonObject) {
-  if(useDatabaseApi) {
-    let isAdded = false;
-    db.collection('products').onSnapshot((doc) => {
-      doc.docs.forEach((doc) => {
-        const data = doc.data();
-        if(data.code == jsonObject.code && data.shop == jsonObject.shop) {
-          isAdded = true;
-          console.log(isAdded);
-          console.log('egyforma');
-          console.log(data.code + " " + data.shop);
-          console.log(jsonObject.code + jsonObject.shop);
-        }
-      });
-    });
+// Check if product is duplicated (Firebase)
+function checkIfProductIsAddedToAShopFirebase(jsonObject) {
+  return db.collection('products').where('code', '==', jsonObject.code).where('shop', '==', jsonObject.shop).get().then((snapshot) => {
+    for(const doc of snapshot.docs) {
+      let data = doc.data()
+      if (data.code == jsonObject.code && data.shop == jsonObject.shop) {
+        console.log(data.code + " " + data.shop);
+        console.log(jsonObject.code + " " + jsonObject.shop);
+        return true;
+      }
+    }
+  });
+}
 
-    console.log(isAdded);
-
-    return isAdded;
-  } else {
+// Check if product is duplicated (local storage)
+function checkIfProductIsAddedToAShopStorage(jsonObject) {
     if(localStorage.length == 0) return false;
 
     for (let i = 0; i < localStorage.length; i++) {
@@ -499,7 +502,6 @@ function checkIfProductIsAddedToAShop(jsonObject) {
     }
 
     return false;
-  }
 }
 
 // Adding a new product 
@@ -507,11 +509,9 @@ function addNewProduct(elementName, jsonObject) {
   if (yahooApiKey && proxyurl) {
     let imgSrc = document.getElementById("imageFile").src;
     if (imgSrc.includes("data")) {
-      console.log('1a');
       checkPicture(elementName, jsonObject);
       if (useDatabaseApi) {
         addNewProductToFirebase(jsonObject, ""); 
-        console.log('1');
       }
       else {
         addNewProductToLocalStorage(jsonObject);
@@ -519,16 +519,13 @@ function addNewProduct(elementName, jsonObject) {
       }
     } else {
       if (useDatabaseApi) {addNewProductToFirebase(jsonObject, imgSrc);
-        console.log('2');
       }
       else addNewProductToLocalStorage(jsonObject, imgSrc);
       app.dialog.alert("Product added to the products list.", "");
     }
   } else  {
-    console.log('3a');
     if (checkPicture(elementName, jsonObject)) {
       if (useDatabaseApi) {addNewProductToFirebase(jsonObject, "");
-      console.log('3');
     }
       else addNewProductToLocalStorage(jsonObject);
     }
