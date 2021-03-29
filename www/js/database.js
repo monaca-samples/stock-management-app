@@ -8,7 +8,7 @@ try {
     initFirebase(); // initialize Firebase
   }
 } catch {
-  ('Firebase is not initialized.')
+  console.log('Firebase is not initialized.');
   console.log('Data is saved to the localStorage.');
 }
 
@@ -18,7 +18,7 @@ function addNewShopToFirebase(jsonObject) {
     'name': jsonObject.name,
     'telephone': jsonObject.telephone,
     'address': jsonObject.address,
-    'location': jsonObject.location,
+    'location': jsonObject.location
   });
 }
 
@@ -45,9 +45,9 @@ function uploadImageToFirebaseStorage(elementName, fileName, img, edit) {
       elementName.innerHTML = 'Upload is ' + Math.trunc(progress) + '% done';
 
       if (progress == 100) {
-        if (edit) {
+        if (edit) 
           app.dialog.alert('Saved product details.', '');
-        } else {
+        else {
           app.dialog.alert("Product added to the products list.", "");
           app.methods.emptyNewProductForm();
           document.getElementById("imageFile").src = "assets/pictures/camera.png";
@@ -167,7 +167,7 @@ const twoFieldSearch = (elementName, stringName, fieldName, stringName2, fieldNa
       if (yahooApiKey && proxyurl)
         result += `<img style="width:146px;height:146px" id="${data.code}_img" src="${data.image}"/>`
       result += `
-          </div>
+        </div>
          <div class="display-flex justify-content-center">
             <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
               <div id="minus" class="stepper-button-minus update-quantity-minus" data-quantity="${data.quantity}" data-product-id="${doc.id}"></div>
@@ -194,7 +194,11 @@ const twoFieldSearch = (elementName, stringName, fieldName, stringName2, fieldNa
 
 // Search by three filled field
 const threeFieldSearch = (elementName,stringName, fieldName, stringName2, fieldName2, stringName3, fieldName3) => {
-  db.collection('products').where(stringName, '==', fieldName).where(stringName2, '==', fieldName2).where(stringName3, '==', fieldName3).get().then((snapshot) => {
+  db.collection('products')
+  .where(stringName, '==', fieldName)
+  .where(stringName2, '==', fieldName2)
+  .where(stringName3, '==', fieldName3)
+  .get().then((snapshot) => {
     let count = 0;
     let result = '';
     snapshot.docs.forEach(doc => {
@@ -218,21 +222,20 @@ const threeFieldSearch = (elementName,stringName, fieldName, stringName2, fieldN
 const getRealTimeUpdatesForSearch = (elementName) => {
   const jsonObject = app.methods.dataToJson('#search-product-form');
 
-  if (jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop == "") {
+  if (jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop == "") 
     oneFieldSearch(elementName, 'code', jsonObject.code);
-  } else if (jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop == "") {
+  else if (jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop == "") 
     oneFieldSearch(elementName, 'name', jsonObject.name);
-  } else if (jsonObject.code == "" && jsonObject.name == "" && jsonObject.shop != "") {
+  else if (jsonObject.code == "" && jsonObject.name == "" && jsonObject.shop != "") 
     oneFieldSearch(elementName, 'shop', jsonObject.shop);
-  } else if (jsonObject.code != "" && jsonObject.name != "" && jsonObject.shop == "") {
+  else if (jsonObject.code != "" && jsonObject.name != "" && jsonObject.shop == "") 
     twoFieldSearch(elementName, 'code', jsonObject.code, 'name', jsonObject.name);
-  } else if (jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop != "") {
+  else if (jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop != "") 
     twoFieldSearch(elementName, 'code', jsonObject.code, 'shop', jsonObject.shop);
-  } else if (jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop != "") {
+  else if (jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop != "") 
     twoFieldSearch(elementName, 'name', jsonObject.name, 'shop', jsonObject.shop);
-  } else if (jsonObject.code != "" && jsonObject.name != "" && jsonObject.shop != "") {
+  else if (jsonObject.code != "" && jsonObject.name != "" && jsonObject.shop != "") 
     threeFieldSearch(elementName, 'code', jsonObject.code, 'name', jsonObject.name, 'code', jsonObject.code);
-  }
 }
 
 // Real time update with Firebase for the Shops

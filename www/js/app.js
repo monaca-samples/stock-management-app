@@ -142,12 +142,8 @@ const getProductInfoWithYahoo = (barcode) => {
           document.getElementById("product-name").value = data.hits[0].name;
           document.getElementById("product-price").value = "¥" + data.hits[0].price;
           document.getElementById("product-quantity").value = 1;
-          //document.getElementById('product-shop').value = data.hits[2].seller.name;
           document.getElementById("imageFile").src = data.hits[0].image.medium;
-        } else app.dialog.alert(
-            "Please add the details by yourself.",
-            "Product Not Found"
-          );
+        } else app.dialog.alert("Please add the details by yourself.","Product Not Found");
         },
         function (response) {
           console.error(response.error);
@@ -259,7 +255,7 @@ function popUpBarcodeList(elementName) {
     } else {
       let count = 0;
       let result = "";
-      for (let i = 0; i < localStorage.length; i++) {
+      for (let i = 0; i < localStorage.getItem("addedProducts"); i++) {
         if (localStorage.getItem("Product" + i)) {
           count++;
           const jsonObject = JSON.parse(localStorage.getItem("Product" + i));
@@ -322,7 +318,7 @@ function popUpProductList(elementName) {
     } else {
       let count = 0;
       let result = "";
-      for (let i = 0; i < localStorage.length; i++) {
+      for (let i = 0; i < localStorage.getItem("addedProducts"); i++) {
         if (localStorage.getItem("Product" + i)) {
           count++;
           const jsonObject = JSON.parse(localStorage.getItem("Product" + i));
@@ -385,7 +381,7 @@ function popUpShopList(elementName) {
     } else {
       let count = 0;
       let result = "";
-      for (let i = 0; i < localStorage.length; i++) {
+      for (let i = 0; i < localStorage.getItem("addedShops"); i++) {
         if (localStorage.getItem("Shop" + i)) {
           count++;
           const jsonObject = JSON.parse(localStorage.getItem("Shop" + i));
@@ -444,30 +440,27 @@ let i = 0;
 $$(document).on("click", ".convert-form-to-data", function () {
   if (app.methods.isNewShopFormEmpty()) {
     const jsonObject = app.methods.dataToJson("#new-shop-form");
-    if (useDatabaseApi) addNewShopToFirebase(jsonObject);
-    // Add new shop to the database
-    else addNewShopToLocalStorage(jsonObject);
-    app.methods.emptyNewShopForm();
+    if (useDatabaseApi) addNewShopToFirebase(jsonObject); // Add new shop to the database
+    else addNewShopToLocalStorage(jsonObject); // Add new shop to local storage
     app.dialog.alert("Shop added to the shop list.", "");
+    app.methods.emptyNewShopForm();
   } else app.dialog.alert("Please fill out the form first.", "");
 });
 
 // Get new product data
 function getNewProductDataFromForm(elementName) {
-  $$(document).on("click", ".convert-new-product-form-to-data", function () {
+  $$(document).once("click", ".convert-new-product-form-to-data", function () {
     if (app.methods.isProductFormEmpty()) {
       const jsonObject = app.methods.dataToJson("#new-product-form");
 
       // Check if the product is already added to that shop (local storage, else case: Firebase)
       if(useDatabaseApi) {
-        checkIfProductIsAddedToAShopFirebase(jsonObject).then((result) => {
-          if(result) 
-            app.dialog.alert("Product is already added to this shop.", "");
+        isProductAddedToAShopInFirebase(jsonObject).then((result) => {
+          if(result) app.dialog.alert("Product is already added to this shop.", "");
           else addNewProduct(elementName, jsonObject);
         });
       } else {
-        if(checkIfProductIsAddedToAShopStorage(jsonObject))
-          app.dialog.alert("Product is already added to this shop.", "");
+        if(isProductAddedToAShopInLocalStorage(jsonObject)) app.dialog.alert("Product is already added to this shop.", "");
         else addNewProduct(elementName, jsonObject);
       }
       
@@ -476,24 +469,24 @@ function getNewProductDataFromForm(elementName) {
 }
 
 // Check if product is duplicated (Firebase)
-function checkIfProductIsAddedToAShopFirebase(jsonObject) {
-  return db.collection('products').where('code', '==', jsonObject.code).where('shop', '==', jsonObject.shop).get().then((snapshot) => {
+function isProductAddedToAShopInFirebase(jsonObject) {
+  return db.collection('products')
+  .where('code', '==', jsonObject.code)
+  .where('shop', '==', jsonObject.shop)
+  .get().then((snapshot) => {
     for(const doc of snapshot.docs) {
       let data = doc.data()
-      if (data.code == jsonObject.code && data.shop == jsonObject.shop) {
-        console.log(data.code + " " + data.shop);
-        console.log(jsonObject.code + " " + jsonObject.shop);
+      if (data.code == jsonObject.code && data.shop == jsonObject.shop) 
         return true;
-      }
     }
   });
 }
 
 // Check if product is duplicated (local storage)
-function checkIfProductIsAddedToAShopStorage(jsonObject) {
+function isProductAddedToAShopInLocalStorage(jsonObject) {
     if(localStorage.length == 0) return false;
 
-    for (let i = 0; i < localStorage.length; i++) {
+    for (let i = 0; i < localStorage.getItem("addedProducts"); i++) {
       if (localStorage.getItem("Product" + i)) {
         const item = JSON.parse(localStorage.getItem("Product" + i));
         if(item.code == jsonObject.code && item.shop == jsonObject.shop) 
@@ -510,26 +503,30 @@ function addNewProduct(elementName, jsonObject) {
     let imgSrc = document.getElementById("imageFile").src;
     if (imgSrc.includes("data")) {
       checkPicture(elementName, jsonObject);
-      if (useDatabaseApi) {
-        addNewProductToFirebase(jsonObject, ""); 
-      }
+      if (useDatabaseApi) addNewProductToFirebase(jsonObject, "");  
       else {
         addNewProductToLocalStorage(jsonObject);
-        app.dialog.alert("Product added to the products list.", "");
+        afterAddingNewProduct();
       }
     } else {
-      if (useDatabaseApi) {addNewProductToFirebase(jsonObject, imgSrc);
-      }
+      if (useDatabaseApi) addNewProductToFirebase(jsonObject, imgSrc);
       else addNewProductToLocalStorage(jsonObject, imgSrc);
-      app.dialog.alert("Product added to the products list.", "");
+      afterAddingNewProduct();
     }
   } else  {
     if (checkPicture(elementName, jsonObject)) {
-      if (useDatabaseApi) {addNewProductToFirebase(jsonObject, "");
-    }
+      if (useDatabaseApi) addNewProductToFirebase(jsonObject, "");
       else addNewProductToLocalStorage(jsonObject);
+      afterAddingNewProduct();
     }
   }
+}
+
+function afterAddingNewProduct() {
+  app.dialog.alert("Product added to the products list.", "");
+  app.methods.emptyNewProductForm();
+  document.getElementById("imageFile").src = "assets/pictures/camera.png";
+  app.views.main.router.back('/');
 }
 
 // Check if the user added a picture or not to the New Product form
@@ -564,7 +561,7 @@ $$(document).on("click", ".get-shop-details-data", function () {
       });
     });
   } else {
-    for (let i = 0; i < localStorage.length; i++) {
+    for (let i = 0; i < localStorage.getItem("addedShops"); i++) {
       if ("Shop" + i == shopId) {
         const jsonObject = JSON.parse(localStorage.getItem("Shop" + i));
         $$(document).on("page:init", '.page[data-name="edit-shop"]', function () {
@@ -591,14 +588,18 @@ function shopDataForLocalStorage(jsonObject) {
 $$(document).on("click", ".edited-shop-data", function () {
   if (app.methods.isNewShopFormEmpty()) {
     if (useDatabaseApi) {
-      db.collection("shops").doc(shopId).update({
-        name: document.getElementById("shop-name").value,
-        telephone: document.getElementById("shop-telephone").value,
-        address: document.getElementById("shop-address").value,
-        location: document.getElementById("shop-location").value,
-      });
+        db.collection("shops").doc(shopId).update({
+          name: document.getElementById("shop-name").value,
+          telephone: document.getElementById("shop-telephone").value,
+          address: document.getElementById("shop-address").value,
+          location: document.getElementById("shop-location").value,
+        }).then(function(){
+          app.dialog.alert("Saved shop details.", "")    
+        }).catch(function(error) {
+          app.dialog.alert("Something went wrong or the shop doesn't exist.", "");
+        });   
     } else {
-      for (let i = 0; i < localStorage.length; i++) {
+      for (let i = 0; i < localStorage.getItem("addedShops"); i++) {
         if ("Shop" + i == shopId) {
           let editedShop = {
             name: document.getElementById("shop-name").value,
@@ -608,13 +609,44 @@ $$(document).on("click", ".edited-shop-data", function () {
           };
 
           localStorage.setItem(shopId, JSON.stringify(editedShop));
+          app.dialog.alert("Saved shop details.", "");
+        } else {
+          app.dialog.alert("Something went wrong or the shop doesn't exist.", "");
+          break;
         }
-      }
+      }   
     }
-
-    app.dialog.alert("Saved shop details.", "");
   } else app.dialog.alert("Please fill out the form first.", "");
 });
+
+function deleteShopData() {
+  $$(document).once("click", ".delete-shop-data", function () { 
+      const jsonObject = app.methods.dataToJson("#edit-shop-form");
+
+      if(useDatabaseApi) {
+        let toDelete = db.collection('shops').where('name','==',jsonObject.name).where('location', '==', jsonObject.location);
+        toDelete.get().then(function(snapshot) {
+          snapshot.forEach(function(doc) {
+            doc.ref.delete();
+          });
+        });
+      } else {
+        for (let i = 0; i < localStorage.getItem("addedShops"); i++) {
+          if (localStorage.getItem("Shop" + i)) {
+            const toDelete = JSON.parse(localStorage.getItem("Shop" + i));
+            if(toDelete.name == jsonObject.name && toDelete.location == jsonObject.location) {
+              localStorage.removeItem("Shop" + i);
+              break;
+            }
+          }
+        }
+      }
+
+      app.dialog.alert("Your shop has been deleted.", "");
+      app.views.main.router.back({url: '/', force: true});
+      app.methods.emptyNewShopForm();
+  });
+}
 
 // Get product details data
 $$(document).on("click", ".get-product-details-data", function () {
@@ -637,7 +669,7 @@ $$(document).on("click", ".get-product-details-data", function () {
       });
     });
   } else {
-    for (let i = 0; i < localStorage.length; i++) {
+    for (let i = 0; i < localStorage.getItem("addedProducts"); i++) {
       if ("Product" + i == productId) {
         const jsonObject = JSON.parse(localStorage.getItem("Product" + i));
         $$(document).on("page:init", '.page[data-name="edit-product"]', function () {
@@ -667,7 +699,7 @@ function productDataForLocalStorage(jsonObject) {
 
 // Save the edited product data
 function saveEditedProductData(elementName) {
-  $$(document).on("click", ".edited-product-data", function () {
+  $$(document).once("click", ".edited-product-data", function () {
     if (app.methods.isProductFormEmpty()) {
       const jsonObject = app.methods.dataToJson("#edit-product-form");
       if (useDatabaseApi) {
@@ -699,7 +731,7 @@ function saveEditedProductData(elementName) {
         const img = document.getElementById("imageFile");
         if (img.src.includes("data")) {
           uploadImageToLocalStorage(jsonObject.code +  jsonObject.shop + ".jpg", img, true);
-          for (let i = 0; i < localStorage.length; i++) {
+          for (let i = 0; i < localStorage.getItem("addedProducts"); i++) {
             if ("Product" + i == productId) {
               let editedProduct = {
                 code: document.getElementById("product-code").value,
@@ -714,7 +746,7 @@ function saveEditedProductData(elementName) {
             }
           }
         } else {
-          for (let i = 0; i < localStorage.length; i++) {
+          for (let i = 0; i < localStorage.getItem("addedProducts"); i++) {
             if ("Product" + i == productId) {
               let editedProduct = {
                 code: document.getElementById("product-code").value,
@@ -734,6 +766,46 @@ function saveEditedProductData(elementName) {
         }
       }
     } else app.dialog.alert("Please fill out the form first.", "");
+  });
+}
+
+function deleteProductData() {
+  $$(document).once("click", ".delete-product-data", function () { 
+      const jsonObject = app.methods.dataToJson("#edit-product-form");
+
+      if(useDatabaseApi) {
+        let toDelete = db.collection('products').where('code','==',jsonObject.code).where('shop', '==', jsonObject.shop);
+        toDelete.get().then(function(snapshot) {
+          snapshot.forEach(function(doc) {
+            doc.ref.delete();
+          });
+        });
+        try{
+          const storageRef = firebase.storage().ref();
+          const filename = 'products/' + jsonObject.code + '.jpg';
+          const ref = storageRef.child(filename);
+          ref.delete();
+        } catch {
+          console.log("Object is not found.");
+        }
+
+      } else {
+        for (let i = 0; i < localStorage.getItem("addedProducts"); i++) {
+          if (localStorage.getItem("Product" + i)) {
+            const toDelete = JSON.parse(localStorage.getItem("Product" + i));
+            if(toDelete.code == jsonObject.code && toDelete.shop == jsonObject.shop) {
+              localStorage.removeItem("Product" + i);
+              localStorage.removeItem(toDelete.code + toDelete.shop + ".jpg");
+              break;
+            }
+          }
+        }
+
+        
+      }
+
+      app.dialog.alert("Your product has been deleted.", "");
+      app.views.main.router.back('/');
   });
 }
 
@@ -829,7 +901,7 @@ const changeQuantity = (elementName, className, productId, productQuantity) => {
     });
     getRealTimeUpdatesForSearch(elementName);
   } else {
-    for (let i = 0; i < localStorage.length; i++) {
+    for (let i = 0; i < localStorage.getItem("addedProducts"); i++) {
       if ("Product" + i == productId) {
         const jsonObject = JSON.parse(localStorage.getItem("Product" + i));
         let changedProduct = {

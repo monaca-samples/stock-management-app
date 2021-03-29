@@ -1,6 +1,15 @@
 /* - - - - - - - - - - - - - - - - -
    Methods for the localStorage
 - - - - - - - - - - - - - - - - - - */
+let addedShops = 0;
+let addedProducts = 0;
+let shopsCounter = 0;
+let productsCounter = 0;
+
+addedShops = localStorage.getItem("addedShops") > 0 ? localStorage.getItem("addedShops") : 0; 
+addedProducts = localStorage.getItem("addedProducts") > 0 ? localStorage.getItem("addedProducts") : 0; 
+shopsCounter = localStorage.getItem("addedShops") > 0 ? localStorage.getItem("addedShops") : 0; 
+productsCounter = localStorage.getItem("addedProducts") > 0 ? localStorage.getItem("addedProducts") : 0; 
 
 // Add new items to the Shop List
 function addNewShopToLocalStorage(jsonObject) {
@@ -11,7 +20,8 @@ function addNewShopToLocalStorage(jsonObject) {
     location: jsonObject.location,
   };
 
-  localStorage.setItem("Shop" + localStorage.length, JSON.stringify(newShop));
+  localStorage.setItem("Shop" + shopsCounter++, JSON.stringify(newShop));
+  localStorage.setItem("addedShops", ++addedShops);
 }
 
 // Add new items to the Product List
@@ -25,7 +35,8 @@ function addNewProductToLocalStorage(jsonObject, imgSrc) {
     image: imgSrc,
   };
 
-  localStorage.setItem("Product" + localStorage.length, JSON.stringify(Product));
+  localStorage.setItem("Product" + productsCounter++, JSON.stringify(Product));
+  localStorage.setItem("addedProducts", ++addedProducts);
 }
 
 // Uploading picture
@@ -71,7 +82,7 @@ function getImageFromLocalStorage(jsonObject, pageName) {
 const oneFieldSearchLocalStorage = (elementName, stringName, objectName) => {
   let count = 0;
   let result = "";
-  for (let i = 0; i < localStorage.length; i++) {
+  for (let i = 0; i < localStorage.getItem("addedProducts"); i++) {
     if (localStorage.getItem("Product" + i)) {
       count++;
       const jsonObject = JSON.parse(localStorage.getItem("Product" + i));
@@ -115,7 +126,7 @@ const oneFieldSearchLocalStorage = (elementName, stringName, objectName) => {
 const twoFieldSearchLocalStorage = (elementName, stringName, objectName, stringName2, objectName2) => {
   let count = 0;
   let result = "";
-  for (let i = 0; i < localStorage.length; i++) {
+  for (let i = 0; i < localStorage.getItem("addedProducts"); i++) {
     if (localStorage.getItem("Product" + i)) {
       count++;
       const jsonObject = JSON.parse(localStorage.getItem("Product" + i));
@@ -160,7 +171,7 @@ const twoFieldSearchLocalStorage = (elementName, stringName, objectName, stringN
 const threeFieldSearchLocalStorage = (elementName) => {
   let count = 0;
   let result = "";
-  for (let i = 0; i < localStorage.length; i++) 
+  for (let i = 0; i < localStorage.getItem("addedProducts"); i++) 
     if (localStorage.getItem("Product" + i)) 
       count++;
 
@@ -180,22 +191,20 @@ const threeFieldSearchLocalStorage = (elementName) => {
 const localStorageUpdateForSearch = (elementName) => {
   const jsonObject = app.methods.dataToJson("#search-product-form");
 
-  if (jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop == "") {
+  if (jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop == "") 
     oneFieldSearchLocalStorage(elementName, jsonObject.code, "code");
-  } else if (jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop == "") {
+  else if (jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop == "") 
     oneFieldSearchLocalStorage(elementName, jsonObject.name, "name");
-  } else if (jsonObject.code == "" && jsonObject.name == "" && jsonObject.shop != "") {
+  else if (jsonObject.code == "" && jsonObject.name == "" && jsonObject.shop != "") 
     oneFieldSearchLocalStorage(elementName, jsonObject.shop, "shop");
-  } else if (jsonObject.code != "" && jsonObject.name != "" && jsonObject.shop == "") {
+  else if (jsonObject.code != "" && jsonObject.name != "" && jsonObject.shop == "") 
     twoFieldSearchLocalStorage(elementName, jsonObject.code, "code", jsonObject.name, "name");
-  } else if (jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop != "") {
-    twoFieldSearchLocalStorage(elementName, jsonObject.code, "code", jsonObject.shop, "shop"
-    );
-  } else if (jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop != "") {
+  else if (jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop != "") 
+    twoFieldSearchLocalStorage(elementName, jsonObject.code, "code", jsonObject.shop, "shop");
+  else if (jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop != "") 
     twoFieldSearchLocalStorage(elementName, jsonObject.name, "name", jsonObject.shop, "shop");
-  } else if (jsonObject.code != "" && jsonObject.name != "" && jsonObject.shop != "") {
+  else if (jsonObject.code != "" && jsonObject.name != "" && jsonObject.shop != "") 
     threeFieldSearchLocalStorage(elementName);
-  }
 };
 
 // Retrieve saved Shops from localStorage
@@ -203,23 +212,23 @@ function getShopsFromLocalStorage(elementName) {
   let count = 0;
   let result = "";
 
-  for (let i = 0; i < localStorage.length; i++) {
+  for (let i = 0; i < localStorage.getItem("addedShops"); i++) {
     if (localStorage.getItem("Shop" + i)) {
       count++;
       const jsonObject = JSON.parse(localStorage.getItem("Shop" + i));
       result += `
-      <div class=" card-bg block block-strong inset display-flex flex-direction-row">
-        <div>
-          <p>Name: <span>${jsonObject.name}</span></p>
-          <p>Tel: <span>${jsonObject.telephone}</span></p>
-          <p>Address: <span>${jsonObject.address}</span></p>
-        </div>
-        <div class="align-self-flex-start">
-				  <i class="icon f7-icons">
-            <a href="/edit-shop/${"Shop" + i}/" data-shop-id="${"Shop" + i}" class="get-shop-details-data">pencil</a>
-          </i>
-				</div>
-      </div>`;
+        <div class=" card-bg block block-strong inset display-flex flex-direction-row">
+          <div>
+            <p>Name: <span>${jsonObject.name}</span></p>
+            <p>Tel: <span>${jsonObject.telephone}</span></p>
+            <p>Address: <span>${jsonObject.address}</span></p>
+          </div>
+          <div class="align-self-flex-start">
+            <i class="icon f7-icons">
+              <a href="/edit-shop/${"Shop" + i}/" data-shop-id="${"Shop" + i}" class="get-shop-details-data">pencil</a>
+            </i>
+          </div>
+        </div>`;
     }
   }
 
@@ -240,7 +249,7 @@ const getProductsFromLocalStorage = (elementName, pageName) => {
   let count = 0;
   let result = "";
 
-  for (let i = 0; i < localStorage.length; i++) {
+  for (let i = 0; i < localStorage.getItem("addedProducts"); i++) {
     if (localStorage.getItem("Product" + i)) {
       count++;
       const jsonObject = JSON.parse(localStorage.getItem("Product" + i));
@@ -248,21 +257,21 @@ const getProductsFromLocalStorage = (elementName, pageName) => {
       if (jsonObject.image != undefined) imageSource = jsonObject.image;
 
       result += `
-      <div class="card-bg block block-strong inset">
-        <div class="display-flex justify-content-space-between">
-          <div>
-            <p>Product Code: <span>${jsonObject.code}</span></p>
-            <p>Name: <span>${jsonObject.name}</span></p>
-            <p>Shop: <span>${jsonObject.shop}</span></p>
-            <p>Price: <span>${jsonObject.price}</span></p>
-            <p>Quantity: <span">${jsonObject.quantity}</span></p>
-          </div>
-            <i class="icon f7-icons">
-              <a href="/edit-product/${"Product" + i}/" data-product-id="${"Product" + i}" class="get-product-details-data">pencil</a>
-            </i>
-          </div>
-          <div class="block display-flex justify-content-center">
-            <div>`;
+        <div class="card-bg block block-strong inset">
+          <div class="display-flex justify-content-space-between">
+            <div>
+              <p>Product Code: <span>${jsonObject.code}</span></p>
+              <p>Name: <span>${jsonObject.name}</span></p>
+              <p>Shop: <span>${jsonObject.shop}</span></p>
+              <p>Price: <span>${jsonObject.price}</span></p>
+              <p>Quantity: <span">${jsonObject.quantity}</span></p>
+            </div>
+              <i class="icon f7-icons">
+                <a href="/edit-product/${"Product" + i}/" data-product-id="${"Product" + i}" class="get-product-details-data">pencil</a>
+              </i>
+            </div>
+            <div class="block display-flex justify-content-center">
+              <div>`;
       if (pageName == "HOME")
         result += `<img style="width:146px;height:146px" id="${jsonObject.code}" src="${imageSource}">`;
       else if (pageName == "PRODUCT")

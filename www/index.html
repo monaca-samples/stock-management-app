@@ -51,7 +51,7 @@
 						<div class="list">
 							<ul>
 								<li>
-									<a href="/" class="item-content item-link panel-close">
+									<a href="#view-home" data-view=".view-main" class="item-content item-link panel-close">
 										<div class="item-inner">
 											<div class="item-title">Home</div>
 										</div>
@@ -142,7 +142,7 @@
 			</div>
 
 			<!-- Your main view/tab, should have "view-main" class. It also has "tab-active" class -->
-			<div id="view-home" class="view view-main view-init tab tab-active">
+			<div id="view-home" class="view view-main view-init tab tab-active" data-url="/">
 				<div class="page" data-name="home">
 					<!-- Top Navbar -->
 					<div class="navbar">
@@ -201,12 +201,12 @@
 	let productId = null;
 	const productListHomeDiv = document.getElementById('product-list-result');
 
-  if(useDatabaseApi) getRealTimeUpdatesForProducts(productListHomeDiv, "HOME");
-  else getProductsFromLocalStorage(productListHomeDiv, "HOME");
+	if(useDatabaseApi) getRealTimeUpdatesForProducts(productListHomeDiv, "HOME");
+  	else getProductsFromLocalStorage(productListHomeDiv, "HOME");
   
-  $$(document).on('page:reinit', function (e) {
-    if(useDatabaseApi) getRealTimeUpdatesForProducts(productListHomeDiv, "HOME");
-    else getProductsFromLocalStorage(productListHomeDiv, "HOME");
-  });
+  	$$(document).on('page:reinit', function (e) {
+    	if(useDatabaseApi) getRealTimeUpdatesForProducts(productListHomeDiv, "HOME");
+    	else getProductsFromLocalStorage(productListHomeDiv, "HOME");
+  	});
 
 </script>
