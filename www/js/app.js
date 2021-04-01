@@ -863,8 +863,6 @@ function moveOnTheMap(map, chosenPositionMarker) {
 
     map.setView([lat, lon], 14);
   });
-
-  
 }
 
 /* - - - - - - - - - - - - - - - - -
