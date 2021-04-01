@@ -24,4 +24,3 @@ const initFirebase = () => {
    Configurations for the Yahoo Barcode Lookup
 - - - - - - - - - - - - - - - - - - - - - - - - -  */
 const yahooApiKey = 'dj00aiZpPW40WFV4SDhDVnd2SSZzPWNvbnN1bWVyc2VjcmV0Jng9ZjA-';
-const proxyurl = "https://cors.bridged.cc/";

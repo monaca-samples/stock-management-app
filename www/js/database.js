@@ -121,7 +121,7 @@ const oneFieldSearch = (elementName, stringName, fieldName) => {
           <p>Price: <span>${data.price}</span></p>
           <p>Quantity: <span id="search-quantity">${data.quantity}</span></p>
           <div class="block display-flex justify-content-center">`
-      if (yahooApiKey && proxyurl)
+      if (yahooApiKey)
         result += `<img style="width:146px;height:146px" id="${data.code}_img" src="${data.image}"/>`
       result += `
           </div>
@@ -164,7 +164,7 @@ const twoFieldSearch = (elementName, stringName, fieldName, stringName2, fieldNa
           <p>Price: <span>${data.price}</span></p>
           <p>Quantity: <span id="search-quantity">${data.quantity}</span></p>
           <div class="block display-flex justify-content-center">`
-      if (yahooApiKey && proxyurl)
+      if (yahooApiKey)
         result += `<img style="width:146px;height:146px" id="${data.code}_img" src="${data.image}"/>`
       result += `
         </div>
@@ -298,7 +298,7 @@ const getRealTimeUpdatesForProducts = (elementName, pageName) => {
           </div>
           <div class="block display-flex justify-content-center">
             <div>`;
-      if (yahooApiKey && proxyurl) {
+      if (yahooApiKey) {
         if (pageName == "HOME")
           result += `<img style="width:146px;height:146px" id="${data.code}" src="${data.image}"/>`
         else if (pageName == "PRODUCT")
@@ -320,7 +320,12 @@ const getRealTimeUpdatesForProducts = (elementName, pageName) => {
           </div>   
         </div>`;
 
-      if (data.image == "") getImage(data, pageName);
+      if (data.image == "") 
+        try{
+          getImage(data, pageName);
+        } catch {
+          console.log('Object not found.');
+        }
     });
 
     if (count == 0) {

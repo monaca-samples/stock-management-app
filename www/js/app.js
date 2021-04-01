@@ -130,7 +130,9 @@ function scanBarcode() {
 const getProductInfoWithYahoo = (barcode) => {
   try {
     const url = `https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch?appid=${yahooApiKey}&jan_code=${barcode}`;
-    fetch(proxyurl + url).then((response) => response.json()).then((data) => {cordova.plugin.http.get("https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch",
+    fetch(url)
+    .then((response) => response.json())
+    .then((data) => {cordova.plugin.http.get("https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch",
     {
       appid: yahooApiKey,
       jan_code: barcode,
@@ -151,7 +153,7 @@ const getProductInfoWithYahoo = (barcode) => {
       );
     });
   } catch {
-    console.log("The Yahoo API Key or the Proxy Server is not defined.");
+    console.log("The Yahoo API Key is not defined.");
   }
 };
 
@@ -499,7 +501,7 @@ function isProductAddedToAShopInLocalStorage(jsonObject) {
 
 // Adding a new product 
 function addNewProduct(elementName, jsonObject) {
-  if (yahooApiKey && proxyurl) {
+  if (yahooApiKey) {
     let imgSrc = document.getElementById("imageFile").src;
     if (imgSrc.includes("data")) {
       checkPicture(elementName, jsonObject);
@@ -662,7 +664,7 @@ $$(document).on("click", ".get-product-details-data", function () {
         document.getElementById("product-quantity").value = data.quantity;
         document.getElementById("product-shop").value = data.shop;
 
-        if (yahooApiKey && proxyurl)
+        if (yahooApiKey)
           document.getElementById("imageFile").src = data.image;
 
         if (data.image == "") getImage(data, "EDIT");
