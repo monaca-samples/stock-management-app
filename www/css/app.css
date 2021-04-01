@@ -16,10 +16,3 @@
 .leaflet-marker-icon.selectedMarker {
   color: red;
 }
-
-.short-text {
-  display: block; 
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
