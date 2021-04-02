@@ -5,7 +5,7 @@
 try {
   if (initFirebase) {
     useDatabaseApi = true;
-    initFirebase(); // initialize Firebase
+    initFirebase(); // initialize Firebase    
   }
 } catch {
   console.log('Firebase is not initialized.');
@@ -65,6 +65,7 @@ function uploadImageToFirebaseStorage(elementName, fileName, img, edit) {
       }
     },
     function (error) {
+      console.log(error.code);
       switch (error.code) {
         case 'storage/unauthorized':
           break;
@@ -320,12 +321,7 @@ const getRealTimeUpdatesForProducts = (elementName, pageName) => {
           </div>   
         </div>`;
 
-      if (data.image == "") 
-        try{
-          getImage(data, pageName);
-        } catch {
-          console.log('Object not found.');
-        }
+      if (data.image == "") getImage(data, pageName);
     });
 
     if (count == 0) {

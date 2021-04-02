@@ -201,4 +201,9 @@
     	if(useDatabaseApi) getRealTimeUpdatesForProducts(productListHomeDiv, "HOME");
     	else getProductsFromLocalStorage(productListHomeDiv, "HOME");
   	});
+
+	$$(document).on('page:afterin', function (e) {
+    	if(useDatabaseApi) getRealTimeUpdatesForProducts(productListHomeDiv, "HOME");
+    	else getProductsFromLocalStorage(productListHomeDiv, "HOME");
+  	});
 </script>

@@ -148,7 +148,8 @@ const getProductInfoWithYahoo = (barcode) => {
         } else app.dialog.alert("Please add the details by yourself.","Product Not Found");
         },
         function (response) {
-          console.error(response.error);
+          app.dialog.alert("The Yahoo API Key is not working. Please add the details by yourself.","Product Not Found");
+          console.log(response);
         }
       );
     });
@@ -782,15 +783,6 @@ function deleteProductData() {
             doc.ref.delete();
           });
         });
-        try{
-          const storageRef = firebase.storage().ref();
-          const filename = 'products/' + jsonObject.code + '.jpg';
-          const ref = storageRef.child(filename);
-          ref.delete();
-        } catch {
-          console.log("Object is not found.");
-        }
-
       } else {
         for (let i = 0; i < localStorage.getItem("addedProducts"); i++) {
           if (localStorage.getItem("Product" + i)) {
