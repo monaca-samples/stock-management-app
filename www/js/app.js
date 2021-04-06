@@ -906,7 +906,8 @@ const changeQuantity = (elementName, className, productId, productQuantity) => {
         };
 
         localStorage.setItem(productId, JSON.stringify(changedProduct));
-        location.reload();
+        getProductsFromLocalStorage(elementName);
+    	  getProductsFromLocalStorage(elementName, "HOME");
       }
     }
   }

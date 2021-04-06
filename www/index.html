@@ -196,6 +196,9 @@
 
 	if(useDatabaseApi) getRealTimeUpdatesForProducts(productListHomeDiv, "HOME");
   	else getProductsFromLocalStorage(productListHomeDiv, "HOME");
+
+	subtractQuantity(productListHomeDiv);
+    addQuantity(productListHomeDiv);
   
   	$$(document).on('page:reinit', function (e) {
     	if(useDatabaseApi) getRealTimeUpdatesForProducts(productListHomeDiv, "HOME");
