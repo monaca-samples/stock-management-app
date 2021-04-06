@@ -140,6 +140,9 @@
         subtractQuantity(productListDiv);
         addQuantity(productListDiv);
         getQuery(productListDiv);
+
+		if (useDatabaseApi) getRealTimeUpdatesForSearch(productListDiv);
+        else localStorageUpdateForSearch(productListDiv);
       }
     }
   }

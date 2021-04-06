@@ -109,7 +109,9 @@ function getImage(data, pageName) {
 
 // Search by one filled field
 const oneFieldSearch = (elementName, stringName, fieldName) => {
-  db.collection('products').where(stringName, '==', fieldName).get().then((snapshot) => {
+  db.collection('products').where(stringName, '==', fieldName)
+  .get()
+  .then((snapshot) => {
     let count = 0;
     let result = '';
     snapshot.docs.forEach(doc => {
@@ -140,13 +142,13 @@ const oneFieldSearch = (elementName, stringName, fieldName) => {
     if (count == 0) {
       result += `
         <div class="card-bg block block-strong inset">
-          <div class="item-content">
-            <div class="display-flex justify-content-center">There are no products added to the database.</div>
-          </div>
+            <div class="display-flex justify-content-center">Product Not Found</div>
         </div>`;
     }
 
     elementName.innerHTML = result;
+  }).catch((error) => {
+    console.log("Error getting documents: ", error);
   });
 }
 
@@ -183,9 +185,7 @@ const twoFieldSearch = (elementName, stringName, fieldName, stringName2, fieldNa
     if (count == 0) {
       result += `
         <div class="card-bg block block-strong inset">
-          <div class="item-content">
-            <div class="display-flex justify-content-center">There are no products added to the database.</div>
-          </div>
+            <div class="display-flex justify-content-center">Product Not Found</div>
         </div>`;
     }
 
@@ -195,23 +195,39 @@ const twoFieldSearch = (elementName, stringName, fieldName, stringName2, fieldNa
 
 // Search by three filled field
 const threeFieldSearch = (elementName,stringName, fieldName, stringName2, fieldName2, stringName3, fieldName3) => {
-  db.collection('products')
-  .where(stringName, '==', fieldName)
-  .where(stringName2, '==', fieldName2)
-  .where(stringName3, '==', fieldName3)
+  db.collection('products').where(stringName, '==', fieldName).where(stringName2, '==', fieldName2).where(stringName3, '==', fieldName3)
   .get().then((snapshot) => {
     let count = 0;
     let result = '';
     snapshot.docs.forEach(doc => {
+      const data = doc.data();
       count++;
+      result += `
+        <div class="card-bg block block-strong inset">
+          <p>Product Code: <span>${data.code}</span></p>
+          <p>Product Name: <span>${data.name}</span></p>
+          <p>Price: <span>${data.price}</span></p>
+          <p>Quantity: <span id="search-quantity">${data.quantity}</span></p>
+          <div class="block display-flex justify-content-center">`
+      if (yahooApiKey)
+        result += `<img style="width:146px;height:146px" id="${data.code}_img" src="${data.image}"/>`
+      result += `
+        </div>
+         <div class="display-flex justify-content-center">
+            <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
+              <div id="minus" class="stepper-button-minus update-quantity-minus" data-quantity="${data.quantity}" data-product-id="${doc.id}"></div>
+              <div id="plus" class="stepper-button-plus update-quantity-plus" data-quantity="${data.quantity}" data-product-id="${doc.id}"></div>
+            </div>
+          </div>   
+        </div>`;
+
+      if (data.image == "") getImage(data, "PRODUCT");
     });
 
     if (count == 0) {
       result += `
         <div class="card-bg block block-strong inset">
-          <div class="item-content">
-            <div class="display-flex justify-content-center">There are no products added to the database.</div>
-          </div>
+            <div class="display-flex justify-content-center">Product Not Found</div>
         </div>`;
     }
 
@@ -221,9 +237,13 @@ const threeFieldSearch = (elementName,stringName, fieldName, stringName2, fieldN
 
 // Real time update with Firebase for the Search
 const getRealTimeUpdatesForSearch = (elementName) => {
+  let count = 0;
+  let result = "";
   const jsonObject = app.methods.dataToJson('#search-product-form');
 
-  if (jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop == "") 
+  if (jsonObject.code == "" && jsonObject.name == "" && jsonObject.shop == "") 
+    countProductsInFirebase(elementName, count, result);
+  else if (jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop == "") 
     oneFieldSearch(elementName, 'code', jsonObject.code);
   else if (jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop == "") 
     oneFieldSearch(elementName, 'name', jsonObject.name);
@@ -237,6 +257,23 @@ const getRealTimeUpdatesForSearch = (elementName) => {
     twoFieldSearch(elementName, 'name', jsonObject.name, 'shop', jsonObject.shop);
   else if (jsonObject.code != "" && jsonObject.name != "" && jsonObject.shop != "") 
     threeFieldSearch(elementName, 'code', jsonObject.code, 'name', jsonObject.name, 'code', jsonObject.code);
+}
+
+function countProductsInFirebase(elementName, count, result) {
+  db.collection('products').onSnapshot((doc) => {
+    doc.docs.forEach((doc) => {
+      count++;
+    });
+      
+    if (count == 0) {
+      result += `
+      <div class="card-bg block block-strong inset">
+        <div class="display-flex justify-content-center">There are no products added to the database.</div>
+      </div>`
+    }
+
+    elementName.innerHTML = result;
+  });
 }
 
 // Real time update with Firebase for the Shops
@@ -265,9 +302,7 @@ const getRealTimeUpdatesForShops = (elementName) => {
     if (count == 0) {
       result += `
         <div class="card-bg block block-strong inset">
-          <div class="item-content">
-            <div class="item-inner display-flex justify-content-center">There are no shops added to the database.</div>
-          </div>
+          <div class="item-inner display-flex justify-content-center">There are no shops added to the database.</div>
         </div>`;
     }
 
@@ -311,7 +346,7 @@ const getRealTimeUpdatesForProducts = (elementName, pageName) => {
           result += `<img style="width:146px;height:146px" id="${data.code}_img" src="assets/pictures/camera.png">`
       }
       result += `
-            </div>
+        </div>
           </div>
           <div class="display-flex justify-content-center">
             <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
@@ -327,9 +362,7 @@ const getRealTimeUpdatesForProducts = (elementName, pageName) => {
     if (count == 0) {
       result += `
         <div class="card-bg block block-strong inset">
-          <div class="item-content">
-            <div class="item-inner display-flex justify-content-center">There are no products added to the database.</div>
-          </div>
+          <div class="item-inner display-flex justify-content-center">There are no products added to the database.</div>
         </div>`;
     }
 
