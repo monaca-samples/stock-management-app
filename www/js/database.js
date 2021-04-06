@@ -109,7 +109,7 @@ function getImage(data, pageName) {
 
 // Search by one filled field
 const oneFieldSearch = (elementName, stringName, fieldName) => {
-  db.collection('products').where(stringName, '==', fieldName)
+  db.collection('products').where(stringName, '>=', fieldName).where(stringName, '<=', fieldName + '\uf8ff')
   .get()
   .then((snapshot) => {
     let count = 0;
@@ -120,7 +120,8 @@ const oneFieldSearch = (elementName, stringName, fieldName) => {
       result += `
         <div class="card-bg block block-strong inset">
           <p>Product Code: <span>${data.code}</span></p>
-          <p>Product Name: <span>${data.name}</span></p>
+          <p>Name: <span>${data.name}</span></p>
+          <p>Shop: <span>${data.shop}</span></p>
           <p>Price: <span>${data.price}</span></p>
           <p>Quantity: <span id="search-quantity">${data.quantity}</span></p>
           <div class="block display-flex justify-content-center">`
@@ -163,7 +164,8 @@ const twoFieldSearch = (elementName, stringName, fieldName, stringName2, fieldNa
       result += `
         <div class="card-bg block block-strong inset">
           <p>Product Code: <span>${data.code}</span></p>
-          <p>Product Name: <span>${data.name}</span></p>
+          <p>Name: <span>${data.name}</span></p>
+          <p>Shop: <span>${data.shop}</span></p>
           <p>Price: <span>${data.price}</span></p>
           <p>Quantity: <span id="search-quantity">${data.quantity}</span></p>
           <div class="block display-flex justify-content-center">`
@@ -205,7 +207,8 @@ const threeFieldSearch = (elementName,stringName, fieldName, stringName2, fieldN
       result += `
         <div class="card-bg block block-strong inset">
           <p>Product Code: <span>${data.code}</span></p>
-          <p>Product Name: <span>${data.name}</span></p>
+          <p>Name: <span>${data.name}</span></p>
+          <p>Shop: <span>${data.shop}</span></p>
           <p>Price: <span>${data.price}</span></p>
           <p>Quantity: <span id="search-quantity">${data.quantity}</span></p>
           <div class="block display-flex justify-content-center">`
@@ -250,13 +253,13 @@ const getRealTimeUpdatesForSearch = (elementName) => {
   else if (jsonObject.code == "" && jsonObject.name == "" && jsonObject.shop != "") 
     oneFieldSearch(elementName, 'shop', jsonObject.shop);
   else if (jsonObject.code != "" && jsonObject.name != "" && jsonObject.shop == "") 
-    twoFieldSearch(elementName, 'code', jsonObject.code, 'name', jsonObject.name);
+    twoFieldSearch(elementName, 'name', jsonObject.name, 'code', jsonObject.code);
   else if (jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop != "") 
-    twoFieldSearch(elementName, 'code', jsonObject.code, 'shop', jsonObject.shop);
-  else if (jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop != "") 
     twoFieldSearch(elementName, 'name', jsonObject.name, 'shop', jsonObject.shop);
+  else if (jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop != "") 
+    twoFieldSearch(elementName, 'code', jsonObject.code, 'shop', jsonObject.shop);
   else if (jsonObject.code != "" && jsonObject.name != "" && jsonObject.shop != "") 
-    threeFieldSearch(elementName, 'code', jsonObject.code, 'name', jsonObject.name, 'code', jsonObject.code);
+    threeFieldSearch(elementName, 'name', jsonObject.name, 'code', jsonObject.code, 'shop', jsonObject.shop);
 }
 
 function countProductsInFirebase(elementName, count, result) {
