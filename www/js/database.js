@@ -285,13 +285,13 @@ const getRealTimeUpdatesForShops = (elementName) => {
       count++;
       const data = doc.data();
       result += `
-        <div class=" card-bg block block-strong inset display-flex flex-direction-row">
+        <div class="card-bg block block-strong inset display-flex flex-direction-row">
           <div>
             <p>Name: <span>${data.name}</span></p>
           	<p>Tel: <span>${data.telephone}</span></p>
             <p>Address: <span>${data.address}</span></p>
           </div>
-          <div class="align-self-flex-start">
+          <div class="topright align-self-flex-start">
 					  <i class="icon f7-icons">
               <a href="/edit-shop/${doc.id}/" data-shop-id="${doc.id}" class="get-shop-details-data">pencil</a>
             </i>
@@ -328,12 +328,14 @@ const getRealTimeUpdatesForProducts = (elementName, pageName) => {
               <p>Price: <span>${data.price}</span></p>
               <p>Quantity: <span>${data.quantity}</span></p>
             </div>
-            <i class="icon f7-icons">
-              <a href="/edit-product/${doc.id}/" data-product-id="${doc.id}" class="get-product-details-data">pencil</a>
-            </i>
+            <div class="topright align-self-flex-start">
+              <i class="icon f7-icons">
+                <a href="/edit-product/${doc.id}/" data-product-id="${doc.id}" class="get-product-details-data">pencil</a>
+              </i>
+            </div>
           </div>
           <div class="block display-flex justify-content-center">
-            <div>`;
+        <div>`;
       if (yahooApiKey) {
         if (pageName == "HOME")
           result += `<img style="width:146px;height:146px" id="${data.code}" src="${data.image}"/>`

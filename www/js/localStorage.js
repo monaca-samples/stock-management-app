@@ -255,7 +255,7 @@ function getShopsFromLocalStorage(elementName) {
             <p>Tel: <span>${jsonObject.telephone}</span></p>
             <p>Address: <span>${jsonObject.address}</span></p>
           </div>
-          <div class="align-self-flex-start">
+          <div class="topright align-self-flex-start">
             <i class="icon f7-icons">
               <a href="/edit-shop/${"Shop" + i}/" data-shop-id="${"Shop" + i}" class="get-shop-details-data">pencil</a>
             </i>
@@ -296,12 +296,14 @@ const getProductsFromLocalStorage = (elementName, pageName) => {
               <p>Price: <span>${jsonObject.price}</span></p>
               <p>Quantity: <span">${jsonObject.quantity}</span></p>
             </div>
+            <div class="topright align-self-flex-start">
               <i class="icon f7-icons">
                 <a href="/edit-product/${"Product" + i}/" data-product-id="${"Product" + i}" class="get-product-details-data">pencil</a>
               </i>
             </div>
-            <div class="block display-flex justify-content-center">
-              <div>`;
+          </div>
+          <div class="block display-flex justify-content-center">
+        <div>`;
       if (pageName == "HOME")
         result += `<img style="width:146px;height:146px" id="${jsonObject.code}" src="${imageSource}">`;
       else if (pageName == "PRODUCT")

@@ -16,3 +16,9 @@
 .leaflet-marker-icon.selectedMarker {
   color: red;
 }
+
+.topright {
+  position: absolute;
+  top: 8px;
+  right: 16px;
+}
