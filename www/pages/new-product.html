@@ -22,7 +22,7 @@
 							<li class="col-95 item-content item-input">
 								<div class="row item-inner">
 									<div class="item-input-wrap">
-										<textarea class="resizable" placeholder="Code" id="product-code" name="code" required validate></textarea>
+										<input type="text" placeholder="Code" id="product-code" name="code" required validate>
 									</div>
 								</div>
 								<i class="icon f7-icons" id="product-barcode">barcode_viewfinder</i>
@@ -30,28 +30,28 @@
 							<li class="col-100 item-content item-input">
 								<div class="item-inner">
 									<div class="item-input-wrap">
-										<textarea class="resizable" placeholder="Name" id="product-name" name="name" required validate></textarea>
+										<input type="text" placeholder="Name" id="product-name" name="name" required validate>
 									</div>
 								</div>
 							</li>
 							<li class="col-100 item-content item-input">
 								<div class="item-inner">
 									<div class="item-input-wrap">
-										<textarea class="resizable" placeholder="Price" id="product-price" name="price" required validate></textarea>
+										<input type="text" placeholder="Price" id="product-price" name="price" required validate  data-error-message="Only numbers please!" inputmode="decimal"/>
 									</div>
 								</div>
 							</li>
 							<li class="col-100 item-content item-input">
 								<div class="item-inner">
 									<div class="item-input-wrap">
-										<textarea class="resizable" placeholder="Quantity" id="product-quantity" name="quantity" required validate></textarea>
+										<input type="number" placeholder="Quantity" id="product-quantity" name="quantity" required validate pattern="[0-9]*" min="0" data-error-message="Only numbers please!"/>
 									</div>
 								</div>
 							</li>
 							<li class="col-95 item-content item-input">
 								<div class="item-inner">
 									<div class="item-input-wrap">
-										<textarea class="resizable" placeholder="Shop" id="product-shop" name="shop" required validate></textarea>
+										<input type="text" placeholder="Shop" id="product-shop" name="shop" required validate>
 									</div>
 								</div>
 								<i class="icon f7-icons popup-open popup-shop-list" data-popup=".popup-shop-list">cart</i>

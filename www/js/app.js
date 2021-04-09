@@ -925,3 +925,4 @@ function getQuery(elementName) {
     } else app.dialog.alert("Please fill out the form first.", "");
   });
 }
+
