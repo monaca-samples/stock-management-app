@@ -129,29 +129,20 @@ function scanBarcode() {
 - - - - - - - - - - - - - - - - - - - */
 const getProductInfoWithYahoo = (barcode) => {
   try {
-    const url = `https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch?appid=${yahooApiKey}&jan_code=${barcode}`;
-    fetch(url)
-    .then((response) => response.json())
-    .then((data) => {cordova.plugin.http.get("https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch",
-    {
+    cordova.plugin.http.get('https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch', {
       appid: yahooApiKey,
-      jan_code: barcode,
-    },
-    {},
-      function (response) {
-        const data = JSON.parse(response.data);
-        if (data && data.hits && data.hits.length) {
-          document.getElementById("product-name").value = data.hits[0].name;
-          document.getElementById("product-price").value = "¥" + data.hits[0].price;
-          document.getElementById("product-quantity").value = 1;
-          document.getElementById("imageFile").src = data.hits[0].image.medium;
-        } else app.dialog.alert("Please add the details by yourself.","Product Not Found");
-        },
-        function (response) {
-          app.dialog.alert("The Yahoo API Key is not working. Please add the details by yourself.","Product Not Found");
-          console.log(response);
-        }
-      );
+      jan_code: barcode
+    }, {}, function (response) {
+      const data = JSON.parse(response.data);
+      if (data && data.hits && data.hits.length) {
+        document.getElementById("product-name").value = data.hits[0].name;
+        document.getElementById("product-price").value = "¥" + data.hits[0].price;
+        document.getElementById("product-quantity").value = 1;
+        document.getElementById("imageFile").src = data.hits[0].image.medium;
+      } else app.dialog.alert("Please add the details by yourself.", "Product Not Found");
+    }, function (response) {
+      app.dialog.alert("The Yahoo API Key is not working. Please add the details by yourself.", "Product Not Found");
+      console.log(response);
     });
   } catch {
     console.log("The Yahoo API Key is not defined.");
@@ -177,19 +168,20 @@ function setOptions(srcType) {
 
 // Take picture with camera
 function openCamera(selection) {
-  try{
-  const srcType = Camera.PictureSourceType.CAMERA;
-  const options = setOptions(srcType);
-  navigator.camera.getPicture(
-    function cameraSuccess(imageUrl) {
-      // Cordova Bug getPicture doesn't work properly
-      displayImage(imageUrl);
-    },
-    function cameraError(error) {
-      console.debug("Unable to take picture: " + error, "app");
-    },
-    options
-  );}
+  try {
+    const srcType = Camera.PictureSourceType.CAMERA;
+    const options = setOptions(srcType);
+    navigator.camera.getPicture(
+      function cameraSuccess(imageUrl) {
+        // Cordova Bug getPicture doesn't work properly
+        displayImage(imageUrl);
+      },
+      function cameraError(error) {
+        console.debug("Unable to take picture: " + error, "app");
+      },
+      options
+    );
+  }
   catch {
     console.error("Something went wrong.");
   }
@@ -197,19 +189,19 @@ function openCamera(selection) {
 
 // Open gallery and choose a picture
 function openFilePicker(selection) {
-  try{
-  const srcType = Camera.PictureSourceType.SAVEDPHOTOALBUM;
-  const options = setOptions(srcType);
-  navigator.camera.getPicture(
-    function cameraSuccess(imageUrl) {
-      // Cordova bug getPicture doesn't work properly
-      displayImage(imageUrl);
-    },
-    function cameraError(error) {
-      console.debug("Unable to obtain picture: " + error, "app");
-    },
-    options
-  );
+  try {
+    const srcType = Camera.PictureSourceType.SAVEDPHOTOALBUM;
+    const options = setOptions(srcType);
+    navigator.camera.getPicture(
+      function cameraSuccess(imageUrl) {
+        // Cordova bug getPicture doesn't work properly
+        displayImage(imageUrl);
+      },
+      function cameraError(error) {
+        console.debug("Unable to obtain picture: " + error, "app");
+      },
+      options
+    );
   } catch {
     console.error("Something went wrong.");
   }
@@ -305,19 +297,19 @@ function popUpProductList(elementName) {
                 </div>
               </a>
             </li>`;
-          });
+        });
 
-          if (count == 0) {
-            result += `
+        if (count == 0) {
+          result += `
               <li>
                 <div class="item-content">
                   <div class="item-inner display-flex justify-content-center">There are no products added to the database.</div>
                 </div>
               </li>`;
-          }
+        }
 
-          elementName.innerHTML = result;
-        });
+        elementName.innerHTML = result;
+      });
     } else {
       let count = 0;
       let result = "";
@@ -457,16 +449,16 @@ function getNewProductDataFromForm(elementName) {
       const jsonObject = app.methods.dataToJson("#new-product-form");
 
       // Check if the product is already added to that shop (local storage, else case: Firebase)
-      if(useDatabaseApi) {
+      if (useDatabaseApi) {
         isProductAddedToAShopInFirebase(jsonObject).then((result) => {
-          if(result) app.dialog.alert("Product is already added to this shop.", "");
+          if (result) app.dialog.alert("Product is already added to this shop.", "");
           else addNewProduct(elementName, jsonObject);
         });
       } else {
-        if(isProductAddedToAShopInLocalStorage(jsonObject)) app.dialog.alert("Product is already added to this shop.", "");
+        if (isProductAddedToAShopInLocalStorage(jsonObject)) app.dialog.alert("Product is already added to this shop.", "");
         else addNewProduct(elementName, jsonObject);
       }
-      
+
     } else app.dialog.alert("Please fill out the form first.", "");
   });
 }
@@ -474,30 +466,30 @@ function getNewProductDataFromForm(elementName) {
 // Check if product is duplicated (Firebase)
 function isProductAddedToAShopInFirebase(jsonObject) {
   return db.collection('products')
-  .where('code', '==', jsonObject.code)
-  .where('shop', '==', jsonObject.shop)
-  .get().then((snapshot) => {
-    for(const doc of snapshot.docs) {
-      let data = doc.data()
-      if (data.code == jsonObject.code && data.shop == jsonObject.shop) 
-        return true;
-    }
-  });
+    .where('code', '==', jsonObject.code)
+    .where('shop', '==', jsonObject.shop)
+    .get().then((snapshot) => {
+      for (const doc of snapshot.docs) {
+        let data = doc.data()
+        if (data.code == jsonObject.code && data.shop == jsonObject.shop)
+          return true;
+      }
+    });
 }
 
 // Check if product is duplicated (local storage)
 function isProductAddedToAShopInLocalStorage(jsonObject) {
-    if(localStorage.length == 0) return false;
+  if (localStorage.length == 0) return false;
 
-    for (let i = 0; i < localStorage.getItem("addedProducts"); i++) {
-      if (localStorage.getItem("Product" + i)) {
-        const item = JSON.parse(localStorage.getItem("Product" + i));
-        if(item.code == jsonObject.code && item.shop == jsonObject.shop) 
-          return true;
-      }
+  for (let i = 0; i < localStorage.getItem("addedProducts"); i++) {
+    if (localStorage.getItem("Product" + i)) {
+      const item = JSON.parse(localStorage.getItem("Product" + i));
+      if (item.code == jsonObject.code && item.shop == jsonObject.shop)
+        return true;
     }
+  }
 
-    return false;
+  return false;
 }
 
 // Adding a new product 
@@ -506,7 +498,7 @@ function addNewProduct(elementName, jsonObject) {
     let imgSrc = document.getElementById("imageFile").src;
     if (imgSrc.includes("data")) {
       checkPicture(elementName, jsonObject);
-      if (useDatabaseApi) addNewProductToFirebase(jsonObject, "");  
+      if (useDatabaseApi) addNewProductToFirebase(jsonObject, "");
       else {
         addNewProductToLocalStorage(jsonObject);
         afterAddingNewProduct();
@@ -516,7 +508,7 @@ function addNewProduct(elementName, jsonObject) {
       else addNewProductToLocalStorage(jsonObject, imgSrc);
       afterAddingNewProduct();
     }
-  } else  {
+  } else {
     if (checkPicture(elementName, jsonObject)) {
       if (useDatabaseApi) addNewProductToFirebase(jsonObject, "");
       else addNewProductToLocalStorage(jsonObject);
@@ -568,12 +560,12 @@ $$(document).on("click", ".get-shop-details-data", function () {
       if ("Shop" + i == shopId) {
         const jsonObject = JSON.parse(localStorage.getItem("Shop" + i));
         $$(document).on("page:init", '.page[data-name="edit-shop"]', function () {
-            shopDataForLocalStorage(jsonObject);
-          }
+          shopDataForLocalStorage(jsonObject);
+        }
         );
         $$(document).on("page:afterin", '.page[data-name="edit-shop"]', function () {
-            shopDataForLocalStorage(jsonObject);
-          }
+          shopDataForLocalStorage(jsonObject);
+        }
         );
       }
     }
@@ -591,16 +583,16 @@ function shopDataForLocalStorage(jsonObject) {
 $$(document).on("click", ".edited-shop-data", function () {
   if (app.methods.isNewShopFormEmpty()) {
     if (useDatabaseApi) {
-        db.collection("shops").doc(shopId).update({
-          name: document.getElementById("shop-name").value,
-          telephone: document.getElementById("shop-telephone").value,
-          address: document.getElementById("shop-address").value,
-          location: document.getElementById("shop-location").value,
-        }).then(function(){
-          app.dialog.alert("Saved shop details.", "")    
-        }).catch(function(error) {
-          app.dialog.alert("Something went wrong or the shop doesn't exist.", "");
-        });   
+      db.collection("shops").doc(shopId).update({
+        name: document.getElementById("shop-name").value,
+        telephone: document.getElementById("shop-telephone").value,
+        address: document.getElementById("shop-address").value,
+        location: document.getElementById("shop-location").value,
+      }).then(function () {
+        app.dialog.alert("Saved shop details.", "")
+      }).catch(function (error) {
+        app.dialog.alert("Something went wrong or the shop doesn't exist.", "");
+      });
     } else {
       for (let i = 0; i < localStorage.getItem("addedShops"); i++) {
         if ("Shop" + i == shopId) {
@@ -617,37 +609,37 @@ $$(document).on("click", ".edited-shop-data", function () {
           app.dialog.alert("Something went wrong or the shop doesn't exist.", "");
           break;
         }
-      }   
+      }
     }
   } else app.dialog.alert("Please fill out the form first.", "");
 });
 
 function deleteShopData() {
-  $$(document).once("click", ".delete-shop-data", function () { 
-      const jsonObject = app.methods.dataToJson("#edit-shop-form");
+  $$(document).once("click", ".delete-shop-data", function () {
+    const jsonObject = app.methods.dataToJson("#edit-shop-form");
 
-      if(useDatabaseApi) {
-        let toDelete = db.collection('shops').where('name','==',jsonObject.name).where('location', '==', jsonObject.location);
-        toDelete.get().then(function(snapshot) {
-          snapshot.forEach(function(doc) {
-            doc.ref.delete();
-          });
+    if (useDatabaseApi) {
+      let toDelete = db.collection('shops').where('name', '==', jsonObject.name).where('location', '==', jsonObject.location);
+      toDelete.get().then(function (snapshot) {
+        snapshot.forEach(function (doc) {
+          doc.ref.delete();
         });
-      } else {
-        for (let i = 0; i < localStorage.getItem("addedShops"); i++) {
-          if (localStorage.getItem("Shop" + i)) {
-            const toDelete = JSON.parse(localStorage.getItem("Shop" + i));
-            if(toDelete.name == jsonObject.name && toDelete.location == jsonObject.location) {
-              localStorage.removeItem("Shop" + i);
-              break;
-            }
+      });
+    } else {
+      for (let i = 0; i < localStorage.getItem("addedShops"); i++) {
+        if (localStorage.getItem("Shop" + i)) {
+          const toDelete = JSON.parse(localStorage.getItem("Shop" + i));
+          if (toDelete.name == jsonObject.name && toDelete.location == jsonObject.location) {
+            localStorage.removeItem("Shop" + i);
+            break;
           }
         }
       }
+    }
 
-      app.dialog.alert("Your shop has been deleted.", "");
-      app.views.main.router.back({url: '/', force: true});
-      app.methods.emptyNewShopForm();
+    app.dialog.alert("Your shop has been deleted.", "");
+    app.views.main.router.back({ url: '/', force: true });
+    app.methods.emptyNewShopForm();
   });
 }
 
@@ -676,12 +668,12 @@ $$(document).on("click", ".get-product-details-data", function () {
       if ("Product" + i == productId) {
         const jsonObject = JSON.parse(localStorage.getItem("Product" + i));
         $$(document).on("page:init", '.page[data-name="edit-product"]', function () {
-            productDataForLocalStorage(jsonObject);
-          }
+          productDataForLocalStorage(jsonObject);
+        }
         );
         $$(document).on("page:afterin", '.page[data-name="edit-product"]', function () {
-            productDataForLocalStorage(jsonObject);
-          }
+          productDataForLocalStorage(jsonObject);
+        }
         );
       }
     }
@@ -695,7 +687,7 @@ function productDataForLocalStorage(jsonObject) {
   document.getElementById("product-quantity").value = jsonObject.quantity;
   document.getElementById("product-shop").value = jsonObject.shop;
 
-  if (jsonObject.image != undefined) 
+  if (jsonObject.image != undefined)
     document.getElementById("imageFile").src = jsonObject.image;
   else getImageFromLocalStorage(jsonObject, "EDIT");
 }
@@ -711,29 +703,29 @@ function saveEditedProductData(elementName) {
           uploadImageToFirebaseStorage(elementName, jsonObject.code + ".jpg", img, true);
 
           db.collection("products").doc(productId).update({
-              code: document.getElementById("product-code").value,
-              name: document.getElementById("product-name").value,
-              price: document.getElementById("product-price").value,
-              quantity: document.getElementById("product-quantity").value,
-              shop: document.getElementById("product-shop").value,
-              image: "",
-            });
+            code: document.getElementById("product-code").value,
+            name: document.getElementById("product-name").value,
+            price: document.getElementById("product-price").value,
+            quantity: document.getElementById("product-quantity").value,
+            shop: document.getElementById("product-shop").value,
+            image: "",
+          });
         } else {
           db.collection("products").doc(productId).update({
-              code: document.getElementById("product-code").value,
-              name: document.getElementById("product-name").value,
-              price: document.getElementById("product-price").value,
-              quantity: document.getElementById("product-quantity").value,
-              shop: document.getElementById("product-shop").value,
-              image: document.getElementById("imageFile").src,
-            });
+            code: document.getElementById("product-code").value,
+            name: document.getElementById("product-name").value,
+            price: document.getElementById("product-price").value,
+            quantity: document.getElementById("product-quantity").value,
+            shop: document.getElementById("product-shop").value,
+            image: document.getElementById("imageFile").src,
+          });
 
           app.dialog.alert('Saved product details.', '');
         }
       } else {
         const img = document.getElementById("imageFile");
         if (img.src.includes("data")) {
-          uploadImageToLocalStorage(jsonObject.code +  jsonObject.shop + ".jpg", img, true);
+          uploadImageToLocalStorage(jsonObject.code + jsonObject.shop + ".jpg", img, true);
           for (let i = 0; i < localStorage.getItem("addedProducts"); i++) {
             if ("Product" + i == productId) {
               let editedProduct = {
@@ -761,7 +753,7 @@ function saveEditedProductData(elementName) {
               };
 
               localStorage.setItem(productId, JSON.stringify(editedProduct));
-              localStorage.removeItem(document.getElementById("product-code").value +  document.getElementById("product-shop").value + ".jpg");
+              localStorage.removeItem(document.getElementById("product-code").value + document.getElementById("product-shop").value + ".jpg");
             }
           }
 
@@ -773,33 +765,33 @@ function saveEditedProductData(elementName) {
 }
 
 function deleteProductData() {
-  $$(document).once("click", ".delete-product-data", function () { 
-      const jsonObject = app.methods.dataToJson("#edit-product-form");
+  $$(document).once("click", ".delete-product-data", function () {
+    const jsonObject = app.methods.dataToJson("#edit-product-form");
 
-      if(useDatabaseApi) {
-        let toDelete = db.collection('products').where('code','==',jsonObject.code).where('shop', '==', jsonObject.shop);
-        toDelete.get().then(function(snapshot) {
-          snapshot.forEach(function(doc) {
-            doc.ref.delete();
-          });
+    if (useDatabaseApi) {
+      let toDelete = db.collection('products').where('code', '==', jsonObject.code).where('shop', '==', jsonObject.shop);
+      toDelete.get().then(function (snapshot) {
+        snapshot.forEach(function (doc) {
+          doc.ref.delete();
         });
-      } else {
-        for (let i = 0; i < localStorage.getItem("addedProducts"); i++) {
-          if (localStorage.getItem("Product" + i)) {
-            const toDelete = JSON.parse(localStorage.getItem("Product" + i));
-            if(toDelete.code == jsonObject.code && toDelete.shop == jsonObject.shop) {
-              localStorage.removeItem("Product" + i);
-              localStorage.removeItem(toDelete.code + toDelete.shop + ".jpg");
-              break;
-            }
+      });
+    } else {
+      for (let i = 0; i < localStorage.getItem("addedProducts"); i++) {
+        if (localStorage.getItem("Product" + i)) {
+          const toDelete = JSON.parse(localStorage.getItem("Product" + i));
+          if (toDelete.code == jsonObject.code && toDelete.shop == jsonObject.shop) {
+            localStorage.removeItem("Product" + i);
+            localStorage.removeItem(toDelete.code + toDelete.shop + ".jpg");
+            break;
           }
         }
-
-        
       }
 
-      app.dialog.alert("Your product has been deleted.", "");
-      app.views.main.router.back('/');
+
+    }
+
+    app.dialog.alert("Your product has been deleted.", "");
+    app.views.main.router.back('/');
   });
 }
 
@@ -907,7 +899,7 @@ const changeQuantity = (elementName, className, productId, productQuantity) => {
 
         localStorage.setItem(productId, JSON.stringify(changedProduct));
         getProductsFromLocalStorage(elementName);
-    	  getProductsFromLocalStorage(elementName, "HOME");
+        getProductsFromLocalStorage(elementName, "HOME");
       }
     }
   }

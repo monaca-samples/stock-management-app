@@ -195,17 +195,13 @@
 	const productListHomeDiv = document.getElementById('product-list-result');
 
 	if(useDatabaseApi) getRealTimeUpdatesForProducts(productListHomeDiv, "HOME");
-  	else getProductsFromLocalStorage(productListHomeDiv, "HOME");
-
-	subtractQuantity(productListHomeDiv);
-    addQuantity(productListHomeDiv);
+  	else {
+		getProductsFromLocalStorage(productListHomeDiv, "HOME");
+		subtractQuantity(productListHomeDiv);
+    	addQuantity(productListHomeDiv);
+	  }
   
   	$$(document).on('page:reinit', function (e) {
-    	if(useDatabaseApi) getRealTimeUpdatesForProducts(productListHomeDiv, "HOME");
-    	else getProductsFromLocalStorage(productListHomeDiv, "HOME");
-  	});
-
-	$$(document).on('page:afterin', function (e) {
     	if(useDatabaseApi) getRealTimeUpdatesForProducts(productListHomeDiv, "HOME");
     	else getProductsFromLocalStorage(productListHomeDiv, "HOME");
   	});

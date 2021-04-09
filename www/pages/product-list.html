@@ -28,7 +28,11 @@
       pageInit: function(e, page) {
         const productListDiv = document.getElementById('product-list');
         if(useDatabaseApi) getRealTimeUpdatesForProducts(productListDiv, "PRODUCT");
-        else getProductsFromLocalStorage(productListDiv, "PRODUCT");
+        else {
+			getProductsFromLocalStorage(productListDiv, "PRODUCT");
+			subtractQuantity(productListDiv);
+    		addQuantity(productListDiv);
+		}
 
         $$(document).on('page:reinit', function (e) {
           if(useDatabaseApi) getRealTimeUpdatesForProducts(productListDiv, "PRODUCT");
