@@ -23,4 +23,4 @@ let useDatabaseApi = false;
 /* - - - - - - - - - - - - - - - - - - - - - - - -
    Configurations for the Yahoo Barcode Lookup
 - - - - - - - - - - - - - - - - - - - - - - - - -  */
-const yahooApiKey = false; // set it to false or 'PUT_YOUR KEY_HERE' if you want to use yahooApi
+//const yahooApiKey = 'PUT_YOUR KEY_HERE';
