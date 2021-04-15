@@ -425,6 +425,7 @@ $$(document).on("click", ".get-shop-name", function () {
   shopName = $$(this).data("shop-name");
   shopId = $$(this).data("shop-id");
   document.getElementById("product-shop").value = shopName;
+  app.input.validate('#product-shop');
 });
 
 /* - - - - - - - - - - - - - - 
@@ -591,11 +592,13 @@ $$(document).on("click", ".edited-shop-data", function () {
       }).then(function () {
         app.dialog.alert("Saved shop details.", "")
       }).catch(function (error) {
-        app.dialog.alert("Something went wrong or the shop doesn't exist.", "");
+        console.log("Something went wrong or the shop doesn't exist.");
       });
     } else {
+      let found = false;
       for (let i = 0; i < localStorage.getItem("addedShops"); i++) {
         if ("Shop" + i == shopId) {
+          found = true;
           let editedShop = {
             name: document.getElementById("shop-name").value,
             telephone: document.getElementById("shop-telephone").value,
@@ -605,11 +608,9 @@ $$(document).on("click", ".edited-shop-data", function () {
 
           localStorage.setItem(shopId, JSON.stringify(editedShop));
           app.dialog.alert("Saved shop details.", "");
-        } else {
-          app.dialog.alert("Something went wrong or the shop doesn't exist.", "");
-          break;
         }
       }
+      if (!found) console.log("Something went wrong or the shop doesn't exist.");
     }
   } else app.dialog.alert("Please fill out the form first.", "");
 });
@@ -786,8 +787,6 @@ function deleteProductData() {
           }
         }
       }
-
-
     }
 
     app.dialog.alert("Your product has been deleted.", "");
@@ -818,6 +817,7 @@ function currentLocation(map) {
   navigator.geolocation.getCurrentPosition(function (position) {
     onSuccess(map, position);
     document.getElementById("shop-location").value = position.coords.latitude + " " + position.coords.longitude;
+    app.input.validate('#shop-location');
   }, onError);
 }
 
