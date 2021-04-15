@@ -1,6 +1,6 @@
 <template>
 	<div class="page" data-name="edit-shop">
-     <!-- Navbar -->
+		<!-- Navbar -->
 		<div class="navbar">
 			<div class="navbar-bg"></div>
 			<div class="navbar-inner sliding">
@@ -13,7 +13,7 @@
 				<div class="title">Edit Shop Details</div>
 			</div>
 		</div>
-    <!-- Page content -->
+		<!-- Page content -->
 		<div class="page-content">
 			<form class="list" id="edit-shop-form">
 				<div class="list no-hairlines-md">
@@ -21,9 +21,10 @@
 						<li>
 							<div class="item-content item-input">
 								<div class="item-inner">
-                  <div class="item-title item-label">Shop name</div>
+									<div class="item-title item-label">Shop name</div>
 									<div class="item-input-wrap">
-										<textarea class="resizable" placeholder="Name" id="shop-name" name="name" required validate></textarea>
+										<textarea class="resizable" placeholder="Name" id="shop-name" name="name"
+											required validate></textarea>
 									</div>
 								</div>
 							</div>
@@ -31,9 +32,10 @@
 						<li>
 							<div class="item-content item-input">
 								<div class="item-inner">
-                  <div class="item-title item-label">Telephone number</div>
+									<div class="item-title item-label">Telephone number</div>
 									<div class="item-input-wrap">
-										<textarea class="resizable" placeholder="Telephone number" id="shop-telephone" name="telephone" required validate></textarea>
+										<textarea class="resizable" placeholder="Telephone number" id="shop-telephone"
+											name="telephone" required validate></textarea>
 									</div>
 								</div>
 							</div>
@@ -41,9 +43,10 @@
 						<li>
 							<div class="item-content item-input">
 								<div class="item-inner">
-                  <div class="item-title item-label">Address</div>
+									<div class="item-title item-label">Address</div>
 									<div class="item-input-wrap">
-										<textarea class="resizable" placeholder="Address" id="shop-address" name="address" required validate></textarea>
+										<textarea class="resizable" placeholder="Address" id="shop-address"
+											name="address" required validate></textarea>
 									</div>
 								</div>
 							</div>
@@ -51,26 +54,28 @@
 						<li>
 							<div class="item-content item-input">
 								<div class="item-inner">
-                  <div class="item-title item-label">Location</div>
+									<div class="item-title item-label">Location</div>
 									<div class="item-input-wrap">
-										<textarea class="resizable" placeholder="Location" id="shop-location" name="location" required validate></textarea>
+										<textarea class="resizable" placeholder="Location" id="shop-location"
+											name="location" required validate></textarea>
 									</div>
 								</div>
 							</div>
 						</li>
 					</ul>
 				</div>
-        <!-- Map -->
+				<!-- Map -->
 				<div class="block">
 					<div class="row display-flex justify-content-center">
 						<div class="col-80 align-self-center">
-							<a id="current-location" href="#" class="button button-raised button-fill">Current Position</a>
+							<a id="current-location" href="#" class="button button-raised button-fill">Current
+								Position</a>
 						</div>
 					</div>
 				</div>
 				<div id="editShopMap" class="map"></div>
 				<br>
-        <!-- Button -->
+				<!-- Button -->
 				<div class="row display-flex justify-content-center">
 					<div class="col-40 align-self-center">
 						<a href="#" class="button button-raised button-fill edited-shop-data">Save</a>
@@ -88,29 +93,32 @@
 
 <script>
 	return {
-      data: function () {
-       return {
-        }
-      },
-    on: {
-      pageInit: function(e, page) {
-        let map = null;
-        let chosenPositionMarker = {};
-        const currentLocationBtn = document.getElementById('current-location');
+		data: function () {
+			return {
+			}
+		},
+		on: {
+			pageInit: function (e, page) {
+				let map = null;
+				let chosenPositionMarker = {};
+				const currentLocationBtn = document.getElementById('current-location');
 
-        if (!map) map = L.map('editShopMap', {doubleClickZoom: false}).locate({setView: true, maxZoom: 12});
+				if (!map) map = L.map('editShopMap', { doubleClickZoom: false }).locate({ setView: true, maxZoom: 12 });
 				map.setView([35.40, 139.50], 12);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-        
-        currentLocationBtn.addEventListener('click', () => currentLocation(map));
-        moveOnTheMap(map, chosenPositionMarker);
+				L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+					attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+				}).addTo(map);
 
-		deleteShopData();
-      } 
-    }
-  }
+				currentLocationBtn.addEventListener('click', function () {
+					currentLocationBtn.classList.add('disabled');
+					currentLocation(map);
+				});
+				moveOnTheMap(map, chosenPositionMarker);
+
+				deleteShopData();
+			}
+		}
+	}
 
 </script>

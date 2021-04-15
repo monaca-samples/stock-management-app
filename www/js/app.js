@@ -816,6 +816,7 @@ function onError(error) {
 function currentLocation(map) {
   navigator.geolocation.getCurrentPosition(function (position) {
     onSuccess(map, position);
+    document.getElementById("current-location").classList.remove('disabled');
     document.getElementById("shop-location").value = position.coords.latitude + " " + position.coords.longitude;
     app.input.validate('#shop-location');
   }, onError);

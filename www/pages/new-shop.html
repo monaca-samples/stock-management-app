@@ -95,7 +95,10 @@
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
     
-         currentLocationBtn.addEventListener('click', () => currentLocation(map));
+         currentLocationBtn.addEventListener('click', function() {
+			currentLocationBtn.classList.add('disabled');
+			currentLocation(map)
+		 });
          moveOnTheMap(map, chosenPositionMarker);
       }
     }
