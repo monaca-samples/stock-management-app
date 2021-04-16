@@ -108,6 +108,7 @@ function scanBarcode() {
   cordova.plugins.barcodeScanner.scan(
     function (result) {
       document.getElementById("product-code").value = result.text;
+      app.input.validate('#product-code');
       getProductInfoWithYahoo(result.text);
     },
     function (error) {
@@ -136,9 +137,12 @@ const getProductInfoWithYahoo = (barcode) => {
       const data = JSON.parse(response.data);
       if (data && data.hits && data.hits.length) {
         document.getElementById("product-name").value = data.hits[0].name;
-        document.getElementById("product-price").value = "¥" + data.hits[0].price;
+        document.getElementById("product-price").value = data.hits[0].price;
         document.getElementById("product-quantity").value = 1;
         document.getElementById("imageFile").src = data.hits[0].image.medium;
+        app.input.validate('#product-name');
+        app.input.validate('#product-price');
+        app.input.validate('#product-quantity');
       } else app.dialog.alert("Please add the details by yourself.", "Product Not Found");
     }, function (response) {
       app.dialog.alert("The Yahoo API Key is not working. Please add the details by yourself.", "Product Not Found");
@@ -412,12 +416,14 @@ function popUpShopList(elementName) {
 $$(document).on("click", ".get-product-code", function () {
   productCode = $$(this).data("product-code");
   document.getElementById("product-code").value = productCode;
+  app.input.validate('#product-code');
 });
 
 // Get product name data from pop up and add it to the form
 $$(document).on("click", ".get-product-name", function () {
   productName = $$(this).data("product-name");
   document.getElementById("product-name").value = productName;
+  app.input.validate('#product-name');
 });
 
 // Get shop name from shop list pop up and add it to the form
@@ -445,7 +451,7 @@ $$(document).on("click", ".convert-form-to-data", function () {
 
 // Get new product data
 function getNewProductDataFromForm(elementName) {
-  $$(document).once("click", ".convert-new-product-form-to-data", function () {
+  $$('.convert-new-product-form-to-data').on('click', function () {
     if (app.methods.isProductFormEmpty()) {
       const jsonObject = app.methods.dataToJson("#new-product-form");
 
@@ -512,8 +518,10 @@ function addNewProduct(elementName, jsonObject) {
   } else {
     if (checkPicture(elementName, jsonObject)) {
       if (useDatabaseApi) addNewProductToFirebase(jsonObject, "");
-      else addNewProductToLocalStorage(jsonObject);
-      afterAddingNewProduct();
+      else {
+        addNewProductToLocalStorage(jsonObject);
+        afterAddingNewProduct();
+      }
     }
   }
 }
@@ -616,7 +624,7 @@ $$(document).on("click", ".edited-shop-data", function () {
 });
 
 function deleteShopData() {
-  $$(document).once("click", ".delete-shop-data", function () {
+  $$('.delete-shop-data').on('click', function () {
     const jsonObject = app.methods.dataToJson("#edit-shop-form");
 
     if (useDatabaseApi) {
@@ -766,7 +774,7 @@ function saveEditedProductData(elementName) {
 }
 
 function deleteProductData() {
-  $$(document).once("click", ".delete-product-data", function () {
+  $$('.delete-product-data').on('click', function () {
     const jsonObject = app.methods.dataToJson("#edit-product-form");
 
     if (useDatabaseApi) {
@@ -828,6 +836,7 @@ function moveOnTheMap(map, chosenPositionMarker) {
     lat = e.latlng.lat;
     lon = e.latlng.lng;
     document.getElementById("shop-location").value = lat + " " + lon;
+    app.input.validate('#shop-location');
 
     let redIcon = new L.Icon({
       iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
@@ -911,11 +920,11 @@ const changeQuantity = (elementName, className, productId, productQuantity) => {
 - - - - - - - - - - - - - - - - */
 // Get query
 function getQuery(elementName) {
-  $$(document).on("click", ".convert-product-form-to-data", function () {
+  $$('.convert-product-form-to-data').on('click', function () {
     if (app.methods.isSearchFormEmpty()) {
       if (useDatabaseApi) getRealTimeUpdatesForSearch(elementName);
       else localStorageUpdateForSearch(elementName);
     } else app.dialog.alert("Please fill out the form first.", "");
-  });
+  })
 }
 

@@ -156,7 +156,7 @@ const twoFieldSearchLocalStorage = (elementName, stringName, objectName, stringN
   if(found == 0) 
   result += `
     <div class="card-bg block block-strong inset">
-        <div class="display-flex justify-content-center">Product Not Found..</div>
+        <div class="display-flex justify-content-center">Product Not Found</div>
     </div>`;
   
 
@@ -238,7 +238,7 @@ function countProductsInLocalStorage(elementName, count, result) {
       count++;
 
   if(count == 0)    
-    result += `
+    result = `
       <div class="card-bg block block-strong inset">
         <div class="display-flex justify-content-center">There are no products added to the database.</div>
       </div>`;

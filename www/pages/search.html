@@ -1,134 +1,134 @@
 <template>
-	<div class="page" data-name="search">
-		<!-- Navbar -->
-		<div class="navbar">
-			<div class="navbar-bg"></div>
-			<div class="navbar-inner sliding">
-				<div class="left">
-					<a href="#" class="link back">
-						<i class="icon icon-back"></i>
-						<span class="if-not-md">Back</span>
-					</a>
-				</div>
-				<div class="title">Search</div>
-			</div>
-		</div>
-		<!-- Page content -->
-		<div class="page-content">
-			<!-- Left panel with cover effect -->
-			<!-- Form -->
-			<form class="list" id="search-product-form">
-				<div class="list">
-					<div class="list no-hairlines-md">
-						<ul class="row">
-							<li class="col-95 item-content item-input">
-								<div class="item-inner">
-									<div class="item-input-wrap">
-										<input id="product-code" name="code" type="text" placeholder="Code" />
-										<span class="input-clear-button"></span>
-									</div>
-								</div>
-								<i class="icon f7-icons popup-open popup-code-list" data-popup=".popup-code-list">barcode_viewfinder</i>
-							</li>
-							<li class="col-95 item-content item-input">
-								<div class="item-inner">
-									<div class="item-input-wrap">
-										<input id="product-name" name="name" type="text" placeholder="Product Name"/>
-										<span class="input-clear-button"></span>
-									</div>
-								</div>
-								<i class="icon f7-icons popup-open popup-product-list" data-popup=".popup-product-list">cube</i>
-							</li>
-							<li class="col-95 item-content item-input">
-								<div class="item-inner">
-									<div class="item-input-wrap">
-										<input id="product-shop" name="shop" type="text" placeholder="Shop Name" />
-										<span class="input-clear-button"></span>
-									</div>
-								</div>
-								<i class="icon f7-icons popup-open popup-shop-list" data-popup=".popup-shop-list">cart</i>
-							</li>
-						</ul>
-					</div>
-				</div>
-				<!-- Pop up code list -->
-				<div class="popup popup-code-list">
-					<div class="navbar">
-						<div class="navbar-bg"></div>
-						<div class="navbar-inner sliding">
-							<div class="left">
-								<a href="#" class="link popup-close">
-									<i class="icon icon-back"></i>
-									<span class="if-not-md">Back</span>
-								</a>
-							</div>
-							<div class="title">Barcodes</div>
-						</div>
-					</div>
-					<div class="list">
-						<ul id="popup-barcode-list"></ul>
-					</div>
-				</div>
-				<!-- Pop up product list -->
-				<div class="popup popup-product-list">
-					<div class="navbar">
-						<div class="navbar-bg"></div>
-						<div class="navbar-inner sliding">
-							<div class="left">
-								<a href="#" class="link popup-close">
-									<i class="icon icon-back"></i>
-									<span class="if-not-md">Back</span>
-								</a>
-							</div>
-							<div class="title">Products</div>
-						</div>
-					</div>
-					<div class="list">
-						<ul id="popup-product-list"></ul>
-					</div>
-				</div>
-				<!-- Pop up shop list -->
-				<div class="popup popup-shop-list">
-					<div class="navbar">
-						<div class="navbar-bg"></div>
-						<div class="navbar-inner sliding">
-							<div class="left">
-								<a href="#" class="link popup-close">
-									<i class="icon icon-back"></i>
-									<span class="if-not-md">Back</span>
-								</a>
-							</div>
-							<div class="title">Shop List</div>
-						</div>
-					</div>
-					<div class="list">
-						<ul id="popup-shop-list"></ul>
-					</div>
-				</div>
-				<!-- Button -->
-				<div class="block">
-					<div class="row">
-						<div class="col-50">
-							<a href="#" class="button button-raised button-fill convert-product-form-to-data">Search</a>
-						</div>
-						<div class="col-50">
-							<a href="#" class="button button-raised button-fill" @click="$root.emptySearchForm()">Clear</a>
-						</div>
-					</div>
-				</div>
-				<div id="product-list"></div>
-			</form>
-		</div>
+  <div class="page" data-name="search">
+    <!-- Navbar -->
+    <div class="navbar">
+      <div class="navbar-bg"></div>
+      <div class="navbar-inner sliding">
+        <div class="left">
+          <a href="#" class="link back">
+            <i class="icon icon-back"></i>
+            <span class="if-not-md">Back</span>
+          </a>
+        </div>
+        <div class="title">Search</div>
+      </div>
+    </div>
+    <!-- Page content -->
+    <div class="page-content">
+      <!-- Left panel with cover effect -->
+      <!-- Form -->
+      <form class="list" id="search-product-form">
+        <div class="list">
+          <div class="list no-hairlines-md">
+            <ul class="row">
+              <li class="col-95 item-content item-input">
+                <div class="item-inner">
+                  <div class="item-input-wrap">
+                    <input id="product-code" name="code" type="text" placeholder="Code" />
+                    <span class="input-clear-button"></span>
+                  </div>
+                </div>
+                <i class="icon f7-icons popup-open popup-code-list" data-popup=".popup-code-list">barcode_viewfinder</i>
+              </li>
+              <li class="col-95 item-content item-input">
+                <div class="item-inner">
+                  <div class="item-input-wrap">
+                    <input id="product-name" name="name" type="text" placeholder="Product Name" />
+                    <span class="input-clear-button"></span>
+                  </div>
+                </div>
+                <i class="icon f7-icons popup-open popup-product-list" data-popup=".popup-product-list">cube</i>
+              </li>
+              <li class="col-95 item-content item-input">
+                <div class="item-inner">
+                  <div class="item-input-wrap">
+                    <input id="product-shop" name="shop" type="text" placeholder="Shop Name" />
+                    <span class="input-clear-button"></span>
+                  </div>
+                </div>
+                <i class="icon f7-icons popup-open popup-shop-list" data-popup=".popup-shop-list">cart</i>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Pop up code list -->
+        <div class="popup popup-code-list">
+          <div class="navbar">
+            <div class="navbar-bg"></div>
+            <div class="navbar-inner sliding">
+              <div class="left">
+                <a href="#" class="link popup-close">
+                  <i class="icon icon-back"></i>
+                  <span class="if-not-md">Back</span>
+                </a>
+              </div>
+              <div class="title">Barcodes</div>
+            </div>
+          </div>
+          <div class="list">
+            <ul id="popup-barcode-list"></ul>
+          </div>
+        </div>
+        <!-- Pop up product list -->
+        <div class="popup popup-product-list">
+          <div class="navbar">
+            <div class="navbar-bg"></div>
+            <div class="navbar-inner sliding">
+              <div class="left">
+                <a href="#" class="link popup-close">
+                  <i class="icon icon-back"></i>
+                  <span class="if-not-md">Back</span>
+                </a>
+              </div>
+              <div class="title">Products</div>
+            </div>
+          </div>
+          <div class="list">
+            <ul id="popup-product-list"></ul>
+          </div>
+        </div>
+        <!-- Pop up shop list -->
+        <div class="popup popup-shop-list">
+          <div class="navbar">
+            <div class="navbar-bg"></div>
+            <div class="navbar-inner sliding">
+              <div class="left">
+                <a href="#" class="link popup-close">
+                  <i class="icon icon-back"></i>
+                  <span class="if-not-md">Back</span>
+                </a>
+              </div>
+              <div class="title">Shop List</div>
+            </div>
+          </div>
+          <div class="list">
+            <ul id="popup-shop-list"></ul>
+          </div>
+        </div>
+        <!-- Button -->
+        <div class="block">
+          <div class="row">
+            <div class="col-50">
+              <a href="#" class="button button-raised button-fill convert-product-form-to-data">Search</a>
+            </div>
+            <div class="col-50">
+              <a href="#" class="button button-raised button-fill" @click="$root.emptySearchForm()">Clear</a>
+            </div>
+          </div>
+        </div>
+        <div id="product-list"></div>
+      </form>
+    </div>
 </template>
 
 <script>
-	return {
+  return {
     data: function () {
       return {
-        }
+      }
     },
     on: {
-      pageInit: function(e, page) {
+      pageInit: function (e, page) {
         const barcodeListPopUp = document.getElementById('popup-barcode-list')
         const productListPopUp = document.getElementById('popup-product-list')
         const shopListPopUp = document.getElementById('popup-shop-list');
@@ -141,7 +141,7 @@
         addQuantity(productListDiv);
         getQuery(productListDiv);
 
-		if (useDatabaseApi) getRealTimeUpdatesForSearch(productListDiv);
+        if (useDatabaseApi) getRealTimeUpdatesForSearch(productListDiv);
         else localStorageUpdateForSearch(productListDiv);
       }
     }

@@ -45,7 +45,7 @@ function uploadImageToFirebaseStorage(elementName, fileName, img, edit) {
       elementName.innerHTML = 'Upload is ' + Math.trunc(progress) + '% done';
 
       if (progress == 100) {
-        if (edit) 
+        if (edit)
           app.dialog.alert('Saved product details.', '');
         else {
           app.dialog.alert("Product added to the products list.", "");
@@ -110,14 +110,14 @@ function getImage(data, pageName) {
 // Search by one filled field
 const oneFieldSearch = (elementName, stringName, fieldName) => {
   db.collection('products').where(stringName, '>=', fieldName).where(stringName, '<=', fieldName + '\uf8ff')
-  .get()
-  .then((snapshot) => {
-    let count = 0;
-    let result = '';
-    snapshot.docs.forEach(doc => {
-      const data = doc.data();
-      count++;
-      result += `
+    .get()
+    .then((snapshot) => {
+      let count = 0;
+      let result = '';
+      snapshot.docs.forEach(doc => {
+        const data = doc.data();
+        count++;
+        result += `
         <div class="card-bg block block-strong inset">
           <p>Product Code: <span>${data.code}</span></p>
           <p>Name: <span>${data.name}</span></p>
@@ -125,9 +125,9 @@ const oneFieldSearch = (elementName, stringName, fieldName) => {
           <p>Price: <span>${data.price}</span></p>
           <p>Quantity: <span id="search-quantity">${data.quantity}</span></p>
           <div class="block display-flex justify-content-center">`
-      if (yahooApiKey)
-        result += `<img style="width:146px;height:146px" id="${data.code}_img" src="${data.image}"/>`
-      result += `
+        if (yahooApiKey)
+          result += `<img style="width:146px;height:146px" id="${data.code}_img" src="${data.image}"/>`
+        result += `
           </div>
           <div class="display-flex justify-content-center">
             <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
@@ -137,20 +137,20 @@ const oneFieldSearch = (elementName, stringName, fieldName) => {
           </div>   
         </div>`;
 
-      if (data.image == "") getImage(data, "PRODUCT");
-    });
+        if (data.image == "") getImage(data, "PRODUCT");
+      });
 
-    if (count == 0) {
-      result += `
+      if (count == 0) {
+        result += `
         <div class="card-bg block block-strong inset">
             <div class="display-flex justify-content-center">Product Not Found</div>
         </div>`;
-    }
+      }
 
-    elementName.innerHTML = result;
-  }).catch((error) => {
-    console.log("Error getting documents: ", error);
-  });
+      elementName.innerHTML = result;
+    }).catch((error) => {
+      console.log("Error getting documents: ", error);
+    });
 }
 
 // Search by two filled field
@@ -196,15 +196,15 @@ const twoFieldSearch = (elementName, stringName, fieldName, stringName2, fieldNa
 }
 
 // Search by three filled field
-const threeFieldSearch = (elementName,stringName, fieldName, stringName2, fieldName2, stringName3, fieldName3) => {
+const threeFieldSearch = (elementName, stringName, fieldName, stringName2, fieldName2, stringName3, fieldName3) => {
   db.collection('products').where(stringName, '==', fieldName).where(stringName2, '==', fieldName2).where(stringName3, '==', fieldName3)
-  .get().then((snapshot) => {
-    let count = 0;
-    let result = '';
-    snapshot.docs.forEach(doc => {
-      const data = doc.data();
-      count++;
-      result += `
+    .get().then((snapshot) => {
+      let count = 0;
+      let result = '';
+      snapshot.docs.forEach(doc => {
+        const data = doc.data();
+        count++;
+        result += `
         <div class="card-bg block block-strong inset">
           <p>Product Code: <span>${data.code}</span></p>
           <p>Name: <span>${data.name}</span></p>
@@ -212,9 +212,9 @@ const threeFieldSearch = (elementName,stringName, fieldName, stringName2, fieldN
           <p>Price: <span>${data.price}</span></p>
           <p>Quantity: <span id="search-quantity">${data.quantity}</span></p>
           <div class="block display-flex justify-content-center">`
-      if (yahooApiKey)
-        result += `<img style="width:146px;height:146px" id="${data.code}_img" src="${data.image}"/>`
-      result += `
+        if (yahooApiKey)
+          result += `<img style="width:146px;height:146px" id="${data.code}_img" src="${data.image}"/>`
+        result += `
         </div>
          <div class="display-flex justify-content-center">
             <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
@@ -224,18 +224,18 @@ const threeFieldSearch = (elementName,stringName, fieldName, stringName2, fieldN
           </div>   
         </div>`;
 
-      if (data.image == "") getImage(data, "PRODUCT");
-    });
+        if (data.image == "") getImage(data, "PRODUCT");
+      });
 
-    if (count == 0) {
-      result += `
+      if (count == 0) {
+        result += `
         <div class="card-bg block block-strong inset">
             <div class="display-flex justify-content-center">Product Not Found</div>
         </div>`;
-    }
+      }
 
-    elementName.innerHTML = result;
-  });
+      elementName.innerHTML = result;
+    });
 }
 
 // Real time update with Firebase for the Search
@@ -244,21 +244,21 @@ const getRealTimeUpdatesForSearch = (elementName) => {
   let result = "";
   const jsonObject = app.methods.dataToJson('#search-product-form');
 
-  if (jsonObject.code == "" && jsonObject.name == "" && jsonObject.shop == "") 
+  if (jsonObject.code == "" && jsonObject.name == "" && jsonObject.shop == "")
     countProductsInFirebase(elementName, count, result);
-  else if (jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop == "") 
+  else if (jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop == "")
     oneFieldSearch(elementName, 'code', jsonObject.code);
-  else if (jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop == "") 
+  else if (jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop == "")
     oneFieldSearch(elementName, 'name', jsonObject.name);
-  else if (jsonObject.code == "" && jsonObject.name == "" && jsonObject.shop != "") 
+  else if (jsonObject.code == "" && jsonObject.name == "" && jsonObject.shop != "")
     oneFieldSearch(elementName, 'shop', jsonObject.shop);
-  else if (jsonObject.code != "" && jsonObject.name != "" && jsonObject.shop == "") 
+  else if (jsonObject.code != "" && jsonObject.name != "" && jsonObject.shop == "")
     twoFieldSearch(elementName, 'name', jsonObject.name, 'code', jsonObject.code);
-  else if (jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop != "") 
+  else if (jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop != "")
     twoFieldSearch(elementName, 'name', jsonObject.name, 'shop', jsonObject.shop);
-  else if (jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop != "") 
+  else if (jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop != "")
     twoFieldSearch(elementName, 'code', jsonObject.code, 'shop', jsonObject.shop);
-  else if (jsonObject.code != "" && jsonObject.name != "" && jsonObject.shop != "") 
+  else if (jsonObject.code != "" && jsonObject.name != "" && jsonObject.shop != "")
     threeFieldSearch(elementName, 'name', jsonObject.name, 'code', jsonObject.code, 'shop', jsonObject.shop);
 }
 
@@ -267,7 +267,7 @@ function countProductsInFirebase(elementName, count, result) {
     doc.docs.forEach((doc) => {
       count++;
     });
-      
+
     if (count == 0) {
       result += `
       <div class="card-bg block block-strong inset">
