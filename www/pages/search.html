@@ -28,7 +28,7 @@
                     <span class="input-clear-button"></span>
                   </div>
                 </div>
-                <i class="icon f7-icons popup-open popup-code-list" data-popup=".popup-code-list">barcode_viewfinder</i>
+                <i class="icon f7-icons" id="product-barcode">barcode_viewfinder</i>
               </li>
               <li class="col-95 item-content item-input">
                 <div class="item-inner">
@@ -49,24 +49,6 @@
                 <i class="icon f7-icons popup-open popup-shop-list" data-popup=".popup-shop-list">cart</i>
               </li>
             </ul>
-          </div>
-        </div>
-        <!-- Pop up code list -->
-        <div class="popup popup-code-list">
-          <div class="navbar">
-            <div class="navbar-bg"></div>
-            <div class="navbar-inner sliding">
-              <div class="left">
-                <a href="#" class="link popup-close">
-                  <i class="icon icon-back"></i>
-                  <span class="if-not-md">Back</span>
-                </a>
-              </div>
-              <div class="title">Barcodes</div>
-            </div>
-          </div>
-          <div class="list">
-            <ul id="popup-barcode-list"></ul>
           </div>
         </div>
         <!-- Pop up product list -->
@@ -129,12 +111,12 @@
     },
     on: {
       pageInit: function (e, page) {
-        const barcodeListPopUp = document.getElementById('popup-barcode-list')
+        const barcodeButton = document.getElementById('product-barcode');
         const productListPopUp = document.getElementById('popup-product-list')
         const shopListPopUp = document.getElementById('popup-shop-list');
         const productListDiv = document.getElementById('product-list');
 
-        popUpBarcodeList(barcodeListPopUp);
+        barcodeButton.addEventListener('click', scanBarcodeForSearch);
         popUpProductList(productListPopUp);
         popUpShopList(shopListPopUp);
         subtractQuantity(productListDiv);

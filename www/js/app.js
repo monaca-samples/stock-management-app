@@ -125,6 +125,26 @@ function scanBarcode() {
   );
 }
 
+function scanBarcodeForSearch() {
+  cordova.plugins.barcodeScanner.scan(
+    function (result) {
+      document.getElementById("product-code").value = result.text;
+      app.input.validate('#product-code');
+    },
+    function (error) {
+      alert("Scanning failed: " + error);
+    },
+    {
+      preferFrontCamera: false,
+      showFlipCameraButton: false,
+      showTorchButton: false,
+      torchOn: false,
+      disableAnimations: true,
+      disableSuccessBeep: false,
+    }
+  );
+}
+
 /* - - - - - - - - - - - - - - - - - -
    Methods for Yahoo Barcode Lookup
 - - - - - - - - - - - - - - - - - - - */
@@ -220,69 +240,6 @@ function displayImage(img) {
 /* - - - - - - 
    Pop ups
 - - - - - - - */
-// Pop up to list all the added barcodes
-function popUpBarcodeList(elementName) {
-  $$(document).on("click", ".popup-code-list", function () {
-    if (useDatabaseApi) {
-      let count = 0;
-      db.collection("products").get().then((snapshot) => {
-        let result = "";
-        snapshot.docs.forEach((doc) => {
-          count++;
-          const data = doc.data();
-          result += `
-            <li>
-              <a href="#" class="item-link popup-close">
-                <div class="item-content">
-                  <div data-product-code="${data.code}" class="item-inner item-title get-product-code">${data.code}</div>
-                </div>
-              </a>
-            </li>`;
-        });
-
-        if (count == 0) {
-          result += `
-            <li>
-              <div class="item-content">
-                <div class="item-inner display-flex justify-content-center">There are no barcodes added to the database.</div>
-              </div>
-            </li>`;
-        }
-
-        elementName.innerHTML = result;
-      });
-    } else {
-      let count = 0;
-      let result = "";
-      for (let i = 0; i < localStorage.getItem("addedProducts"); i++) {
-        if (localStorage.getItem("Product" + i)) {
-          count++;
-          const jsonObject = JSON.parse(localStorage.getItem("Product" + i));
-          result += `
-            <li>
-              <a href="#" class="item-link popup-close">
-                <div class="item-content">
-                  <div data-product-code="${jsonObject.code}" class="item-inner get-product-code item-title">${jsonObject.code}</div>
-                </div>
-              </a>
-            </li>`;
-        }
-      }
-
-      if (count == 0) {
-        result += `
-          <li>
-            <div class="item-content">
-              <div class="item-inner display-flex justify-content-center">There are no barcodes added to the database.</div>
-            </div>
-          </li>`;
-      }
-
-      elementName.innerHTML = result;
-    }
-  });
-}
-
 // Pop up to list all the products
 function popUpProductList(elementName) {
   $$(document).on("click", ".popup-product-list", function () {
