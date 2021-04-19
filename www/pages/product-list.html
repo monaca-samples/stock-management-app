@@ -30,8 +30,8 @@
         if(useDatabaseApi) getRealTimeUpdatesForProducts(productListDiv, "PRODUCT");
         else {
 			getProductsFromLocalStorage(productListDiv, "PRODUCT");
-			subtractQuantity(productListDiv);
-    		addQuantity(productListDiv);
+			subtractQuantity(productListDiv, "PRODUCT");
+    		addQuantity(productListDiv, "PRODUCT");
 		}
 
         $$(document).on('page:reinit', function (e) {

@@ -495,7 +495,7 @@ function checkPicture(elementName, jsonObject) {
   try {
     if (useDatabaseApi) {
       let img = document.getElementById("imageFile").src.substring(23);
-      uploadImageToFirebaseStorage(elementName, jsonObject.code + ".jpg", img);
+      uploadImageToFirebaseStorage(elementName, jsonObject.code + jsonObject.shop + ".jpg", img);
     } else {
       const img = document.getElementById("imageFile");
       uploadImageToLocalStorage(jsonObject.code + jsonObject.shop + ".jpg", img);
@@ -660,13 +660,13 @@ function productDataForLocalStorage(jsonObject) {
 
 // Save the edited product data
 function saveEditedProductData(elementName) {
-  $$(document).once("click", ".edited-product-data", function () {
+  $$('.edited-product-data').on('click', function () {
     if (app.methods.isProductFormEmpty()) {
       const jsonObject = app.methods.dataToJson("#edit-product-form");
       if (useDatabaseApi) {
         let img = document.getElementById("imageFile").src.substring(23);
         if (document.getElementById("imageFile").src.includes("data")) {
-          uploadImageToFirebaseStorage(elementName, jsonObject.code + ".jpg", img, true);
+          uploadImageToFirebaseStorage(elementName, jsonObject.code + jsonObject.shop + ".jpg", img, true);
 
           db.collection("products").doc(productId).update({
             code: document.getElementById("product-code").value,
@@ -820,23 +820,23 @@ function moveOnTheMap(map, chosenPositionMarker) {
    Methods for the product quantity
 - - - - - - - - - - - - - - - - - - */
 // Subtract quantity
-function subtractQuantity(elementName) {
+function subtractQuantity(elementName, pageName) {
   $$(document).on("click", ".update-quantity-minus", function () {
     productId = $$(this).data("product-id");
-    changeQuantity(elementName, "update-quantity-minus", productId, $$(this).data("quantity"));
+    changeQuantity(pageName, elementName, "update-quantity-minus", productId, $$(this).data("quantity"));
   });
 }
 
 // Add quantity
-function addQuantity(elementName) {
+function addQuantity(elementName, pageName) {
   $$(document).on("click", ".update-quantity-plus", function () {
     productId = $$(this).data("product-id");
-    changeQuantity(elementName, "update-quantity-plus", productId, $$(this).data("quantity"));
+    changeQuantity(pageName, elementName, "update-quantity-plus", productId, $$(this).data("quantity"));
   });
 }
 
 // Function to add/subtract quantity
-const changeQuantity = (elementName, className, productId, productQuantity) => {
+const changeQuantity = (pageName, elementName, className, productId, productQuantity) => {
   let newProductQuantity = 0;
   const idValue = document.getElementsByClassName(className)[0].id;
 
@@ -865,8 +865,7 @@ const changeQuantity = (elementName, className, productId, productQuantity) => {
         };
 
         localStorage.setItem(productId, JSON.stringify(changedProduct));
-        getProductsFromLocalStorage(elementName);
-        getProductsFromLocalStorage(elementName, "HOME");
+        getProductsFromLocalStorage(elementName, pageName);
       }
     }
   }

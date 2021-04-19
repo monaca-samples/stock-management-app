@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<meta charset="utf-8">
 	<!--
@@ -11,8 +12,10 @@
       * Enable inline JS: add 'unsafe-inline' to default-src
   -->
 
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui, viewport-fit=cover">
-	<meta http-equiv="Content-Security-Policy" content="default-src * data: gap: content: https://ssl.gstatic.com; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui, viewport-fit=cover">
+	<meta http-equiv="Content-Security-Policy"
+		content="default-src * data: gap: content: https://ssl.gstatic.com; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
 
 	<meta name="theme-color" content="#007aff">
 	<meta name="format-detection" content="telephone=no">
@@ -33,8 +36,9 @@
 	<link rel="stylesheet" href="js/util/leaflet/leaflet.css" />
 	<script src="js/util/leaflet/leaflet.js"></script>
 </head>
+
 <body>
-  <div id="app">
+	<div id="app">
 		<!-- Left panel with cover effect -->
 		<div class="panel panel-left panel-cover theme-dark panel-init">
 			<div class="view">
@@ -49,7 +53,8 @@
 						<div class="list">
 							<ul>
 								<li>
-									<a href="#view-home" data-view=".view-main" class="item-content item-link panel-close">
+									<a href="#view-home" data-view=".view-main"
+										class="item-content item-link panel-close">
 										<div class="item-inner">
 											<div class="item-title">Home</div>
 										</div>
@@ -66,14 +71,16 @@
 										</a>
 										<div class="accordion-item-content">
 											<div class="block">
-												<a href="/shop-list/" data-view=".view-main" class="item-content item-link panel-close">
+												<a href="/shop-list/" data-view=".view-main"
+													class="item-content item-link panel-close">
 													<div class="item-inner">
 														<div class="item-title">Shop List</div>
 													</div>
 												</a>
 											</div>
 											<div class="block">
-												<a href="/new-shop/" data-view=".view-main" class="item-content item-link panel-close">
+												<a href="/new-shop/" data-view=".view-main"
+													class="item-content item-link panel-close">
 													<div class="item-inner">
 														<div class="item-title">New Shop</div>
 													</div>
@@ -89,21 +96,24 @@
 										</a>
 										<div class="accordion-item-content">
 											<div class="block">
-												<a href="/product-list/" data-view=".view-main" class="item-content item-link panel-close">
+												<a href="/product-list/" data-view=".view-main"
+													class="item-content item-link panel-close">
 													<div class="item-inner">
 														<div class="item-title">Product List</div>
 													</div>
 												</a>
 											</div>
 											<div class="block">
-												<a href="/new-product/" data-view=".view-main" class="item-content item-link panel-close">
+												<a href="/new-product/" data-view=".view-main"
+													class="item-content item-link panel-close">
 													<div class="item-inner">
 														<div class="item-title">New Product</div>
 													</div>
 												</a>
 											</div>
 											<div class="block">
-												<a href="/search/" data-view=".view-main" class="item-content item-link panel-close">
+												<a href="/search/" data-view=".view-main"
+													class="item-content item-link panel-close">
 													<div class="item-inner">
 														<div class="item-title">Search Product</div>
 													</div>
@@ -183,26 +193,27 @@
 		<!-- App routes -->
 		<script src="js/routes.js"></script>
 		<!-- App scripts -->
-    <script src="js/config.js"></script>
+		<script src="js/config.js"></script>
 		<script src="js/database.js"></script>
 		<script src="js/localStorage.js"></script>
 		<script src="js/app.js"></script>
 </body>
+
 </html>
 
 <script>
 	let productId = null;
 	const productListHomeDiv = document.getElementById('product-list-result');
 
-	if(useDatabaseApi) getRealTimeUpdatesForProducts(productListHomeDiv, "HOME");
-  	else {
+	if (useDatabaseApi) getRealTimeUpdatesForProducts(productListHomeDiv, "HOME");
+	else {
 		getProductsFromLocalStorage(productListHomeDiv, "HOME");
-		subtractQuantity(productListHomeDiv);
-    	addQuantity(productListHomeDiv);
-	  }
-  
-  	$$(document).on('page:reinit', function (e) {
-    	if(useDatabaseApi) getRealTimeUpdatesForProducts(productListHomeDiv, "HOME");
-    	else getProductsFromLocalStorage(productListHomeDiv, "HOME");
-  	});
+		subtractQuantity(productListHomeDiv, "HOME");
+		addQuantity(productListHomeDiv, "HOME");
+	}
+
+	$$(document).on('page:reinit', function (e) {
+		if (useDatabaseApi) getRealTimeUpdatesForProducts(productListHomeDiv, "HOME");
+		else getProductsFromLocalStorage(productListHomeDiv, "HOME");
+	});
 </script>

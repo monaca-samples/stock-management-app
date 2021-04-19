@@ -82,17 +82,17 @@ function uploadImageToFirebaseStorage(elementName, fileName, img, edit) {
 // To get the picture from the database 
 function getImage(data, pageName) {
   const storageRef = firebase.storage().ref();
-  const filename = 'products/' + data.code + '.jpg';
+  const filename = 'products/' + data.code + data.shop + '.jpg';
   const ref = storageRef.child(filename);
 
   // Get the download URL
   ref.getDownloadURL().then(function (url) {
     if (pageName == "HOME")
-      document.getElementById(`${data.code}`).src = url;
+      document.getElementById(`${data.code}${data.shop}`).src = url;
     else if (pageName == "EDIT")
       document.getElementById('imageFile').src = url;
     else if (pageName == "PRODUCT")
-      document.getElementById(`${data.code}_img`).src = url;
+      document.getElementById(`${data.code}${data.shop}_img`).src = url;
   }).catch(function (error) {
     switch (error.code) {
       case 'storage/object-not-found':
@@ -125,8 +125,7 @@ const oneFieldSearch = (elementName, stringName, fieldName) => {
           <p>Price: <span>${data.price}</span></p>
           <p>Quantity: <span id="search-quantity">${data.quantity}</span></p>
           <div class="block display-flex justify-content-center">`
-        if (yahooApiKey)
-          result += `<img style="width:146px;height:146px" id="${data.code}_img" src="${data.image}"/>`
+        result += `<img style="width:146px;height:146px" id="${data.code}${data.shop}_img" src="${data.image}"/>`
         result += `
           </div>
           <div class="display-flex justify-content-center">
@@ -169,8 +168,7 @@ const twoFieldSearch = (elementName, stringName, fieldName, stringName2, fieldNa
           <p>Price: <span>${data.price}</span></p>
           <p>Quantity: <span id="search-quantity">${data.quantity}</span></p>
           <div class="block display-flex justify-content-center">`
-      if (yahooApiKey)
-        result += `<img style="width:146px;height:146px" id="${data.code}_img" src="${data.image}"/>`
+      result += `<img style="width:146px;height:146px" id="${data.code}${data.shop}_img" src="${data.image}"/>`
       result += `
         </div>
          <div class="display-flex justify-content-center">
@@ -212,8 +210,7 @@ const threeFieldSearch = (elementName, stringName, fieldName, stringName2, field
           <p>Price: <span>${data.price}</span></p>
           <p>Quantity: <span id="search-quantity">${data.quantity}</span></p>
           <div class="block display-flex justify-content-center">`
-        if (yahooApiKey)
-          result += `<img style="width:146px;height:146px" id="${data.code}_img" src="${data.image}"/>`
+        result += `<img style="width:146px;height:146px" id="${data.code}${data.shop}_img" src="${data.image}"/>`
         result += `
         </div>
          <div class="display-flex justify-content-center">
@@ -254,9 +251,9 @@ const getRealTimeUpdatesForSearch = (elementName) => {
     oneFieldSearch(elementName, 'shop', jsonObject.shop);
   else if (jsonObject.code != "" && jsonObject.name != "" && jsonObject.shop == "")
     twoFieldSearch(elementName, 'name', jsonObject.name, 'code', jsonObject.code);
-  else if (jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop != "")
-    twoFieldSearch(elementName, 'name', jsonObject.name, 'shop', jsonObject.shop);
   else if (jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop != "")
+    twoFieldSearch(elementName, 'name', jsonObject.name, 'shop', jsonObject.shop);
+  else if (jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop != "")
     twoFieldSearch(elementName, 'code', jsonObject.code, 'shop', jsonObject.shop);
   else if (jsonObject.code != "" && jsonObject.name != "" && jsonObject.shop != "")
     threeFieldSearch(elementName, 'name', jsonObject.name, 'code', jsonObject.code, 'shop', jsonObject.shop);
@@ -341,14 +338,14 @@ const getRealTimeUpdatesForProducts = (elementName, pageName) => {
         <div>`;
       if (yahooApiKey) {
         if (pageName == "HOME")
-          result += `<img style="width:146px;height:146px" id="${data.code}" src="${data.image}"/>`
+          result += `<img style="width:146px;height:146px" id="${data.code}${data.shop}" src="${data.image}"/>`
         else if (pageName == "PRODUCT")
-          result += `<img style="width:146px;height:146px" id="${data.code}_img" src="${data.image}"/>`
+          result += `<img style="width:146px;height:146px" id="${data.code}${data.shop}_img" src="${data.image}"/>`
       } else {
         if (pageName == "HOME")
-          result += `<img style="width:146px;height:146px" id="${data.code}" src="assets/pictures/camera.png">`
+          result += `<img style="width:146px;height:146px" id="${data.code}${data.shop}" src="assets/pictures/camera.png">`
         else if (pageName == "PRODUCT")
-          result += `<img style="width:146px;height:146px" id="${data.code}_img" src="assets/pictures/camera.png">`
+          result += `<img style="width:146px;height:146px" id="${data.code}${data.shop}_img" src="assets/pictures/camera.png">`
       }
       result += `
         </div>

@@ -6,10 +6,10 @@ let addedProducts = 0;
 let shopsCounter = 0;
 let productsCounter = 0;
 
-addedShops = localStorage.getItem("addedShops") > 0 ? localStorage.getItem("addedShops") : 0; 
-addedProducts = localStorage.getItem("addedProducts") > 0 ? localStorage.getItem("addedProducts") : 0; 
-shopsCounter = localStorage.getItem("addedShops") > 0 ? localStorage.getItem("addedShops") : 0; 
-productsCounter = localStorage.getItem("addedProducts") > 0 ? localStorage.getItem("addedProducts") : 0; 
+addedShops = localStorage.getItem("addedShops") > 0 ? localStorage.getItem("addedShops") : 0;
+addedProducts = localStorage.getItem("addedProducts") > 0 ? localStorage.getItem("addedProducts") : 0;
+shopsCounter = localStorage.getItem("addedShops") > 0 ? localStorage.getItem("addedShops") : 0;
+productsCounter = localStorage.getItem("addedProducts") > 0 ? localStorage.getItem("addedProducts") : 0;
 
 // Add new items to the Shop List
 function addNewShopToLocalStorage(jsonObject) {
@@ -110,15 +110,15 @@ const oneFieldSearchLocalStorage = (elementName, stringName, objectName) => {
     }
   }
 
-  if(found == 0) 
+  if (found == 0)
     result += `
       <div class="card-bg block block-strong inset">
           <div class="display-flex justify-content-center">Product Not Found</div>
       </div>`;
 
-  (countProductsInLocalStorage(elementName, count, result) != 0) ? 
-  elementName.innerHTML = result : 
-  countProductsInLocalStorage(elementName, count, result);
+  (countProductsInLocalStorage(elementName, count, result) != 0) ?
+    elementName.innerHTML = result :
+    countProductsInLocalStorage(elementName, count, result);
 };
 
 // Search by two filled field
@@ -153,16 +153,16 @@ const twoFieldSearchLocalStorage = (elementName, stringName, objectName, stringN
     }
   }
 
-  if(found == 0) 
-  result += `
+  if (found == 0)
+    result += `
     <div class="card-bg block block-strong inset">
         <div class="display-flex justify-content-center">Product Not Found</div>
     </div>`;
-  
 
-  (countProductsInLocalStorage(elementName, count, result) != 0) ? 
-  elementName.innerHTML = result : 
-  countProductsInLocalStorage(elementName, count, result);
+
+  (countProductsInLocalStorage(elementName, count, result) != 0) ?
+    elementName.innerHTML = result :
+    countProductsInLocalStorage(elementName, count, result);
 };
 
 // Search by three filled field
@@ -193,19 +193,19 @@ const threeFieldSearchLocalStorage = (elementName, stringName, objectName, strin
             </div>
           </div>   
         </div>`;
-      } 
+      }
     }
   }
 
-  if(found == 0) 
-  result += `
+  if (found == 0)
+    result += `
     <div class="card-bg block block-strong inset">
         <div class="display-flex justify-content-center">Product Not Found</div>
     </div>`;
 
-  (countProductsInLocalStorage(elementName, count, result) != 0) ? 
-  elementName.innerHTML = result : 
-  countProductsInLocalStorage(elementName, count, result);
+  (countProductsInLocalStorage(elementName, count, result) != 0) ?
+    elementName.innerHTML = result :
+    countProductsInLocalStorage(elementName, count, result);
 };
 
 // Update for the Search
@@ -214,38 +214,38 @@ const localStorageUpdateForSearch = (elementName) => {
   let result = "";
   const jsonObject = app.methods.dataToJson("#search-product-form");
 
-  if(jsonObject.code == "" && jsonObject.name == "" && jsonObject.shop == "") 
+  if (jsonObject.code == "" && jsonObject.name == "" && jsonObject.shop == "")
     countProductsInLocalStorage(elementName, count, result);
-  else if (jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop == "") 
+  else if (jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop == "")
     oneFieldSearchLocalStorage(elementName, jsonObject.code, "code");
-  else if (jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop == "") 
+  else if (jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop == "")
     oneFieldSearchLocalStorage(elementName, jsonObject.name, "name");
-  else if (jsonObject.code == "" && jsonObject.name == "" && jsonObject.shop != "") 
+  else if (jsonObject.code == "" && jsonObject.name == "" && jsonObject.shop != "")
     oneFieldSearchLocalStorage(elementName, jsonObject.shop, "shop");
-  else if (jsonObject.code != "" && jsonObject.name != "" && jsonObject.shop == "") 
+  else if (jsonObject.code != "" && jsonObject.name != "" && jsonObject.shop == "")
     twoFieldSearchLocalStorage(elementName, jsonObject.name, "name", jsonObject.code, "code");
-  else if (jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop != "") 
+  else if (jsonObject.code != "" && jsonObject.name == "" && jsonObject.shop != "")
     twoFieldSearchLocalStorage(elementName, jsonObject.code, "code", jsonObject.shop, "shop");
-  else if (jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop != "") 
+  else if (jsonObject.code == "" && jsonObject.name != "" && jsonObject.shop != "")
     twoFieldSearchLocalStorage(elementName, jsonObject.name, "name", jsonObject.shop, "shop");
-  else if (jsonObject.code != "" && jsonObject.name != "" && jsonObject.shop != "") 
+  else if (jsonObject.code != "" && jsonObject.name != "" && jsonObject.shop != "")
     threeFieldSearchLocalStorage(elementName, jsonObject.name, "name", jsonObject.code, "code", jsonObject.shop, "shop");
 };
 
 function countProductsInLocalStorage(elementName, count, result) {
-  for (let i = 0; i < localStorage.getItem("addedProducts"); i++) 
-    if (localStorage.getItem("Product" + i)) 
+  for (let i = 0; i < localStorage.getItem("addedProducts"); i++)
+    if (localStorage.getItem("Product" + i))
       count++;
 
-  if(count == 0)    
+  if (count == 0)
     result = `
       <div class="card-bg block block-strong inset">
         <div class="display-flex justify-content-center">There are no products added to the database.</div>
       </div>`;
 
-    elementName.innerHTML = result;
+  elementName.innerHTML = result;
 
-    return count;
+  return count;
 }
 
 // Retrieve saved Shops from localStorage
@@ -304,29 +304,35 @@ const getProductsFromLocalStorage = (elementName, pageName) => {
               <p>Shop: <span>${jsonObject.shop}</span></p>
               <p>Price: <span>${jsonObject.price}</span></p>
               <p>Quantity: <span">${jsonObject.quantity}</span></p>
-            </div>
-            <div class="topright align-self-flex-start">
-              <i class="icon f7-icons">
-                <a href="/edit-product/${"Product" + i}/" data-product-id="${"Product" + i}" class="get-product-details-data">pencil</a>
-              </i>
-            </div>
+            </div>`;
+      if (pageName == "HOME" || pageName == "PRODUCT")
+        result += `
+          <div class="topright align-self-flex-start">
+            <i class="icon f7-icons">
+              <a href="/edit-product/${"Product" + i}/" data-product-id="${"Product" + i}" class="get-product-details-data">pencil</a>
+            </i>
           </div>
-          <div class="block display-flex justify-content-center">
-        <div>`;
+        `;
+      result += `
+        </div>
+        <div class="block display-flex justify-content-center">
+          <div>
+            `;
       if (pageName == "HOME")
         result += `<img style="width:146px;height:146px" id="${jsonObject.code}" src="${imageSource}">`;
       else if (pageName == "PRODUCT")
         result += `<img style="width:146px;height:146px" id="${jsonObject.code}_img" src="${imageSource}">`;
+      else result += `<img style="width:146px;height:146px" id="${jsonObject.code}" src="${imageSource}">`;
       result += `
-            </div>
           </div>
-          <div class="display-flex justify-content-center">
-            <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
-              <div id="minus" class="stepper-button-minus update-quantity-minus" data-quantity="${jsonObject.quantity}" data-product-id="${"Product" + i}"></div>
-              <div id="plus" class="stepper-button-plus update-quantity-plus" data-quantity="${jsonObject.quantity}" data-product-id="${"Product" + i}"></div>
-            </div>
-          </div>   
-        </div>`;
+        </div>
+        <div class="display-flex justify-content-center">
+          <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#">
+            <div id="minus" class="stepper-button-minus update-quantity-minus" data-quantity="${jsonObject.quantity}" data-product-id="${"Product" + i}"></div>
+            <div id="plus" class="stepper-button-plus update-quantity-plus" data-quantity="${jsonObject.quantity}" data-product-id="${"Product" + i}"></div>
+          </div>
+        </div>   
+      </div>`;
     }
   }
 
