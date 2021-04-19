@@ -660,7 +660,7 @@ function productDataForLocalStorage(jsonObject) {
 
 // Save the edited product data
 function saveEditedProductData(elementName) {
-  $$('.edited-product-data').on('click', function () {
+    $$('.edited-product-data').on('click', function () {
     if (app.methods.isProductFormEmpty()) {
       const jsonObject = app.methods.dataToJson("#edit-product-form");
       if (useDatabaseApi) {
